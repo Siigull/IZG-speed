@@ -50,11 +50,11 @@ set_target_properties(MealyMachine::MealyMachine PROPERTIES
   INTERFACE_MealyMachine_MAJOR_VERSION "1"
 )
 
-# Import target "MealyMachine::MealyMachine" for configuration ""
-set_property(TARGET MealyMachine::MealyMachine APPEND PROPERTY IMPORTED_CONFIGURATIONS NOCONFIG)
+# Import target "MealyMachine::MealyMachine" for configuration "Release"
+set_property(TARGET MealyMachine::MealyMachine APPEND PROPERTY IMPORTED_CONFIGURATIONS RELEASE)
 set_target_properties(MealyMachine::MealyMachine PROPERTIES
-  IMPORTED_LINK_INTERFACE_LANGUAGES_NOCONFIG "CXX"
-  IMPORTED_LOCATION_NOCONFIG "/home/sigull/izgProject/build/libs/MealyMachine/libMealyMachine.a"
+  IMPORTED_LINK_INTERFACE_LANGUAGES_RELEASE "CXX"
+  IMPORTED_LOCATION_RELEASE "/home/sigull/izgProject/build/libs/MealyMachine/libMealyMachine.a"
   )
 
 # This file does not depend on other imported targets which have

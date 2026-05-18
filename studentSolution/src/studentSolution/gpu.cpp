@@ -5,24 +5,28 @@ static void clearColor(GPUMemory&mem,ClearColorCommand const&cmd){
   Framebuffer*f=mem.framebuffers+mem.activatedFramebuffer;
   if(!f->color.data)return;
   glm::vec4 v=cmd.value*255.f;
-  for(uint32_t y=0;y<f->height;++y)
+  for(uint32_t y=0;y<f->height;++y){
+    uint8_t* row=(uint8_t*)f->color.data+y*f->color.pitch;
     for(uint32_t x=0;x<f->width;++x){
-      auto p=(uint8_t*)getPixel(f->color,x,y);
+      uint8_t* p=row+x*f->color.bytesPerPixel;
       for(uint32_t c=0;c<f->color.channels;++c)p[f->color.channelTypes[c]]=(uint8_t)(v[c]);
     }
+  }
 }
 static void clearDepth(GPUMemory&mem,ClearDepthCommand const&cmd){
   Framebuffer*f=mem.framebuffers+mem.activatedFramebuffer;
   if(!f->depth.data)return;
   float v=cmd.value;
-  for(uint32_t y=0;y<f->height;++y)
-    for(uint32_t x=0;x<f->width;++x)*(float*)getPixel(f->depth,x,y)=v;
+  for(uint32_t y=0;y<f->height;++y){
+    uint8_t* row=(uint8_t*)f->depth.data+y*f->depth.pitch;
+    for(uint32_t x=0;x<f->width;++x)*(float*)(row+x*f->depth.bytesPerPixel)=v;
+  }
 }
 static void clearStencil(GPUMemory&mem,ClearStencilCommand const&cmd){
   Framebuffer*f=mem.framebuffers+mem.activatedFramebuffer;
-  if(!f->stencil.data)return;uint8_t v=cmd.value;
-  for(uint32_t y=0;y<f->height;++y)
-    for(uint32_t x=0;x<f->width;++x)*(uint8_t*)getPixel(f->stencil,x,y)=v;
+  if(!f->stencil.data)return;
+  uint8_t v=cmd.value;
+  memset(f->stencil.data,v,f->stencil.pitch*f->height);
 }
 
 static glm::vec3 ndc(glm::vec4 const&v){return glm::vec3(v)/v.w;}
@@ -151,7 +155,22 @@ static void raster(GPUMemory&mem,OutVertex const v[3]){
   auto&bs=mem.blendingSettings;
   StencilOps ops=isFrontFace?ss.frontOps:ss.backOps;
 
+  uint32_t activeAttribs[maxAttribs];
+  uint32_t nActiveAttribs=0;
+  for(uint32_t a=0;a<maxAttribs;++a){
+    if(p.vs2fs[a]!=AttribType::EMPTY)
+      activeAttribs[nActiveAttribs++]=a;
+  }
+
+  bool hasStencil=f->stencil.data!=nullptr;
+  bool hasDepth=f->depth.data!=nullptr;
+  bool hasColor=f->color.data!=nullptr;
+
   for(int y=y0;y<=y1;++y){
+    uint8_t* stencilRow=hasStencil?((uint8_t*)f->stencil.data+y*f->stencil.pitch):nullptr;
+    uint8_t* depthRow=hasDepth?((uint8_t*)f->depth.data+y*f->depth.pitch):nullptr;
+    uint8_t* colorRow=hasColor?((uint8_t*)f->color.data+y*f->color.pitch):nullptr;
+
     for(int x=x0;x<=x1;++x){
       glm::vec2 pc(x+.5f,y+.5f);
       float l0=edge(sp[1],sp[2],pc);
@@ -166,31 +185,30 @@ static void raster(GPUMemory&mem,OutVertex const v[3]){
       float depthZ=l0*scr[0].z+l1*scr[1].z+l2*scr[2].z;
 
       uint8_t stencilVal=0;
-      if(f->stencil.data)stencilVal=*(uint8_t*)getPixel(f->stencil,x,y);
-      if(ss.enabled&&f->stencil.data){
+      uint8_t* stencilPx=hasStencil?(stencilRow+x*f->stencil.bytesPerPixel):nullptr;
+      if(stencilPx)stencilVal=*stencilPx;
+      if(ss.enabled&&stencilPx){
         if(!stencilTest(stencilVal,ss.refValue,ss.func)){
-          if(!mem.blockWrites.stencil)
-            *(uint8_t*)getPixel(f->stencil,x,y)=applyStencilOp(stencilVal,ops.sfail,ss.refValue);
+          if(!mem.blockWrites.stencil)*stencilPx=applyStencilOp(stencilVal,ops.sfail,ss.refValue);
           continue;
         }
       }
       bool depthPass=true;
       float oldDepth=0.f;
-      if(f->depth.data){
-        oldDepth=*(float*)getPixel(f->depth,x,y);
+      float* depthPx=hasDepth?(float*)(depthRow+x*f->depth.bytesPerPixel):nullptr;
+      if(depthPx){
+        oldDepth=*depthPx;
         depthPass=depthZ<oldDepth;
       }
       if(!depthPass){
-        if(ss.enabled&&f->stencil.data&&!mem.blockWrites.stencil)
-          *(uint8_t*)getPixel(f->stencil,x,y)=applyStencilOp(stencilVal,ops.dpfail,ss.refValue);
+        if(ss.enabled&&stencilPx&&!mem.blockWrites.stencil)*stencilPx=applyStencilOp(stencilVal,ops.dpfail,ss.refValue);
         continue;
       }
-      if(ss.enabled&&f->stencil.data&&!mem.blockWrites.stencil)
-        *(uint8_t*)getPixel(f->stencil,x,y)=applyStencilOp(stencilVal,ops.dppass,ss.refValue);
+      if(ss.enabled&&stencilPx&&!mem.blockWrites.stencil)*stencilPx=applyStencilOp(stencilVal,ops.dppass,ss.refValue);
 
       InFragment inF;inF.gl_FragCoord=glm::vec4(pc.x,pc.y,depthZ,1.f);
-      for(uint32_t a=0;a<maxAttribs;++a){
-        if(p.vs2fs[a]==AttribType::EMPTY)continue;
+      for(uint32_t ai=0;ai<nActiveAttribs;++ai){
+        uint32_t a=activeAttribs[ai];
         AttribType tp=p.vs2fs[a];
         if(tp==AttribType::FLOAT)inF.attributes[a].v1=v[0].attributes[a].v1*lP[0]+v[1].attributes[a].v1*lP[1]+v[2].attributes[a].v1*lP[2];
         else if(tp==AttribType::VEC2)inF.attributes[a].v2=v[0].attributes[a].v2*lP[0]+v[1].attributes[a].v2*lP[1]+v[2].attributes[a].v2*lP[2];
@@ -202,8 +220,8 @@ static void raster(GPUMemory&mem,OutVertex const v[3]){
       if(p.fragmentShader)p.fragmentShader(outF,inF,si);
       if(outF.discard)continue;
 
-      if(!mem.blockWrites.color&&f->color.data){
-        uint8_t*px=(uint8_t*)getPixel(f->color,x,y);
+      if(!mem.blockWrites.color&&colorRow){
+        uint8_t* px=colorRow+x*f->color.bytesPerPixel;
         glm::vec4 fragColor=outF.gl_FragColor;
         if(bs.enabled){
           glm::vec4 dstColor;
@@ -232,7 +250,7 @@ static void raster(GPUMemory&mem,OutVertex const v[3]){
         for(uint32_t c=0;c<f->color.channels;++c)
           px[f->color.channelTypes[c]]=(uint8_t)(fragColor[c]*255.f);
       }
-      if(!mem.blockWrites.depth&&f->depth.data)*(float*)getPixel(f->depth,x,y)=depthZ;
+      if(!mem.blockWrites.depth&&depthPx)*depthPx=depthZ;
     }
   }
 }

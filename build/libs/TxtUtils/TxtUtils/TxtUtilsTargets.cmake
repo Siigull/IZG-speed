@@ -51,11 +51,11 @@ set_target_properties(TxtUtils::TxtUtils PROPERTIES
   INTERFACE_TxtUtils_MAJOR_VERSION "1"
 )
 
-# Import target "TxtUtils::TxtUtils" for configuration ""
-set_property(TARGET TxtUtils::TxtUtils APPEND PROPERTY IMPORTED_CONFIGURATIONS NOCONFIG)
+# Import target "TxtUtils::TxtUtils" for configuration "Release"
+set_property(TARGET TxtUtils::TxtUtils APPEND PROPERTY IMPORTED_CONFIGURATIONS RELEASE)
 set_target_properties(TxtUtils::TxtUtils PROPERTIES
-  IMPORTED_LINK_INTERFACE_LANGUAGES_NOCONFIG "CXX"
-  IMPORTED_LOCATION_NOCONFIG "/home/sigull/izgProject/build/libs/TxtUtils/libTxtUtils.a"
+  IMPORTED_LINK_INTERFACE_LANGUAGES_RELEASE "CXX"
+  IMPORTED_LOCATION_RELEASE "/home/sigull/izgProject/build/libs/TxtUtils/libTxtUtils.a"
   )
 
 # Make sure the targets which have been exported in some other

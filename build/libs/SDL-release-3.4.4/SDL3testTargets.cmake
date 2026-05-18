@@ -50,11 +50,11 @@ set_target_properties(SDL3::SDL3_test PROPERTIES
   INTERFACE_SDL_VERSION "SDL3"
 )
 
-# Import target "SDL3::SDL3_test" for configuration ""
-set_property(TARGET SDL3::SDL3_test APPEND PROPERTY IMPORTED_CONFIGURATIONS NOCONFIG)
+# Import target "SDL3::SDL3_test" for configuration "Release"
+set_property(TARGET SDL3::SDL3_test APPEND PROPERTY IMPORTED_CONFIGURATIONS RELEASE)
 set_target_properties(SDL3::SDL3_test PROPERTIES
-  IMPORTED_LINK_INTERFACE_LANGUAGES_NOCONFIG "C"
-  IMPORTED_LOCATION_NOCONFIG "/home/sigull/izgProject/build/libs/SDL-release-3.4.4/libSDL3_test.a"
+  IMPORTED_LINK_INTERFACE_LANGUAGES_RELEASE "C"
+  IMPORTED_LOCATION_RELEASE "/home/sigull/izgProject/build/libs/SDL-release-3.4.4/libSDL3_test.a"
   )
 
 # Make sure the targets which have been exported in some other

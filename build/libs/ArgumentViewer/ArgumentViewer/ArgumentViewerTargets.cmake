@@ -51,11 +51,11 @@ set_target_properties(ArgumentViewer::ArgumentViewer PROPERTIES
   INTERFACE_LINK_LIBRARIES "MealyMachine::MealyMachine;TxtUtils::TxtUtils"
 )
 
-# Import target "ArgumentViewer::ArgumentViewer" for configuration ""
-set_property(TARGET ArgumentViewer::ArgumentViewer APPEND PROPERTY IMPORTED_CONFIGURATIONS NOCONFIG)
+# Import target "ArgumentViewer::ArgumentViewer" for configuration "Release"
+set_property(TARGET ArgumentViewer::ArgumentViewer APPEND PROPERTY IMPORTED_CONFIGURATIONS RELEASE)
 set_target_properties(ArgumentViewer::ArgumentViewer PROPERTIES
-  IMPORTED_LINK_INTERFACE_LANGUAGES_NOCONFIG "CXX"
-  IMPORTED_LOCATION_NOCONFIG "/home/sigull/izgProject/build/libs/ArgumentViewer/libArgumentViewer.a"
+  IMPORTED_LINK_INTERFACE_LANGUAGES_RELEASE "CXX"
+  IMPORTED_LOCATION_RELEASE "/home/sigull/izgProject/build/libs/ArgumentViewer/libArgumentViewer.a"
   )
 
 # Make sure the targets which have been exported in some other
