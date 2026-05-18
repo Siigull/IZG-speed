@@ -1,0 +1,159 @@
+\chapter{09 Rasterizace}
+\hypertarget{p09_rasterization_theory}{}\label{p09_rasterization_theory}\index{09 Rasterizace@{09 Rasterizace}}
+V tomto úkolu je potřeba rozšířit funkcionalitu funkce student\+\_\+\+GPU\+\_\+run o schopnosti rasterizace. Cílem je naprogramovat části zobrazovacího řetězce, které jsou za vertex shaderem po rasterizaci a pouštění fragment shaderu (včetně). Vzhledem k tomu, že projekt nemůže automaticky testovat vektorovou část\+: část primitiv, jsou tyto testy odsunuty až k rasterizaci, kdy se jejich ověřování umožní.\hypertarget{p09_rasterization_theory_gpu_rasterization}{}\doxysection{\texorpdfstring{Rasterizace}{Rasterizace}}\label{p09_rasterization_theory_gpu_rasterization}
+Rasterizace produkuje raterizací primitiva stream fragmentů\+:
+
+
+
+Rasterizace rasterizuje primitiva v prostoru obrazovky (screen-\/space). Rasterizace produkuje fragmenty v případě, že {\bfseries{střed}} pixelu leží uvnitř trojúhelníku.
+
+\hypertarget{p09_rasterization_theory_ss_rasterization_InFragment}{}\doxysection{\texorpdfstring{In\+Fragment}{InFragment}}\label{p09_rasterization_theory_ss_rasterization_InFragment}
+\doxylink{structInFragment}{In\+Fragment(y)} odpovídají vzorkům v pixelu. Nesou hodnoty důležité pro výpočet jejich barvy.
+
+
+
+Pozice In\+Fragmentu \doxylink{structInFragment_ae72e0b96e17181ea2cb2ef256e3f0a8f}{In\+Fragment\+::gl\+\_\+\+Frag\+Coord} obsahuje 4 složky. Složka XY je souřadnice středu pixelu na obrazovce, Složka Z obsahuje hloubku. Poslední složka W není podstatná, ale obsahuje tím, čím se dělilo při perspektivním dělení.\hypertarget{p09_rasterization_theory_ss_rasterization_interpolation}{}\doxysection{\texorpdfstring{Interpolace atributů}{Interpolace atributů}}\label{p09_rasterization_theory_ss_rasterization_interpolation}
+\hypertarget{p09_rasterization_theory_sss_rasterization_interpolation_2Dlambda}{}\doxysection{\texorpdfstring{Výpočet 2\+D Barycentrických souřadnic pro interpolaci hloubky}{Výpočet 2D Barycentrických souřadnic pro interpolaci hloubky}}\label{p09_rasterization_theory_sss_rasterization_interpolation_2Dlambda}
+Barycentrické souřadnice musíte spočítat podle obsahů\+:  Hlouba se interpoluje pomocí barycentrických souřadnic ve 2D\+: \[\displaystyle fragment.gl\_FragCoord.z = vertex[0].gl\_Position.z\cdot \lambda_0^{2D} + vertex[1].gl\_Position.z\cdot \lambda_1^{2D} + vertex[2].gl\_Position.z\cdot \lambda_2^{2D}\]
+
+Hloubka vrcholů vertex\mbox{[}\mbox{]}.gl\+\_\+\+Position.\+z vznikla při perspektivním dělení.\hypertarget{p09_rasterization_theory_sss_rasterization_interpolation_3Dlambda}{}\doxysection{\texorpdfstring{Výpočet perspektivně korektních Barycentrických souřadnic pro interpolaci uživatelských atribů}{Výpočet perspektivně korektních Barycentrických souřadnic pro interpolaci uživatelských atribů}}\label{p09_rasterization_theory_sss_rasterization_interpolation_3Dlambda}
+Atributy je potřeba interpolovat pomocí perspektivně korektně upravených 2D barycentrických souřadnic. Perspektivně korektní interpolace\+: \[\displaystyle \frac{\frac{A_0 \cdot \lambda_0^{2D}}{h_0} + \frac{A_1 \cdot \lambda_1^{2D}}{h_1} + \frac{A_2 \cdot \lambda_2^{2D}}{h_2}}{\frac{\lambda_0^{2D}}{h_0}+\frac{\lambda_1^{2D}}{h_1}+\frac{\lambda_2^{2D}}{h_2}}\] Kde $\lambda_0^{2D},\lambda_1^{2D},\lambda_2^{2D}$ jsou barycentrické koordináty ve 2D, $h_0,h_1,h_2$ jsou homogenní složky vrcholů a $A_0,A_1,A_2$ jsou atribut vrcholu.~\newline
+ Homogenní složka vrcholů je čtvrtá složka -- tím čím se dělilo ve perspektivním dělení\+: h0 = vertex\mbox{[}0\mbox{]}.gl\+\_\+\+Position.\+w, h1 = vertex\mbox{[}1\mbox{]}.gl\+\_\+\+Position.\+w, ... ~\newline
+ 2D Barycentrické souřadnice je možné přepočítat na perspektivně koretní barycentrické souřadnice (je to jen přepsání zvorečku nahoře)\+: \[\displaystyle s = \frac{\lambda_0^{2D}}{h_0}+\frac{\lambda_1^{2D}}{h_1}+\frac{\lambda_2^{2D}}{h_2}\] \[\displaystyle \lambda_0 = \frac{\lambda_0^{2D}}{h_0\cdot s}\] \[\displaystyle \lambda_1 = \frac{\lambda_1^{2D}}{h_1\cdot s}\] \[\displaystyle \lambda_2 = \frac{\lambda_2^{2D}}{h_2\cdot s}\] Ty je potom možné použít pro interpolaci atributů\+: \[\displaystyle fragment.attribute = vertex[0].attribute\cdot \lambda_0 + vertex[1].attribute\cdot \lambda_1 + vertex[2].attribute\cdot \lambda_2\]\hypertarget{p09_rasterization_theory_gpu_fragmentShader}{}\doxysection{\texorpdfstring{Fragment processor}{Fragment processor}}\label{p09_rasterization_theory_gpu_fragmentShader}
+Fragment processor spouští fragment shader nad každým fragmentem. Data pro fragment shader jsou uložena ve struktuře \doxylink{structInFragment}{In\+Fragment}. Výstup fragment shaderu je výstupní fragment \doxylink{structOutFragment}{Out\+Fragment} -- barva. Další (konstantní) vstup fragment shaderu jsou uniformní proměnné a textury. \hypertarget{p09_rasterization_theory_Raster}{}\doxysection{\texorpdfstring{Úkol 4 – naprogramovat Primitive Assembly jednotku, perspektivní dělení, zahazování odvrácených primitiv, rasterizaci a pouštění fragment shaderu}{Úkol 4 – naprogramovat Primitive Assembly jednotku, perspektivní dělení, zahazování odvrácených primitiv, rasterizaci a pouštění fragment shaderu}}\label{p09_rasterization_theory_Raster}
+Rasterizace rasterizuje primitiva. K tomu je potřeba korektně ty primitiva sestavit, provést perspektivní dělení a viewport transformaci. Jedná se o testy 22. -- 31.\hypertarget{p09_rasterization_theory_ss_raster_test}{}\doxysubsection{\texorpdfstring{Test 22 – Ověření, že funguje základní rasterizace}{Test 22 – Ověření, že funguje základní rasterizace}}\label{p09_rasterization_theory_ss_raster_test}
+V tomto úkolu budete muset naprogramovat rasterizaci. Neobejdete se bez viewport transformace, rasterizace a zavolání fragment shaderu nad každným fragmentem. Tento test spočívá ve zkoušení vyrasterizování jednoho trojúhelníku a podívání se, zda jste korektně pustili fragment shader.~\newline
+ Test spustíte\+: 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{izgProject\ -\/c\ -\/-\/test\ 22}
+
+\end{DoxyCode}
+
+
+Pseudokód může po upravení vypadat nějak takto\+: 
+\begin{DoxyCodeInclude}{0}
+\DoxyCodeLine{\textcolor{keywordtype}{void}\ vertexAssembly()\{}
+\DoxyCodeLine{\ \ computeVertexID();}
+\DoxyCodeLine{\ \ readAttributes();}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordtype}{void}\ primitiveAssembly(primitive,vertexArray,t,program)\{}
+\DoxyCodeLine{\ \ \textcolor{keywordflow}{for}(every\ vertex\ v\ in\ triangle)\{}
+\DoxyCodeLine{\ \ \ \ \mbox{\hyperlink{structInVertex}{InVertex}}\ inVertex;}
+\DoxyCodeLine{\ \ \ \ vertexAssembly(inVertex,vertexArray,t+v);}
+\DoxyCodeLine{\ \ \ \ \mbox{\hyperlink{structShaderInterface}{ShaderInterface}}\ si;}
+\DoxyCodeLine{\ \ \ \ \textcolor{keywordflow}{if}(program.vertexShader)}
+\DoxyCodeLine{\ \ \ \ \ \ program.vertexShader(primitive.vertex,inVertex,si);}
+\DoxyCodeLine{\ \ \}}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordtype}{void}\ rasterize(framebuffer,primitive,program)\{}
+\DoxyCodeLine{\ \ \textcolor{keywordflow}{for}(pixels\ in\ frame)\{}
+\DoxyCodeLine{\ \ \ \ \textcolor{keywordflow}{if}(pixels\ in\ primitive)\{}
+\DoxyCodeLine{\ \ \ \ \ \ \mbox{\hyperlink{structInFragment}{InFragment}}\ inFragment;}
+\DoxyCodeLine{\ \ \ \ \ \ createFragment(inFragment,primitive,barycentrics,pixelCoord,program);}
+\DoxyCodeLine{\ \ \ \ \ \ \mbox{\hyperlink{structOutFragment}{OutFragment}}\ outFragment;}
+\DoxyCodeLine{\ \ \ \ \ \ \mbox{\hyperlink{structShaderInterface}{ShaderInterface}}\ si;}
+\DoxyCodeLine{\ \ \ \ \ \ \textcolor{keywordflow}{if}(program.fragmentShader)}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ program.fragmentShader(outFragment,inFragment,si);}
+\DoxyCodeLine{\ \ \ \ \}}
+\DoxyCodeLine{\ \ \}}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordtype}{void}\ draw(\mbox{\hyperlink{structGPUMemory}{GPUMemory}}\&mem,\mbox{\hyperlink{structDrawCommand}{DrawCommand}}\ \textcolor{keyword}{const}\&cmd)\{}
+\DoxyCodeLine{\ \ \textcolor{keywordflow}{for}(every\ triangle\ t)\{}
+\DoxyCodeLine{\ \ \ \ Primitive\ primitive;}
+\DoxyCodeLine{\ \ \ \ primitiveAssembly(primitive,vertexArray,t,program)}
+\DoxyCodeLine{\ \ \ \ viewportTransformation(primitive,width,height)}
+\DoxyCodeLine{\ \ \ \ rasterize(framebuffer,primitive,program);}
+\DoxyCodeLine{\ \ \}}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordtype}{void}\ \mbox{\hyperlink{studentSolution_2src_2studentSolution_2gpu_8cpp_acb235bf1bd34504bf58828aac4d40b11}{student\_GPU\_run}}(\mbox{\hyperlink{structGPUMemory}{GPUMemory}}\&mem,\mbox{\hyperlink{structCommandBuffer}{CommandBuffer}}\ \textcolor{keyword}{const}\&cb)\{}
+\DoxyCodeLine{\ \ \textcolor{keywordflow}{for}(every\ command\ in\ cb)\{}
+\DoxyCodeLine{\ \ \ \ \textcolor{keywordflow}{if}(command.type\ ==\ \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a21e038f5b8958e203d28bc4f18472352a2b4807f24940ca2fe73284bc6e864d66}{DRAW}})}
+\DoxyCodeLine{\ \ \ \ \ \ draw(mem,command);}
+\DoxyCodeLine{\ \ \}}
+\DoxyCodeLine{\}}
+
+\end{DoxyCodeInclude}
+\hypertarget{p09_rasterization_theory_ss_raster_test_2}{}\doxysubsection{\texorpdfstring{Test 23 – Ověření, zda nerasterizujete mimo okno}{Test 23 – Ověření, zda nerasterizujete mimo okno}}\label{p09_rasterization_theory_ss_raster_test_2}
+V tomto testu jsou trojúhelníky částečně nebo zce mimo okno 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{izgProject\ -\/c\ -\/-\/test\ 23}
+
+\end{DoxyCode}
+\hypertarget{p09_rasterization_theory_ss_raster_test_3}{}\doxysubsection{\texorpdfstring{Test 24 – Komprehenzivní testování rasterizace}{Test 24 – Komprehenzivní testování rasterizace}}\label{p09_rasterization_theory_ss_raster_test_3}
+V tomto testu se testuje rasterizace mnoha trojúhelníků při mnoha nastaveních 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{izgProject\ -\/c\ -\/-\/test\ 24}
+
+\end{DoxyCode}
+\hypertarget{p09_rasterization_theory_ss_raster_test_4}{}\doxysubsection{\texorpdfstring{Test 25 – Ověření, zda počítáte perspektivní dělení.}{Test 25 – Ověření, zda počítáte perspektivní dělení.}}\label{p09_rasterization_theory_ss_raster_test_4}
+Tento test ověřuje, zda provádíte perspektivní dělení. 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{izgProject\ -\/c\ -\/-\/test\ 25}
+
+\end{DoxyCode}
+\hypertarget{p09_rasterization_theory_ss_raster_test_5}{}\doxysubsection{\texorpdfstring{Test 26 – Ověření, zda vám funguje backface culling.}{Test 26 – Ověření, zda vám funguje backface culling.}}\label{p09_rasterization_theory_ss_raster_test_5}
+Tento test ověřuje, zda vám funguje backface culling. 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{izgProject\ -\/c\ -\/-\/test\ 26}
+
+\end{DoxyCode}
+\hypertarget{p09_rasterization_theory_ss_raster_test_6}{}\doxysubsection{\texorpdfstring{Test 27 – Ověření, zda se správně interpoluje hloubka fragmentů.}{Test 27 – Ověření, zda se správně interpoluje hloubka fragmentů.}}\label{p09_rasterization_theory_ss_raster_test_6}
+Tento test ověřuje, zda vyrasterizované fragmenty mají správně interpolovanou hloubku. 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{izgProject\ -\/c\ -\/-\/test\ 27}
+
+\end{DoxyCode}
+ Hloubka fragmentu je v komponentě "{}z"{} položky \doxylink{structInFragment_ae72e0b96e17181ea2cb2ef256e3f0a8f}{In\+Fragment\+::gl\+\_\+\+Frag\+Coord}. Pro její interpolaci potřebujete hloubky vrcholů trojúhelníka a barycentrické souřadnice fragmentu ve 2D.~\newline
+ Hloubky vrcholů najdete ve "{}z"{} komponentě položky \doxylink{structOutVertex_a9ca7de8eef8d688163497a7d34c76d7b}{Out\+Vertex\+::gl\+\_\+\+Position} gl\+\_\+\+Position.\+z 
+\begin{DoxyCodeInclude}{0}
+\DoxyCodeLine{\textcolor{keyword}{struct\ }\mbox{\hyperlink{structOutVertex}{OutVertex}}\{}
+\DoxyCodeLine{\ \ \mbox{\hyperlink{unionAttrib}{Attrib}}\ \ \ \ \mbox{\hyperlink{structOutVertex_a94f0934abc3c37a700428b7a6dd005e7}{attributes}}[\mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a8938ad0ed0735df8ab181ffadae5f489}{maxAttribs}}]\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ;\ }
+\DoxyCodeLine{\ \ glm::vec4\ \mbox{\hyperlink{structOutVertex_a9ca7de8eef8d688163497a7d34c76d7b}{gl\_Position}}\ \ \ \ \ \ \ \ \ \ \ \ =\ glm::vec4(0,0,0,1);\ }
+\DoxyCodeLine{\};}
+
+\end{DoxyCodeInclude}
+ Hloubku zapisujte do komponenty "{}z"{} položky \doxylink{structInFragment_ae72e0b96e17181ea2cb2ef256e3f0a8f}{In\+Fragment\+::gl\+\_\+\+Frag\+Coord} gl\+\_\+\+Frag\+Coord.\+z 
+\begin{DoxyCodeInclude}{0}
+\DoxyCodeLine{\textcolor{keyword}{struct\ }\mbox{\hyperlink{structInFragment}{InFragment}}\{}
+\DoxyCodeLine{\ \ \mbox{\hyperlink{unionAttrib}{Attrib}}\ \ \ \ \mbox{\hyperlink{structInFragment_a18c45ea10a91005cd27dd6554202a4b2}{attributes}}[\mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a8938ad0ed0735df8ab181ffadae5f489}{maxAttribs}}]\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ;\ }
+\DoxyCodeLine{\ \ glm::vec4\ \mbox{\hyperlink{structInFragment_ae72e0b96e17181ea2cb2ef256e3f0a8f}{gl\_FragCoord}}\ \ \ \ \ \ \ \ \ \ \ =\ glm::vec4(1);\ }
+\DoxyCodeLine{\};}
+
+\end{DoxyCodeInclude}
+\hypertarget{p09_rasterization_theory_ss_raster_test_7}{}\doxysubsection{\texorpdfstring{Testy 28-\/29 – Ověření, zda se správně interpolují vertex attributy.}{Testy 28-29 – Ověření, zda se správně interpolují vertex attributy.}}\label{p09_rasterization_theory_ss_raster_test_7}
+Tyto dva testy ověřují, jestli se správně interpolují vertex atributy do fragment atributů. 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{izgProject\ -\/c\ -\/-\/test\ 28}
+\DoxyCodeLine{izgProject\ -\/c\ -\/-\/test\ 29}
+
+\end{DoxyCode}
+ Vertex Attributy jsou se struktuře \doxylink{structOutVertex}{Out\+Vertex} 
+\begin{DoxyCodeInclude}{0}
+\DoxyCodeLine{\textcolor{keyword}{struct\ }\mbox{\hyperlink{structOutVertex}{OutVertex}}\{}
+\DoxyCodeLine{\ \ \mbox{\hyperlink{unionAttrib}{Attrib}}\ \ \ \ \mbox{\hyperlink{structOutVertex_a94f0934abc3c37a700428b7a6dd005e7}{attributes}}[\mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a8938ad0ed0735df8ab181ffadae5f489}{maxAttribs}}]\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ;\ }
+\DoxyCodeLine{\ \ glm::vec4\ \mbox{\hyperlink{structOutVertex_a9ca7de8eef8d688163497a7d34c76d7b}{gl\_Position}}\ \ \ \ \ \ \ \ \ \ \ \ =\ glm::vec4(0,0,0,1);\ }
+\DoxyCodeLine{\};}
+
+\end{DoxyCodeInclude}
+ A ze tří těchto vrcholů by se měly interpolovat atributy \doxylink{structInFragment}{In\+Fragment}. 
+\begin{DoxyCodeInclude}{0}
+\DoxyCodeLine{\textcolor{keyword}{struct\ }\mbox{\hyperlink{structInFragment}{InFragment}}\{}
+\DoxyCodeLine{\ \ \mbox{\hyperlink{unionAttrib}{Attrib}}\ \ \ \ \mbox{\hyperlink{structInFragment_a18c45ea10a91005cd27dd6554202a4b2}{attributes}}[\mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a8938ad0ed0735df8ab181ffadae5f489}{maxAttribs}}]\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ;\ }
+\DoxyCodeLine{\ \ glm::vec4\ \mbox{\hyperlink{structInFragment_ae72e0b96e17181ea2cb2ef256e3f0a8f}{gl\_FragCoord}}\ \ \ \ \ \ \ \ \ \ \ =\ glm::vec4(1);\ }
+\DoxyCodeLine{\};}
+
+\end{DoxyCodeInclude}
+ Interpolujte pouze ty atributy, které jsou poznačené v položce \doxylink{structProgram_ac9033c6597b5c092dc2393965ce57b0c}{Program\+::vs2fs}! A pouze ty, které nejsou typu integer! Integerové atributy neinterpolujte, ale pouze použijte hodnoty nultého vrcholu. Tomuto vrcholu se také říká provoking vertex. 
+\begin{DoxyCodeInclude}{0}
+\DoxyCodeLine{\textcolor{keyword}{struct\ }\mbox{\hyperlink{structProgram}{Program}}\{}
+\DoxyCodeLine{\ \ \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a61e7df3fcaa53829be20be29b197e3e6}{VertexShader}}\ \ \ \mbox{\hyperlink{structProgram_a2bcea678985527f04a87be358ff1f78b}{vertexShader}}\ \ \ =\ \textcolor{keyword}{nullptr};\ }
+\DoxyCodeLine{\ \ \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_ac2dd95ee5e44978647da13fc95b9420e}{FragmentShader}}\ \mbox{\hyperlink{structProgram_a5faf623d0af27d6000ebcacafecf2eb5}{fragmentShader}}\ =\ \textcolor{keyword}{nullptr};\ }
+\DoxyCodeLine{\ \ \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a8cc36b907e294f5e78e1b479cac369dd}{AttribType}}\ \ \mbox{\hyperlink{structProgram_ac9033c6597b5c092dc2393965ce57b0c}{vs2fs}}[\mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a8938ad0ed0735df8ab181ffadae5f489}{maxAttribs}}]\ =\ \{\mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a8cc36b907e294f5e78e1b479cac369ddaba2b45bdc11e2a4a6e86aab2ac693cbb}{AttribType::EMPTY}}\};\ }
+\DoxyCodeLine{\};}
+
+\end{DoxyCodeInclude}
+ 

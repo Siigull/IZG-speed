@@ -1,0 +1,41 @@
+\doxysection{student\+Solution/src/student\+Solution/gpu.cpp File Reference}
+\hypertarget{studentSolution_2src_2studentSolution_2gpu_8cpp}{}\label{studentSolution_2src_2studentSolution_2gpu_8cpp}\index{studentSolution/src/studentSolution/gpu.cpp@{studentSolution/src/studentSolution/gpu.cpp}}
+
+
+This file contains implementation of gpu.  
+
+
+{\ttfamily \#include $<$student\+Solution/gpu.\+hpp$>$}\newline
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{studentSolution_2src_2studentSolution_2gpu_8cpp_acb235bf1bd34504bf58828aac4d40b11}{student\+\_\+\+GPU\+\_\+run}} (\mbox{\hyperlink{structGPUMemory}{GPUMemory}} \&mem, \mbox{\hyperlink{structCommandBuffer}{Command\+Buffer}} const \&cb)
+\begin{DoxyCompactList}\small\item\em \mbox{[}student\+\_\+\+GPU\+\_\+run\mbox{]} \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+This file contains implementation of gpu. 
+
+\begin{DoxyAuthor}{Author}
+Tomáš Milet, \href{mailto:imilet@fit.vutbr.cz}{\texttt{ imilet@fit.\+vutbr.\+cz}} 
+\end{DoxyAuthor}
+
+
+\doxysubsection{Function Documentation}
+\Hypertarget{studentSolution_2src_2studentSolution_2gpu_8cpp_acb235bf1bd34504bf58828aac4d40b11}\label{studentSolution_2src_2studentSolution_2gpu_8cpp_acb235bf1bd34504bf58828aac4d40b11} 
+\index{gpu.cpp@{gpu.cpp}!student\_GPU\_run@{student\_GPU\_run}}
+\index{student\_GPU\_run@{student\_GPU\_run}!gpu.cpp@{gpu.cpp}}
+\doxysubsubsection{\texorpdfstring{student\_GPU\_run()}{student\_GPU\_run()}}
+{\footnotesize\ttfamily void student\+\_\+\+GPU\+\_\+run (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structGPUMemory}{GPUMemory}} \&}]{mem,  }\item[{\mbox{\hyperlink{structCommandBuffer}{Command\+Buffer}} const \&}]{cb }\end{DoxyParamCaption})}
+
+
+
+\mbox{[}student\+\_\+\+GPU\+\_\+run\mbox{]} 
+
+function that executes work stored in command buffer on the gpu memory. This function represents the functionality of GPU. It can render stuff, it can clear framebuffer. It can process work stored in command buffer \begin{DoxyRefDesc}{Todo}
+\item[\mbox{\hyperlink{todo__todo000001}{Todo}}]Tato funkce reprezentuje funkcionalitu grafické karty.~\newline
+ Měla by umět zpracovat command buffer, čistit framebuffer a kreslit.~\newline
+ mem obsahuje paměť grafické karty. cb obsahuje command buffer pro zpracování. Bližší informace jsou uvedeny na hlavní stránce dokumentace.\end{DoxyRefDesc}
+
+
+V základu jde o to, že cb obsahuje příkazy, které se musí provést nad pamětí mem. Správně fungující grafická karta dobře interpretuje příkazy v cb a správně změní obsah paměti mem.

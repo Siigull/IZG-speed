@@ -1,0 +1,30 @@
+/**
+\page p20_testovani 20 Testování
+Vaši implementaci si můžete ověřit sadou vestavěných akceptačních testů.
+Když aplikaci pustíte s parametrem "-c", pustí se akceptační testy, které ověřují funkčnost vaší implementace.
+\code{.sh}
+./izgProject -c
+\endcode
+Pokud není nějaký test splněn, vypíše se k němu komentář s informacemi, co je špatně.
+Testy jsou seřazeny a měly by se plnit postupně.
+Pokud chcete pustit jeden konkrétní test (třeba 13.), pusťte aplikaci s parametry "-c --test 13".
+\code{.sh}
+./izgProject -c --test 13
+\endcode
+Pokud chcete pustit všechny testy až po jeden konkrétní (třeba 5.), pusťte aplikaci s parametry "-c --up-to-test --test 5".
+\code{.sh}
+./izgProject -c --test 5 --up-to-test
+\endcode
+To je užitečné, když implementujete sekci, a chcete vědět, jestli jste něco zpětně nerozbili.<br>
+Na konci výpisu testů se vám vypíše bodové hodnocení.
+
+Testování probíhá proti učitelskému řešení, které je přiloženo jako binárka v souborech:
+- teacherSolutionBinary/windows/bin/libteacherSolution.dll
+- teacherSolutionBinary/linux/lib/libteacherSolution.so
+
+Je to pouze pro operační systémy Linux a Windows.
+MAC není podporován, protože nevlastním žádné takové zařízení a cross compilace na MAC by projekt ještě protáhla...
+Kdyby se vám tato dynamická knihovna nepodařila načíst, pak může být problém s verzí systému, v takovém případě se obraťte na Tomáše Mileta.
+Projekt byl testován na Merlinovi, kde to fungovalo.
+
+*/

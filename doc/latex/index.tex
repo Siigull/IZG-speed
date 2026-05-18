@@ -1,0 +1,39 @@
+\chapter{00 Zadání projektu do předmětu IZG.}
+\hypertarget{index}{}\label{index}\index{00 Zadání projektu do předmětu IZG.@{00 Zadání projektu do předmětu IZG.}}
+ 
+\begin{DoxyImage}
+\includegraphics[width=\textwidth,height=\textheight/2,keepaspectratio=true]{vystup.png}
+\doxyfigcaption{Výstup}
+\end{DoxyImage}
+   
+
+
+
+Cílem projektu je seznámit studenty s fungováním grafické karty a vykreslováním modelů.~\newline
+
+
+Vaše úkoly jsou dva\+:
+\begin{DoxyItemize}
+\item Implementace jednoduché grafické karty (gpu).
+\item Implementace vykreslování modelů.
+\end{DoxyItemize}
+
+Všechny soubory, které se vás týkají jsou ve složce student\+Solution/src/student\+Solution/ Soubory, které budete modifikovat a které budete odevzdávat\+:
+\begin{DoxyItemize}
+\item \doxylink{studentSolution_2src_2studentSolution_2gpu_8cpp}{student\+Solution/src/student\+Solution/gpu.\+cpp} -- implementace grafické karty, v něm implementujte funkci\+:
+\begin{DoxyItemize}
+\item \doxylink{studentSolution_2src_2studentSolution_2gpu_8cpp_acb235bf1bd34504bf58828aac4d40b11}{student\+\_\+\+GPU\+\_\+run} -- funkcionalita vámi implementované grafické karty.
+\end{DoxyItemize}
+\item \doxylink{prepareModel_8cpp}{student\+Solution/src/student\+Solution/prepare\+Model.\+cpp} -- implementace vykreslování modelů, v něm implementujete funkce\+:
+\begin{DoxyItemize}
+\item \doxylink{prepareModel_8cpp_a46fe75e58d09064a5a33d511123d3a4d}{student\+\_\+prepare\+Model} -- tato funkce připravuje command buffer pro vykreslení modelu,
+\item \doxylink{prepareModel_8cpp_a034552bbcfbd934b738aacf12ea64839}{student\+\_\+draw\+Model\+\_\+vertex\+Shader} -- vertex shader pro vykreslení modelu,
+\item \doxylink{prepareModel_8cpp_a8fd935a09a7659cb2858aca6d22d827c}{student\+\_\+draw\+Model\+\_\+fragment\+Shader} -- fragment shader pro vykreslení modelu.
+\end{DoxyItemize}
+\end{DoxyItemize}
+
+Kromě toho se v projektu nachází ještě tyto soubory, které budete potřebovat\+:
+\begin{DoxyItemize}
+\item \doxylink{solutionInterface_2src_2solutionInterface_2gpu_8hpp}{solution\+Interface/src/solution\+Interface/gpu.\+hpp} -- ten obsahuje deklarace struktur a konstant pro grafickou kartu.
+\item \doxylink{modelFwd_8hpp}{solution\+Interface/src/solution\+Interface/model\+Fwd.\+hpp} -- ten obsahuje deklarace struktur a konstant pro model 
+\end{DoxyItemize}

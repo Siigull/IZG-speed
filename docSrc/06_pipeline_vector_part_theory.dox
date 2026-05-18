@@ -1,0 +1,54 @@
+/**
+\page p06_pipeline_vector_part_theory 06 Teorie o vektorové a rastrové části GPU
+
+\section GPU_vector_intro Úvod
+Grafická karta je navržena tak, aby se minimalizovaly přenosy CPU <-> GPU.
+Je to z toho důvodu, že PCIe sběrnice je oproti všem zůčastněným částem při kreslení nejpomalejší.
+Snažíme se o to, aby se používalo menší množství větších přenosů data mezi CPU <-> GPU.
+Velké množství malých přenosů je neefektivní a způsobuje čekání jak na straně CPU, tak na straně GPU.
+Další věcí, která způsobuje zpomalování kreslení je velké množství samostatných vykresovacích příkazů.
+Je lepší jedním příkazem vykreslit milión trojúhelníků než miliónem příkazů vykreslit stejný milión trojúhelníků po jednom.
+Z těchto důvodů vzniky command buffery a další techniky.
+Dnes je možné pomocí jednoho příkazu vykreslit celou scénu i s mnoha efekty.
+Příkladem nechť je funkce z OpenGL <a href="https://registry.khronos.org/OpenGL-Refpages/gl4/html/glDrawElementsIndirect.xhtml">glDrawElementsIndirect</a>.
+Nastává však jeden problém.
+Pokud se vše vykreslí pomocí jednoho volání, jak se každému objektu nastaví správná barva, pozice a materiál?<br>
+V OpenGL i ve Vulkánu se to řeší pomocí číslování vykreslovacích příkazů <a href="https://www.khronos.org/opengl/wiki/Vertex_Shader/Defined_Inputs">gl_DrawID</a>.
+Pomocí tohoto čísla je možné typicky v shader programu vybrat správnou modelovou matici, materiál a jiné vlastnosti.
+Ale co je to vůbec shader program, kde se berou data a jak vůbec funguje vykresování?
+A co je to vykreslovací řetězec a jak funguje?<br><br>
+Cílem následujícího výkladu je přiblížit fungování grafické karty.<br>
+
+
+\section GPU Grafická karta
+Hlavním účelem grafické karty je převod vektorové grafiky na rastrovou.
+\image html docSrc/images/pipeline_overview.svg "Grafická karta je složena z paměti a zobrazovacího řetězce. Z paměti tečou vrcholy a trojúhelníky, které jsou vyrasterizovány zpět do paměti."  width=800
+Data se čtou z paměti, pak se zpracují zobrazovacím řetězcem (ve kterém běží programy) a výsledek se opět zapíše do paměti.
+Zobravací řetězec je složitý, lze rozdělit na tři části: vektorová část, rasterizace a rastrová část.
+Akce/příkaz kreslení operuje nad pamětí:
+\image html docSrc/images/ctx_overview.svg "Vstup, proces, výstup -- tak vypadá vykresovací příkaz."  width=800
+Příkaz kreslení je prováděn stejně jako příkaz čistění v grafické kartě.
+Proces kreslení na grafické kartě probíhá v zobrazovacím řetězci.<br>
+
+
+\section Pipeline Zobrazovací řetězec
+Zobrazovací řetězec je složen ze tří částí: vektorová část, rasterizace, rastrová část.
+\image html docSrc/images/pipeline_vector_raster.svg "Zobrazovací řetězec je složen z vektorové a rastrové části mezi kterými leží rasterizace."  width=800
+Úkolem vektorové části je transformovat vektorovou grafiku, posouvat trojúhelníky a podobně.
+Úkolem raterizace je vektorové elementy převést na rastr.
+Úkolem frastrové části je obarvit vyrastrované vektory.<br>
+Část rasterizace a dál nás v tomto úkolu nezajímá, to až později.
+Tento test je zaměřený na vektorovou část a to jen na její vstup a vertex shader.
+
+
+\section vector_part_theory Vektorová část zobrazovacího řetězce
+
+Vektorová část zobrazovacího řetězce se dá rozdělit přibližně na dvě části:
+- Část Vertexů
+- Část Primitiv
+
+\image html docSrc/images/pipeline_vector_part.svg "Vektorová část je složena z vertexové části a z části primitiv."  width=800
+
+Následující výklad a testy projektu se budou týkat právě vektorové části zobrazovacího řetězce.
+
+*/

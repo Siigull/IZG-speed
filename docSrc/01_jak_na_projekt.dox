@@ -1,0 +1,49 @@
+/**
+\page p01_jakNaTo 01 Jak na projekt?
+
+\image html docSrc/images/project_part.svg "gpu.cpp a prepareModel.cpp jsou soubory, které řeší studenti."  width=400
+
+Týkají se vás jen dva soubory do kterých napíšete váš kód a dva soubory s deklaracemi struktur:
+ - studentSolution/src/studentSolution/gpu.cpp
+ - studentSolution/src/studentSolution/prepareModel.cpp
+
+Celkový projekt je velký, kvůli načítání modelů, vytvoření okna, testování a dalším podpůrným částem, ale není potřeba se jim zabývat (tedy pokud nechcete vidět vnitřnosti a jak celý projekt funguje).
+
+Takže jak na to?<br>
+Nejprve si vyzkoušejte, jak by to mělo vypadat...
+
+\code{.sh}
+# a mačkejte "n" nebo "p" a ovládaní myší
+izgProject_windows.exe
+
+# a mačkejte "n" nebo "p" a ovládaní myší
+./izgProject_linux.bin 
+\endcode
+
+Jak je to složité? Můj kód pro student_GPU_run má ~1000 řádků a implementace student_prepareModel a shaderů ~100 řádku.
+<br>
+Není potřeba nic alokovat, paměť je již předchystaná.
+Pokud budete někde volat malloc, new a podobně, zamyslete se.
+Z C++ se nevyužívá skoro nic (jen vector a knihovna glm, reference). Takže by to mělo jít napsat celkem v pohodě i pro C lidi.
+<br>
+Postup řešení:
+
+<ol>
+<li> Vyzkoušet si přiložený zkompilovaný referenční projekt izgProject_linux.bin a izgProject_windows.exe. (mačkejte "n" nebo "p", když projekt pustíte, abyste přepínali zobrazované metody).
+<li> \ref p17_sestaveni "Zprovoznit si překlad"
+<li> \ref p18_spousteni "Zkusit si projekt pustit a podívat se na parametry příkazové řádky." a \ref p19_ovladani "jak se aplikace ovládá"
+<li> V projektu jsou přítomny \ref p20_testovani "akceptační testy", které vám řeknou, jestli jdete správným směrem a taky vypisují nápovědu.
+<li> Začít implementovat funkci \ref student_GPU_run a kontrolovat váš postup podle přiložených testů.
+<li> Začít implementovat funkci \ref student_prepareModel
+<li> Začít implementovat funkci \ref student_drawModel_vertexShader
+<li> Začít implementovat funkci \ref student_drawModel_fragmentShader
+<li> Ověřte si implementaci na Merlinovi
+<li> \ref p21_odevzdavani "Odevzdejte"
+<li> ???
+<li> profit
+</ol>
+
+Každý úkol má přiřazen akceptační test, takže si můžete snadno ověřit funkčnosti vaší implementace.
+<br><br>
+Úkoly lze rozdělit do dvou částí: implementace grafické karty a implementace kreslení modelů se stíny.
+*/

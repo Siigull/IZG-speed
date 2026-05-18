@@ -1,0 +1,128 @@
+\chapter{12 Brzké per fragment operace}
+\hypertarget{p12_pfo_early}{}\label{p12_pfo_early}\index{12 Brzké per fragment operace@{12 Brzké per fragment operace}}
+Mezi brzké Per Fragment Operace patří\+:
+\begin{DoxyItemize}
+\item stencilový test,
+\item hloubkový test.
+\end{DoxyItemize}
+
+\hypertarget{p12_pfo_early_pfo_early_stencil_test}{}\doxysection{\texorpdfstring{Stencilový test}{Stencilový test}}\label{p12_pfo_early_pfo_early_stencil_test}
+Stencilový test slouží k zahození fragmentů například pokud uživatel chce kreslit jen v části obrazovky. Využívá se například pro vykreslení portálů, zrcadel a podobných efektů. Ke stencilovému testu se váže stencilový buffer.
+
+
+
+Nastavení stencilu je uloženo v paměti grafické karty \doxylink{structGPUMemory_a00d576026cb037973a8cdb85ba6e5498}{GPUMemory\+::stencil\+Settings} 
+\begin{DoxyCodeInclude}{0}
+\DoxyCodeLine{\textcolor{keyword}{struct\ }\mbox{\hyperlink{structStencilSettings}{StencilSettings}}\{}
+\DoxyCodeLine{\ \ \textcolor{keywordtype}{bool}\ \ \ \ \ \ \ \ \mbox{\hyperlink{structStencilSettings_a6660cb6ab02d9a2384556a5b27a8ddc1}{enabled}}\ \ =\ false\ \ \ \ \ \ \ \ \ \ \ \ \ \ ;\ }
+\DoxyCodeLine{\ \ \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_ad3d7abe532ca7be55ba9e8e03916e2e0}{StencilFunc}}\ \mbox{\hyperlink{structStencilSettings_aeef6ed112903656cc94a46ff39e2880d}{func}}\ \ \ \ \ =\ \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_ad3d7abe532ca7be55ba9e8e03916e2e0af3fc827ade4b968e50406496907ef962}{StencilFunc::ALWAYS}};\ }
+\DoxyCodeLine{\ \ uint32\_t\ \ \ \ \mbox{\hyperlink{structStencilSettings_ad24b5e058cbbd57870b6c07a44df48e1}{refValue}}\ =\ 0\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ;\ }
+\DoxyCodeLine{\ \ \mbox{\hyperlink{structStencilOps}{StencilOps}}\ \ \mbox{\hyperlink{structStencilSettings_a80d833cb87eadee270af94f27ed2f4e9}{frontOps}}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ;\ }
+\DoxyCodeLine{\ \ \mbox{\hyperlink{structStencilOps}{StencilOps}}\ \ \mbox{\hyperlink{structStencilSettings_a34c5f4762d31ee4bbdf10176a0bd3e82}{backOps}}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ;\ }
+\DoxyCodeLine{\};}
+
+\end{DoxyCodeInclude}
+\hypertarget{p12_pfo_early_pfo_early_stencil_test_func}{}\doxysubsection{\texorpdfstring{Stencilová porovnávací funce}{Stencilová porovnávací funce}}\label{p12_pfo_early_pfo_early_stencil_test_func}
+Pokud je stencilový test aktivní je rozhodnut na základě těchto věcí\+:
+\begin{DoxyItemize}
+\item Referenční hodnotě \doxylink{structStencilSettings_ad24b5e058cbbd57870b6c07a44df48e1}{Stencil\+Settings\+::ref\+Value}
+\item Stencilové funci \doxylink{structStencilSettings_aeef6ed112903656cc94a46ff39e2880d}{Stencil\+Settings\+::func}
+\item Hodnotě ve stencilovému bufferu \doxylink{structFramebuffer_ac2732cb27f34176ed1a1acc001c18a88}{Framebuffer\+::stencil}
+\end{DoxyItemize}
+
+Mezi stencilové funkce patří hodnoty z enumu \doxylink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_ad3d7abe532ca7be55ba9e8e03916e2e0}{Stencil\+Func} 
+\begin{DoxyCodeInclude}{0}
+\DoxyCodeLine{\textcolor{keyword}{enum\ class}\ \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_ad3d7abe532ca7be55ba9e8e03916e2e0}{StencilFunc}}\{}
+\DoxyCodeLine{\ \ \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_ad3d7abe532ca7be55ba9e8e03916e2e0a443475558f0168dff92ecde26b98ae5a}{NEVER}}\ \ \ ,\ }
+\DoxyCodeLine{\ \ \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_ad3d7abe532ca7be55ba9e8e03916e2e0a1798e8c3621ca53d9e3a80d257306000}{LESS}}\ \ \ \ ,\ }
+\DoxyCodeLine{\ \ \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_ad3d7abe532ca7be55ba9e8e03916e2e0a8a72211a539c4f44dcaa446209076da6}{LEQUAL}}\ \ ,\ }
+\DoxyCodeLine{\ \ \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_ad3d7abe532ca7be55ba9e8e03916e2e0ae7e72355289e404b762d4cf88824d23b}{GREATER}}\ ,\ }
+\DoxyCodeLine{\ \ \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_ad3d7abe532ca7be55ba9e8e03916e2e0a9e63a520a6e8fefd37a5fa966d96f3bc}{GEQUAL}}\ \ ,\ }
+\DoxyCodeLine{\ \ \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_ad3d7abe532ca7be55ba9e8e03916e2e0a969f331a87d8c958473c32b4d0e61a44}{EQUAL}}\ \ \ ,\ }
+\DoxyCodeLine{\ \ \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_ad3d7abe532ca7be55ba9e8e03916e2e0a94fbd04a26dff1689ee02634be6aaf1f}{NOTEQUAL}},\ }
+\DoxyCodeLine{\ \ \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_ad3d7abe532ca7be55ba9e8e03916e2e0af3fc827ade4b968e50406496907ef962}{ALWAYS}}\ \ ,\ }
+\DoxyCodeLine{\};}
+
+\end{DoxyCodeInclude}
+
+
+
+\begin{DoxyItemize}
+\item \doxylink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_ad3d7abe532ca7be55ba9e8e03916e2e0a443475558f0168dff92ecde26b98ae5a}{Stencil\+Func\+::\+NEVER} -- nikdy neprojde
+\item \doxylink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_ad3d7abe532ca7be55ba9e8e03916e2e0a1798e8c3621ca53d9e3a80d257306000}{Stencil\+Func\+::\+LESS} -- projde pokud je hodnota ve stencilovém buferu \texorpdfstring{$<$}{<} než \doxylink{structStencilSettings_ad24b5e058cbbd57870b6c07a44df48e1}{Stencil\+Settings\+::ref\+Value}
+\item \doxylink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_ad3d7abe532ca7be55ba9e8e03916e2e0a8a72211a539c4f44dcaa446209076da6}{Stencil\+Func\+::\+LEQUAL} -- projde pokud je hodnota ve stencilovém buferu \texorpdfstring{$<$}{<}= než \doxylink{structStencilSettings_ad24b5e058cbbd57870b6c07a44df48e1}{Stencil\+Settings\+::ref\+Value}
+\item \doxylink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_ad3d7abe532ca7be55ba9e8e03916e2e0ae7e72355289e404b762d4cf88824d23b}{Stencil\+Func\+::\+GREATER} -- projde pokud je hodnota ve stencilovém buferu \texorpdfstring{$>$}{>} než \doxylink{structStencilSettings_ad24b5e058cbbd57870b6c07a44df48e1}{Stencil\+Settings\+::ref\+Value}
+\item \doxylink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_ad3d7abe532ca7be55ba9e8e03916e2e0a9e63a520a6e8fefd37a5fa966d96f3bc}{Stencil\+Func\+::\+GEQUAL} -- projde pokud je hodnota ve stencilovém buferu \texorpdfstring{$>$}{>}= než \doxylink{structStencilSettings_ad24b5e058cbbd57870b6c07a44df48e1}{Stencil\+Settings\+::ref\+Value}
+\item \doxylink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_ad3d7abe532ca7be55ba9e8e03916e2e0a969f331a87d8c958473c32b4d0e61a44}{Stencil\+Func\+::\+EQUAL} -- projde pokud je hodnota ve stencilovém buferu == než \doxylink{structStencilSettings_ad24b5e058cbbd57870b6c07a44df48e1}{Stencil\+Settings\+::ref\+Value}
+\item \doxylink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_ad3d7abe532ca7be55ba9e8e03916e2e0a94fbd04a26dff1689ee02634be6aaf1f}{Stencil\+Func\+::\+NOTEQUAL} -- projde pokud je hodnota ve stencilovém buferu != než \doxylink{structStencilSettings_ad24b5e058cbbd57870b6c07a44df48e1}{Stencil\+Settings\+::ref\+Value}
+\item \doxylink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_ad3d7abe532ca7be55ba9e8e03916e2e0a443475558f0168dff92ecde26b98ae5a}{Stencil\+Func\+::\+NEVER} -- vždy projde
+\end{DoxyItemize}\hypertarget{p12_pfo_early_pfo_early_stencil_test_op}{}\doxysubsection{\texorpdfstring{Stencilová operace}{Stencilová operace}}\label{p12_pfo_early_pfo_early_stencil_test_op}
+Stencilová operace závisí na tom, zda je rasterizován přivrácený nebo odvrácený trojúhelník. Pokud se rasterizuje přivrácený trojúhelník, měla by se použít operace z \doxylink{structStencilSettings_a80d833cb87eadee270af94f27ed2f4e9}{Stencil\+Settings\+::front\+Ops} jinak \doxylink{structStencilSettings_a34c5f4762d31ee4bbdf10176a0bd3e82}{Stencil\+Settings\+::back\+Ops}.
+
+Mezi stencilové opereace patří hodnoty z enumu \doxylink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_af046868f9f300b11282490852e003566}{Stencil\+Op} 
+\begin{DoxyCodeInclude}{0}
+\DoxyCodeLine{\textcolor{keyword}{enum\ class}\ \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_af046868f9f300b11282490852e003566}{StencilOp}}\{}
+\DoxyCodeLine{\ \ \ \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_af046868f9f300b11282490852e003566a60cba2874369bd3790e14ea5f8a7bc58}{KEEP}}\ \ \ \ \ ,\ }
+\DoxyCodeLine{\ \ \ \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_af046868f9f300b11282490852e003566a529e9e0beb5f85d1f132917c1a09860c}{ZERO}}\ \ \ \ \ ,\ }
+\DoxyCodeLine{\ \ \ \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_af046868f9f300b11282490852e003566a560a2dd6f6744646473b3b19e1fe96d7}{REPLACE}}\ \ ,\ }
+\DoxyCodeLine{\ \ \ \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_af046868f9f300b11282490852e003566afc67535e5273d466beba3c06c0dbd988}{INCR}}\ \ \ \ \ ,\ }
+\DoxyCodeLine{\ \ \ \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_af046868f9f300b11282490852e003566a056f9acd45832946a8f02289a8516e7f}{INCR\_WRAP}},\ }
+\DoxyCodeLine{\ \ \ \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_af046868f9f300b11282490852e003566ac121b991572aba8a5789d08d7e9cf76e}{DECR}}\ \ \ \ \ ,\ }
+\DoxyCodeLine{\ \ \ \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_af046868f9f300b11282490852e003566a6501b4eff3345af27614635221cc6c59}{DECR\_WRAP}},\ }
+\DoxyCodeLine{\ \ \ \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_af046868f9f300b11282490852e003566aa2727ae72447eea06d4cc0ef67187280}{INVERT}}\ \ \ ,\ }
+\DoxyCodeLine{\};}
+
+\end{DoxyCodeInclude}
+
+\begin{DoxyItemize}
+\item \doxylink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_af046868f9f300b11282490852e003566a60cba2874369bd3790e14ea5f8a7bc58}{Stencil\+Op\+::\+KEEP} -- ponechá hodnotu ve stencilovém bufferu nezměněnou
+\item \doxylink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_af046868f9f300b11282490852e003566a529e9e0beb5f85d1f132917c1a09860c}{Stencil\+Op\+::\+ZERO} -- vynuluje hodnotu ve stencilovém bufferu
+\item \doxylink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_af046868f9f300b11282490852e003566a560a2dd6f6744646473b3b19e1fe96d7}{Stencil\+Op\+::\+REPLACE} -- zapíše do stencil bufferu referenční hodnotu \doxylink{structStencilSettings_ad24b5e058cbbd57870b6c07a44df48e1}{Stencil\+Settings\+::ref\+Value}
+\item \doxylink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_af046868f9f300b11282490852e003566afc67535e5273d466beba3c06c0dbd988}{Stencil\+Op\+::\+INCR} -- inkrementuje hodnotu ve stencilovém bufferu, pokud je 255, nechá ji být
+\item \doxylink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_af046868f9f300b11282490852e003566a056f9acd45832946a8f02289a8516e7f}{Stencil\+Op\+::\+INCR\+\_\+\+WRAP} -- inkrementuje hodnotu ve stencilovému bufferu, pokud je 255, zapíše 0
+\item \doxylink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_af046868f9f300b11282490852e003566ac121b991572aba8a5789d08d7e9cf76e}{Stencil\+Op\+::\+DECR} -- dekrementuje hodnotu ve stencilovém bufferu, pokud je 0, nechá ji být
+\item \doxylink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_af046868f9f300b11282490852e003566a6501b4eff3345af27614635221cc6c59}{Stencil\+Op\+::\+DECR\+\_\+\+WRAP} -- dekrementuje hodnotu ve stencilovém bufferu, pokud je 0, zapíše 255
+\item \doxylink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_af046868f9f300b11282490852e003566aa2727ae72447eea06d4cc0ef67187280}{Stencil\+Op\+::\+INVERT} -- bitově invertuje hodnotu ve stencilovém bufferu
+\end{DoxyItemize}
+
+Pokud stencil test neprojde a je možné modifikovat stencilový buffer, modifikuje se na základě operace \doxylink{structStencilOps_a375268b2d22a9511f3f4ca01a0b3e07f}{Stencil\+Ops\+::sfail}. 
+\begin{DoxyCodeInclude}{0}
+\DoxyCodeLine{\textcolor{keyword}{struct\ }\mbox{\hyperlink{structStencilOps}{StencilOps}}\{}
+\DoxyCodeLine{\ \ \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_af046868f9f300b11282490852e003566}{StencilOp}}\ \mbox{\hyperlink{structStencilOps_a375268b2d22a9511f3f4ca01a0b3e07f}{sfail}}\ \ =\ \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_af046868f9f300b11282490852e003566a60cba2874369bd3790e14ea5f8a7bc58}{StencilOp::KEEP}};\ }
+\DoxyCodeLine{\ \ \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_af046868f9f300b11282490852e003566}{StencilOp}}\ \mbox{\hyperlink{structStencilOps_a2e4d1f63d830de4d7e11f7d361ccd8ec}{dpfail}}\ =\ \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_af046868f9f300b11282490852e003566a60cba2874369bd3790e14ea5f8a7bc58}{StencilOp::KEEP}};\ }
+\DoxyCodeLine{\ \ \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_af046868f9f300b11282490852e003566}{StencilOp}}\ \mbox{\hyperlink{structStencilOps_ad94f25bfe86fb216c6bb3229cea969d3}{dppass}}\ =\ \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_af046868f9f300b11282490852e003566a60cba2874369bd3790e14ea5f8a7bc58}{StencilOp::KEEP}};\ }
+\DoxyCodeLine{\};}
+
+\end{DoxyCodeInclude}
+\hypertarget{p12_pfo_early_pfo_early_depth_test}{}\doxysection{\texorpdfstring{Hloubkový test}{Hloubkový test}}\label{p12_pfo_early_pfo_early_depth_test}
+Hloubkový test je druhá z brzkých per fragment operací. Stará se o zahazování fragmentů, které jsou hlouběji než to, co už se vyrasterizovalo. Využívá k tomu hloubkový buffer.
+
+
+
+Hloubka fragmentu je "{}z"{} komponenta \doxylink{structInFragment_ae72e0b96e17181ea2cb2ef256e3f0a8f}{In\+Fragment\+::gl\+\_\+\+Frag\+Coord} In\+Fragment\+::gl\+\_\+\+Frag\+Coord.\+z. Pokud je hloubka nového fragment menší, hloubkový test prošel. \hypertarget{p12_pfo_early_pfo_early_depth_test_fail}{}\doxysubsection{\texorpdfstring{Pokud hloubkový test selže...}{Pokud hloubkový test selže...}}\label{p12_pfo_early_pfo_early_depth_test_fail}
+Podobně jako je tomu, když selže stencilový test, pokud selže hloubkový test, je možné, že se provede stencilová operace. Tentokrát však to bude operace \doxylink{structStencilOps_a2e4d1f63d830de4d7e11f7d361ccd8ec}{Stencil\+Ops\+::dpfail}.\hypertarget{p12_pfo_early_pfo_early_tasks}{}\doxysection{\texorpdfstring{Úkol 5 – Naprogramovat brzké Per Fragment Operace}{Úkol 5 – Naprogramovat brzké Per Fragment Operace}}\label{p12_pfo_early_pfo_early_tasks}
+\hypertarget{p12_pfo_early_pfo_early_stencil_stencil_test}{}\doxysubsection{\texorpdfstring{Test 30 – Stencil test}{Test 30 – Stencil test}}\label{p12_pfo_early_pfo_early_stencil_stencil_test}
+Tento test zkouší, zda funguje stencilový test 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{./izgProject\ -\/c\ -\/-\/test\ 30}
+
+\end{DoxyCode}
+\hypertarget{p12_pfo_early_pfo_early_stencil_sfail}{}\doxysubsection{\texorpdfstring{Test 31 – Stencil Operace při sfail}{Test 31 – Stencil Operace při sfail}}\label{p12_pfo_early_pfo_early_stencil_sfail}
+Tento test zkouší, zda fungují stencilové operace, když stencilový test selže 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{./izgProject\ -\/c\ -\/-\/test\ 31}
+
+\end{DoxyCode}
+\hypertarget{p12_pfo_early_pfo_early_depth_test_task}{}\doxysubsection{\texorpdfstring{Test 32 – Depth test}{Test 32 – Depth test}}\label{p12_pfo_early_pfo_early_depth_test_task}
+Tento test zkouší, zda funguje depth test. 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{./izgProject\ -\/c\ -\/-\/test\ 32}
+
+\end{DoxyCode}
+\hypertarget{p12_pfo_early_pfo_early_depth_dppas}{}\doxysubsection{\texorpdfstring{Test 33 – Depth test a modifikace stencilového buffer při dpfail}{Test 33 – Depth test a modifikace stencilového buffer při dpfail}}\label{p12_pfo_early_pfo_early_depth_dppas}
+Tento test zkouší, zda fungují modifikace stencilového bufferu při dpfail. 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{./izgProject\ -\/c\ -\/-\/test\ 33}
+
+\end{DoxyCode}
+ 

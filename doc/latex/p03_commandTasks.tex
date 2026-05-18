@@ -1,0 +1,261 @@
+\chapter{03 Úkoly ohledně Command Bufferu}
+\hypertarget{p03_commandTasks}{}\label{p03_commandTasks}\index{03 Úkoly ohledně Command Bufferu@{03 Úkoly ohledně Command Bufferu}}
+V tomto projektu musíte naimplementovat vlastní grafickou kartu. Tu budete implementovat v souboru\+: \doxylink{studentSolution_2src_2studentSolution_2gpu_8cpp}{student\+Solution/src/student\+Solution/gpu.\+cpp}\hypertarget{p03_commandTasks_activateTheory}{}\doxysection{\texorpdfstring{Teorie\+: Nastavování aktivních objektů GPU a zápisu nastavení}{Teorie: Nastavování aktivních objektů GPU a zápisu nastavení}}\label{p03_commandTasks_activateTheory}
+Grafická karta obsahuje mnoho objektů. Jsou to\+: 
+\begin{DoxyItemize}
+\item textury, 
+\item buffery, 
+\item programy, 
+\item framebuffery, 
+\item vertex array objekty, 
+\item uniformy a další. 
+\end{DoxyItemize}Některé z těchto objektů se přímo využívají při kreslení. Jsou to objekty\+: 
+\begin{DoxyItemize}
+\item framebuffery, 
+\item programy, 
+\item vertex array objekty. 
+\end{DoxyItemize}Je potřeba vědět, kam se kreslí (\doxylink{structFramebuffer}{Framebuffer}), je potřeba vědět jak se kreslí (\doxylink{structProgram}{Program} a nastavení v objektech\+: \doxylink{structBlockWrites}{Block\+Writes}, \doxylink{structStencilSettings}{Stencil\+Settings} a \doxylink{structBackfaceCulling}{Backface\+Culling}) a je potřeba vědět, odkud se berou data pro kreslení (\doxylink{structVertexArray}{Vertex\+Array}).  Síla dnešních grafických karet spočívá v jejich programovatelnosti a široké nastavitelnosti. Dnes je možné kreslit to vícero framebufferů, využívat k tomu tisíce programů a mít k tomu milióny objektů. Proto je nutné grafické kartě říct, které objekty jsou v danou chvíli aktivní. V Open\+GL se to provádí příkazy\+: 
+\begin{DoxyItemize}
+\item \href{https://registry.khronos.org/OpenGL-Refpages/gl4/html/glBindFramebuffer.xhtml}{\texttt{ gl\+Bind\+Framebuffer(...)}} 
+\item \href{https://registry.khronos.org/OpenGL-Refpages/gl4/html/glUseProgram.xhtml}{\texttt{ gl\+Use\+Program(...)}} 
+\item \href{https://registry.khronos.org/OpenGL-Refpages/gl4/html/glBindVertexArray.xhtml}{\texttt{ gl\+Bind\+Vertex\+Array(...)}} 
+\end{DoxyItemize}Těmto příkazům odpovídají v tomto projetku příkazy \doxylink{structBindFramebufferCommand}{Bind\+Framebuffer\+Command}, \doxylink{structBindProgramCommand}{Bind\+Program\+Command}, \doxylink{structBindVertexArrayCommand}{Bind\+Vertex\+Array\+Command}.~\newline
+ ~\newline
+ Stejně tak je potřeba GPU říct, jaké je nastavení pro kreslení. Například se může zakázat zápis barvy, hloubky a stencilové hodnoty do framebuffer, nebo se může zapnout ořezávání odvrácených stran trojúhelníků, nebo se mohou nastavit stencilové operace. V Open\+GL by to byly tyto příkazy\+: 
+\begin{DoxyItemize}
+\item Zakázání / Povolení zápisu do framebufferu (\doxylink{structBlockWritesCommand}{Block\+Writes\+Command})\+:
+\begin{DoxyItemize}
+\item \href{https://registry.khronos.org/OpenGL-Refpages/gl4/html/glColorMask.xhtml}{\texttt{ gl\+Color\+Mask(...)}}
+\item \href{https://registry.khronos.org/OpenGL-Refpages/gl4/html/glDepthMask.xhtml}{\texttt{ gl\+Depth\+Mask(...)}}
+\item \href{https://registry.khronos.org/OpenGL-Refpages/gl4/html/glStencilMask.xhtml}{\texttt{ gl\+Stencil\+Mask(...)}} 
+\end{DoxyItemize}
+\item Povolení / zakázání zahazování odvrácených stran trojúhelníků (\doxylink{structSetBackfaceCullingCommand}{Set\+Backface\+Culling\+Command})\+:
+\begin{DoxyItemize}
+\item \href{https://registry.khronos.org/OpenGL-Refpages/gl4/html/glEnable.xhtml}{\texttt{ gl\+Enabled(\+GL\+\_\+\+CULL\+\_\+\+FACE)}}
+\item \href{https://registry.khronos.org/OpenGL-Refpages/gl4/html/glDisable.xhtml}{\texttt{ gl\+Disable(\+GL\+\_\+\+CULL\+\_\+\+FACE)}} 
+\end{DoxyItemize}
+\item Určení, co je to přivrácená strana trojúhelníku (\doxylink{structSetFrontFaceCommand}{Set\+Front\+Face\+Command})\+:
+\begin{DoxyItemize}
+\item \href{https://registry.khronos.org/OpenGL-Refpages/gl4/html/glFrontFace.xhtml}{\texttt{ gl\+Front\+Face(\+GL\+\_\+\+CW)}}
+\item \href{https://registry.khronos.org/OpenGL-Refpages/gl4/html/glFrontFace.xhtml}{\texttt{ gl\+Front\+Face(\+GL\+\_\+\+CCW)}} 
+\end{DoxyItemize}
+\item Stencilové nastavení (\doxylink{structSetStencilCommand}{Set\+Stencil\+Command})\+:
+\begin{DoxyItemize}
+\item \href{https://registry.khronos.org/OpenGL-Refpages/gl4/html/glStencilFunc.xhtml}{\texttt{ gl\+Stencil\+Func(...)}}
+\item \href{https://registry.khronos.org/OpenGL-Refpages/gl4/html/glStencilOpSeparate.xhtml}{\texttt{ gl\+Stencil\+Op\+Separate(...)}}
+\item \href{https://registry.khronos.org/OpenGL-Refpages/gl4/html/glEnable.xhtml}{\texttt{ gl\+Enabled(\+GL\+\_\+\+STENCIL\+\_\+\+TEST)}}
+\item \href{https://registry.khronos.org/OpenGL-Refpages/gl4/html/glDisable.xhtml}{\texttt{ gl\+Disabled(\+GL\+\_\+\+STENCIL\+\_\+\+TEST)}} 
+\end{DoxyItemize}
+\end{DoxyItemize}Podobně je to ve Vulkánu, ale je to tam složitější.~\newline
+ Těmto nastavením odpovídají v tomto projektu příkazy \doxylink{structBlockWritesCommand}{Block\+Writes\+Command}, \doxylink{structSetBackfaceCullingCommand}{Set\+Backface\+Culling\+Command}, \doxylink{structSetFrontFaceCommand}{Set\+Front\+Face\+Command} a \doxylink{structSetStencilCommand}{Set\+Stencil\+Command}.\hypertarget{p03_commandTasks_BindTask}{}\doxysection{\texorpdfstring{Úkol 0\+: Aktivování objektů a nastavení}{Úkol 0: Aktivování objektů a nastavení}}\label{p03_commandTasks_BindTask}
+Vašim prvním úkolem bude správně vybírat aktivní objekty na grafické kartě a zápis nastavení GPU. Vážou se k tomu tyto testy\+: 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{./izgProject\ -\/c\ -\/-\/test\ 7\ -\/-\/up-\/to-\/test}
+
+\end{DoxyCode}
+ Editujte funkci \doxylink{studentSolution_2src_2studentSolution_2gpu_8cpp_acb235bf1bd34504bf58828aac4d40b11}{student\+\_\+\+GPU\+\_\+run} v souboru \doxylink{studentSolution_2src_2studentSolution_2gpu_8cpp}{student\+Solution/src/student\+Solution/gpu.\+cpp}.~\newline
+\hypertarget{p03_commandTasks_bindFBO}{}\doxysubsection{\texorpdfstring{Test 0 – bind\+Framebuffer}{Test 0 – bindFramebuffer}}\label{p03_commandTasks_bindFBO}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{./izgProject\ -\/c\ -\/-\/test\ 0}
+
+\end{DoxyCode}
+ Tento test zkouší, zda funguje command \doxylink{structBindFramebufferCommand}{Bind\+Framebuffer\+Command} 
+\begin{DoxyCodeInclude}{0}
+\DoxyCodeLine{\textcolor{keyword}{struct\ }\mbox{\hyperlink{structBindFramebufferCommand}{BindFramebufferCommand}}\{}
+\DoxyCodeLine{\ \ uint32\_t\ \textcolor{keywordtype}{id}\ =\ 0;\ }
+\DoxyCodeLine{\};}
+
+\end{DoxyCodeInclude}
+ Pokud se v command bufferu objeví tento příkaz, je nutné nastavit aktivní framebuffer v paměti gpu\+: \doxylink{structGPUMemory_acd06344c1c43bef8df606d6664fee4b4}{GPUMemory\+::activated\+Framebuffer}. Pamatujte, je potřeba zpracovat \doxylink{structCommandBuffer}{Command\+Buffer} a správně reagovat na příkazy, které jsou v něm uloženy. 
+\begin{DoxyCodeInclude}{0}
+\DoxyCodeLine{\textcolor{keywordtype}{void}\ \mbox{\hyperlink{studentSolution_2src_2studentSolution_2gpu_8cpp_acb235bf1bd34504bf58828aac4d40b11}{student\_GPU\_run}}(\mbox{\hyperlink{structGPUMemory}{GPUMemory}}\&mem,\mbox{\hyperlink{structCommandBuffer}{CommandBuffer}}\ \textcolor{keyword}{const}\&cb)\{}
+\DoxyCodeLine{\ \ \textcolor{comment}{//\ průchod\ všemi\ příkazy\ v\ CommandBufferu}}
+\DoxyCodeLine{\ \ \textcolor{keywordflow}{for}(uint32\_t\ i=0;i<cb.\mbox{\hyperlink{structCommandBuffer_a5a4e731514b5998dad67189ca3612f3e}{nofCommands}};++i)\{}
+\DoxyCodeLine{\ \ \ \ \textcolor{comment}{//\ typ\ a\ data\ příkazu}}
+\DoxyCodeLine{\ \ \ \ \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a21e038f5b8958e203d28bc4f18472352}{CommandType}}\ type\ =\ cb.\mbox{\hyperlink{structCommandBuffer_addba1f7b3ffb5ad52a484d1b815436df}{commands}}[i].\mbox{\hyperlink{structCommand_afd23b7e189739dbae6c0f2e93ba02c81}{type}};}
+\DoxyCodeLine{\ \ \ \ \mbox{\hyperlink{unionCommandData}{CommandData}}\ data\ =\ cb.\mbox{\hyperlink{structCommandBuffer_addba1f7b3ffb5ad52a484d1b815436df}{commands}}[i].\mbox{\hyperlink{structCommand_ab4bcc3a5664498309ec42d4bb0e1c872}{data}};}
+\DoxyCodeLine{\ \ \ \ \textcolor{keywordflow}{if}(type\ ==\ \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a21e038f5b8958e203d28bc4f18472352ac9e3011a04cc978bf737d10d2b73f4b7}{CommandType::BIND\_FRAMEBUFFER}})\{\ \textcolor{comment}{//\ pokud\ je\ to\ BindFramebufferCommand}}
+\DoxyCodeLine{\ \ \ \ \ \ \textcolor{comment}{//nastav\ aktivní\ framebuffer}}
+\DoxyCodeLine{\ \ \ \ \ \ mem.\mbox{\hyperlink{structGPUMemory_acd06344c1c43bef8df606d6664fee4b4}{activatedFramebuffer}}\ =\ data.\mbox{\hyperlink{unionCommandData_a413e8640a4a2e25636d4042f8d781c3e}{bindFramebufferCommand}}.\mbox{\hyperlink{structBindFramebufferCommand_a6bc09d211b78f6ccd68d90478a003194}{id}};}
+\DoxyCodeLine{\ \ \ \ \}}
+\DoxyCodeLine{\ \ \}}
+\DoxyCodeLine{\}}
+
+\end{DoxyCodeInclude}
+\hypertarget{p03_commandTasks_bindProgram}{}\doxysubsection{\texorpdfstring{Test 1 – bind\+Program}{Test 1 – bindProgram}}\label{p03_commandTasks_bindProgram}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{./izgProject\ -\/c\ -\/-\/test\ 1}
+
+\end{DoxyCode}
+ Tento test zkouší, zda funguje command \doxylink{structBindProgramCommand}{Bind\+Program\+Command} 
+\begin{DoxyCodeInclude}{0}
+\DoxyCodeLine{\textcolor{keyword}{struct\ }\mbox{\hyperlink{structBindProgramCommand}{BindProgramCommand}}\{}
+\DoxyCodeLine{\ \ uint32\_t\ \textcolor{keywordtype}{id}\ =\ 0;\ }
+\DoxyCodeLine{\};}
+
+\end{DoxyCodeInclude}
+ Pokud se v command bufferu objeví tento příkaz, je nutné nastavit aktivní program v paměti gpu\+: \doxylink{structGPUMemory_a7b289e72424eb0cf9b7aa920386f7565}{GPUMemory\+::activated\+Program}.\hypertarget{p03_commandTasks_bindVBO}{}\doxysubsection{\texorpdfstring{Test 2 – bind\+Vertex\+Array}{Test 2 – bindVertexArray}}\label{p03_commandTasks_bindVBO}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{./izgProject\ -\/c\ -\/-\/test\ 2}
+
+\end{DoxyCode}
+ Tento test zkouší, zda funguje command \doxylink{structBindVertexArrayCommand}{Bind\+Vertex\+Array\+Command} 
+\begin{DoxyCodeInclude}{0}
+\DoxyCodeLine{\textcolor{keyword}{struct\ }\mbox{\hyperlink{structBindVertexArrayCommand}{BindVertexArrayCommand}}\{}
+\DoxyCodeLine{\ \ uint32\_t\ \textcolor{keywordtype}{id}\ =\ 0;\ }
+\DoxyCodeLine{\};}
+
+\end{DoxyCodeInclude}
+ Pokud se v command bufferu objeví tento příkaz, je nutné nastavit aktivní vertex array v paměti gpu\+: \doxylink{structGPUMemory_af2f8e1efb9217022ced48eeb04b79810}{GPUMemory\+::activated\+Vertex\+Array}.\hypertarget{p03_commandTasks_blockWritesCMD}{}\doxysubsection{\texorpdfstring{Test 3 – block\+Writes}{Test 3 – blockWrites}}\label{p03_commandTasks_blockWritesCMD}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{./izgProject\ -\/c\ -\/-\/test\ 3}
+
+\end{DoxyCode}
+ Tento test zkouší, zda funguje command \doxylink{structBlockWritesCommand}{Block\+Writes\+Command} 
+\begin{DoxyCodeInclude}{0}
+\DoxyCodeLine{\textcolor{keyword}{struct\ }\mbox{\hyperlink{structBlockWritesCommand}{BlockWritesCommand}}\{}
+\DoxyCodeLine{\ \ \mbox{\hyperlink{structBlockWrites}{BlockWrites}}\ \mbox{\hyperlink{structBlockWritesCommand_adb7b8be1c92fe13e2d3b4e9e26b85a0c}{blockWrites}};\ }
+\DoxyCodeLine{\};}
+
+\end{DoxyCodeInclude}
+ 
+\begin{DoxyCodeInclude}{0}
+\DoxyCodeLine{\textcolor{keyword}{struct\ }\mbox{\hyperlink{structBlockWrites}{BlockWrites}}\{}
+\DoxyCodeLine{\ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{structBlockWrites_acb95627c0f6c7adbf2103eb609c3768a}{color}}\ \ \ =\ \textcolor{keyword}{false};\ }
+\DoxyCodeLine{\ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{structBlockWrites_af6c00ed5422ecdd6369859c084fccd7c}{depth}}\ \ \ =\ \textcolor{keyword}{false};\ }
+\DoxyCodeLine{\ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{structBlockWrites_a7523284a23964e30cdaf684bad714674}{stencil}}\ =\ \textcolor{keyword}{false};\ }
+\DoxyCodeLine{\};}
+
+\end{DoxyCodeInclude}
+ Pokud se v \doxylink{structCommandBuffer}{Command\+Buffer(u)} objeví tento příkaz, je nutné nastavit v paměti gpu\+: \doxylink{structGPUMemory_ac8733e2ed174d07681ccb20407ac2933}{GPUMemory\+::block\+Writes}.\hypertarget{p03_commandTasks_setBackfaceCullingCMD}{}\doxysubsection{\texorpdfstring{Test 4 – set\+Backface}{Test 4 – setBackface}}\label{p03_commandTasks_setBackfaceCullingCMD}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{./izgProject\ -\/c\ -\/-\/test\ 4}
+
+\end{DoxyCode}
+ Tento test zkouší, zda funguje command \doxylink{structSetBackfaceCullingCommand}{Set\+Backface\+Culling\+Command} 
+\begin{DoxyCodeInclude}{0}
+\DoxyCodeLine{\textcolor{keyword}{struct\ }\mbox{\hyperlink{structSetBackfaceCullingCommand}{SetBackfaceCullingCommand}}\{}
+\DoxyCodeLine{\ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{structSetBackfaceCullingCommand_ac6edae6e6046a7e4a37eaca4e60bf097}{enabled}}\ =\ \textcolor{keyword}{false};\ }
+\DoxyCodeLine{\};}
+
+\end{DoxyCodeInclude}
+ Pokud se v \doxylink{structCommandBuffer}{Command\+Buffer(u)} objeví tento příkaz, je nutné nastavit v paměti gpu \+: \doxylink{structGPUMemory_a08ac73715dd9138f6dfc6b04b7ec3860}{GPUMemory\+::backface\+Culling} položku \doxylink{structBackfaceCulling_ae721a4edf793efc6ae7292ebdd880306}{Backface\+Culling\+::enabled}. 
+\begin{DoxyCodeInclude}{0}
+\DoxyCodeLine{\textcolor{keyword}{struct\ }\mbox{\hyperlink{structBackfaceCulling}{BackfaceCulling}}\{}
+\DoxyCodeLine{\ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{structBackfaceCulling_ae721a4edf793efc6ae7292ebdd880306}{enabled}}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ =\ \textcolor{keyword}{false};\ }
+\DoxyCodeLine{\ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{structBackfaceCulling_a33977d66b5cff5ea41b261c677fef364}{frontFaceIsCounterClockWise}}\ =\ true\ ;\ }
+\DoxyCodeLine{\};}
+
+\end{DoxyCodeInclude}
+\hypertarget{p03_commandTasks_setFrontFaceCMD}{}\doxysubsection{\texorpdfstring{Test 5 – set\+Front\+Face}{Test 5 – setFrontFace}}\label{p03_commandTasks_setFrontFaceCMD}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{./izgProject\ -\/c\ -\/-\/test\ 5}
+
+\end{DoxyCode}
+ Tento test zkouší, zda funguje command \doxylink{structSetFrontFaceCommand}{Set\+Front\+Face\+Command} 
+\begin{DoxyCodeInclude}{0}
+\DoxyCodeLine{\textcolor{keyword}{struct\ }\mbox{\hyperlink{structSetFrontFaceCommand}{SetFrontFaceCommand}}\{}
+\DoxyCodeLine{\ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{structSetFrontFaceCommand_aae3d6ebf5adb8df2c9d4a0d0e271ba0c}{frontFaceIsCounterClockWise}}\ =\ \textcolor{keyword}{true};\ }
+\DoxyCodeLine{\};}
+
+\end{DoxyCodeInclude}
+ Pokud se v \doxylink{structCommandBuffer}{Command\+Buffer(u)} objeví tento příkaz, je nutné nastavit v paměti gpu \+: \doxylink{structGPUMemory_a08ac73715dd9138f6dfc6b04b7ec3860}{GPUMemory\+::backface\+Culling} položku \doxylink{structBackfaceCulling_a33977d66b5cff5ea41b261c677fef364}{Backface\+Culling\+::front\+Face\+Is\+Counter\+Clock\+Wise} 
+\begin{DoxyCodeInclude}{0}
+\DoxyCodeLine{\textcolor{keyword}{struct\ }\mbox{\hyperlink{structBackfaceCulling}{BackfaceCulling}}\{}
+\DoxyCodeLine{\ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{structBackfaceCulling_ae721a4edf793efc6ae7292ebdd880306}{enabled}}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ =\ \textcolor{keyword}{false};\ }
+\DoxyCodeLine{\ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{structBackfaceCulling_a33977d66b5cff5ea41b261c677fef364}{frontFaceIsCounterClockWise}}\ =\ true\ ;\ }
+\DoxyCodeLine{\};}
+
+\end{DoxyCodeInclude}
+\hypertarget{p03_commandTasks_setStencilCMD}{}\doxysubsection{\texorpdfstring{Test 6 – set\+Stencil}{Test 6 – setStencil}}\label{p03_commandTasks_setStencilCMD}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{./izgProject\ -\/c\ -\/-\/test\ 6}
+
+\end{DoxyCode}
+ Tento test zkouší, zda funguje command \doxylink{structSetStencilCommand}{Set\+Stencil\+Command} 
+\begin{DoxyCodeInclude}{0}
+\DoxyCodeLine{\textcolor{keyword}{struct\ }\mbox{\hyperlink{structSetStencilCommand}{SetStencilCommand}}\{}
+\DoxyCodeLine{\ \ \mbox{\hyperlink{structStencilSettings}{StencilSettings}}\ \mbox{\hyperlink{structSetStencilCommand_aa503b49ab4e746daf3cc1651af4ba985}{settings}};\ }
+\DoxyCodeLine{\};}
+
+\end{DoxyCodeInclude}
+ 
+\begin{DoxyCodeInclude}{0}
+\DoxyCodeLine{\textcolor{keyword}{struct\ }\mbox{\hyperlink{structStencilSettings}{StencilSettings}}\{}
+\DoxyCodeLine{\ \ \textcolor{keywordtype}{bool}\ \ \ \ \ \ \ \ \mbox{\hyperlink{structStencilSettings_a6660cb6ab02d9a2384556a5b27a8ddc1}{enabled}}\ \ =\ false\ \ \ \ \ \ \ \ \ \ \ \ \ \ ;\ }
+\DoxyCodeLine{\ \ \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_ad3d7abe532ca7be55ba9e8e03916e2e0}{StencilFunc}}\ \mbox{\hyperlink{structStencilSettings_aeef6ed112903656cc94a46ff39e2880d}{func}}\ \ \ \ \ =\ \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_ad3d7abe532ca7be55ba9e8e03916e2e0af3fc827ade4b968e50406496907ef962}{StencilFunc::ALWAYS}};\ }
+\DoxyCodeLine{\ \ uint32\_t\ \ \ \ \mbox{\hyperlink{structStencilSettings_ad24b5e058cbbd57870b6c07a44df48e1}{refValue}}\ =\ 0\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ;\ }
+\DoxyCodeLine{\ \ \mbox{\hyperlink{structStencilOps}{StencilOps}}\ \ \mbox{\hyperlink{structStencilSettings_a80d833cb87eadee270af94f27ed2f4e9}{frontOps}}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ;\ }
+\DoxyCodeLine{\ \ \mbox{\hyperlink{structStencilOps}{StencilOps}}\ \ \mbox{\hyperlink{structStencilSettings_a34c5f4762d31ee4bbdf10176a0bd3e82}{backOps}}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ;\ }
+\DoxyCodeLine{\};}
+
+\end{DoxyCodeInclude}
+ Pokud se v \doxylink{structCommandBuffer}{Command\+Buffer(u)} objeví tento příkaz, je nutné nastavit v paměti gpu \+: \doxylink{structGPUMemory_a00d576026cb037973a8cdb85ba6e5498}{GPUMemory\+::stencil\+Settings}. 
+\begin{DoxyCodeInclude}{0}
+\DoxyCodeLine{\textcolor{keyword}{struct\ }\mbox{\hyperlink{structStencilSettings}{StencilSettings}}\{}
+\DoxyCodeLine{\ \ \textcolor{keywordtype}{bool}\ \ \ \ \ \ \ \ \mbox{\hyperlink{structStencilSettings_a6660cb6ab02d9a2384556a5b27a8ddc1}{enabled}}\ \ =\ false\ \ \ \ \ \ \ \ \ \ \ \ \ \ ;\ }
+\DoxyCodeLine{\ \ \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_ad3d7abe532ca7be55ba9e8e03916e2e0}{StencilFunc}}\ \mbox{\hyperlink{structStencilSettings_aeef6ed112903656cc94a46ff39e2880d}{func}}\ \ \ \ \ =\ \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_ad3d7abe532ca7be55ba9e8e03916e2e0af3fc827ade4b968e50406496907ef962}{StencilFunc::ALWAYS}};\ }
+\DoxyCodeLine{\ \ uint32\_t\ \ \ \ \mbox{\hyperlink{structStencilSettings_ad24b5e058cbbd57870b6c07a44df48e1}{refValue}}\ =\ 0\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ;\ }
+\DoxyCodeLine{\ \ \mbox{\hyperlink{structStencilOps}{StencilOps}}\ \ \mbox{\hyperlink{structStencilSettings_a80d833cb87eadee270af94f27ed2f4e9}{frontOps}}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ;\ }
+\DoxyCodeLine{\ \ \mbox{\hyperlink{structStencilOps}{StencilOps}}\ \ \mbox{\hyperlink{structStencilSettings_a34c5f4762d31ee4bbdf10176a0bd3e82}{backOps}}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ;\ }
+\DoxyCodeLine{\};}
+
+\end{DoxyCodeInclude}
+ 
+\begin{DoxyCodeInclude}{0}
+\DoxyCodeLine{\textcolor{keyword}{struct\ }\mbox{\hyperlink{structStencilOps}{StencilOps}}\{}
+\DoxyCodeLine{\ \ \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_af046868f9f300b11282490852e003566}{StencilOp}}\ \mbox{\hyperlink{structStencilOps_a375268b2d22a9511f3f4ca01a0b3e07f}{sfail}}\ \ =\ \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_af046868f9f300b11282490852e003566a60cba2874369bd3790e14ea5f8a7bc58}{StencilOp::KEEP}};\ }
+\DoxyCodeLine{\ \ \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_af046868f9f300b11282490852e003566}{StencilOp}}\ \mbox{\hyperlink{structStencilOps_a2e4d1f63d830de4d7e11f7d361ccd8ec}{dpfail}}\ =\ \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_af046868f9f300b11282490852e003566a60cba2874369bd3790e14ea5f8a7bc58}{StencilOp::KEEP}};\ }
+\DoxyCodeLine{\ \ \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_af046868f9f300b11282490852e003566}{StencilOp}}\ \mbox{\hyperlink{structStencilOps_ad94f25bfe86fb216c6bb3229cea969d3}{dppass}}\ =\ \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_af046868f9f300b11282490852e003566a60cba2874369bd3790e14ea5f8a7bc58}{StencilOp::KEEP}};\ }
+\DoxyCodeLine{\};}
+
+\end{DoxyCodeInclude}
+ 
+\begin{DoxyCodeInclude}{0}
+\DoxyCodeLine{\textcolor{keyword}{enum\ class}\ \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_af046868f9f300b11282490852e003566}{StencilOp}}\{}
+\DoxyCodeLine{\ \ \ \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_af046868f9f300b11282490852e003566a60cba2874369bd3790e14ea5f8a7bc58}{KEEP}}\ \ \ \ \ ,\ }
+\DoxyCodeLine{\ \ \ \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_af046868f9f300b11282490852e003566a529e9e0beb5f85d1f132917c1a09860c}{ZERO}}\ \ \ \ \ ,\ }
+\DoxyCodeLine{\ \ \ \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_af046868f9f300b11282490852e003566a560a2dd6f6744646473b3b19e1fe96d7}{REPLACE}}\ \ ,\ }
+\DoxyCodeLine{\ \ \ \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_af046868f9f300b11282490852e003566afc67535e5273d466beba3c06c0dbd988}{INCR}}\ \ \ \ \ ,\ }
+\DoxyCodeLine{\ \ \ \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_af046868f9f300b11282490852e003566a056f9acd45832946a8f02289a8516e7f}{INCR\_WRAP}},\ }
+\DoxyCodeLine{\ \ \ \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_af046868f9f300b11282490852e003566ac121b991572aba8a5789d08d7e9cf76e}{DECR}}\ \ \ \ \ ,\ }
+\DoxyCodeLine{\ \ \ \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_af046868f9f300b11282490852e003566a6501b4eff3345af27614635221cc6c59}{DECR\_WRAP}},\ }
+\DoxyCodeLine{\ \ \ \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_af046868f9f300b11282490852e003566aa2727ae72447eea06d4cc0ef67187280}{INVERT}}\ \ \ ,\ }
+\DoxyCodeLine{\};}
+
+\end{DoxyCodeInclude}
+ 
+\begin{DoxyCodeInclude}{0}
+\DoxyCodeLine{\textcolor{keyword}{enum\ class}\ \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_ad3d7abe532ca7be55ba9e8e03916e2e0}{StencilFunc}}\{}
+\DoxyCodeLine{\ \ \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_ad3d7abe532ca7be55ba9e8e03916e2e0a443475558f0168dff92ecde26b98ae5a}{NEVER}}\ \ \ ,\ }
+\DoxyCodeLine{\ \ \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_ad3d7abe532ca7be55ba9e8e03916e2e0a1798e8c3621ca53d9e3a80d257306000}{LESS}}\ \ \ \ ,\ }
+\DoxyCodeLine{\ \ \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_ad3d7abe532ca7be55ba9e8e03916e2e0a8a72211a539c4f44dcaa446209076da6}{LEQUAL}}\ \ ,\ }
+\DoxyCodeLine{\ \ \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_ad3d7abe532ca7be55ba9e8e03916e2e0ae7e72355289e404b762d4cf88824d23b}{GREATER}}\ ,\ }
+\DoxyCodeLine{\ \ \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_ad3d7abe532ca7be55ba9e8e03916e2e0a9e63a520a6e8fefd37a5fa966d96f3bc}{GEQUAL}}\ \ ,\ }
+\DoxyCodeLine{\ \ \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_ad3d7abe532ca7be55ba9e8e03916e2e0a969f331a87d8c958473c32b4d0e61a44}{EQUAL}}\ \ \ ,\ }
+\DoxyCodeLine{\ \ \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_ad3d7abe532ca7be55ba9e8e03916e2e0a94fbd04a26dff1689ee02634be6aaf1f}{NOTEQUAL}},\ }
+\DoxyCodeLine{\ \ \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_ad3d7abe532ca7be55ba9e8e03916e2e0af3fc827ade4b968e50406496907ef962}{ALWAYS}}\ \ ,\ }
+\DoxyCodeLine{\};}
+
+\end{DoxyCodeInclude}
+\hypertarget{p03_commandTasks_setDrawIDCMD}{}\doxysubsection{\texorpdfstring{Test 7 – set\+Draw\+ID}{Test 7 – setDrawID}}\label{p03_commandTasks_setDrawIDCMD}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{./izgProject\ -\/c\ -\/-\/test\ 7}
+
+\end{DoxyCode}
+ Tento test zkouší, zda funguje command \doxylink{structSetDrawIdCommand}{Set\+Draw\+Id\+Command} 
+\begin{DoxyCodeInclude}{0}
+\DoxyCodeLine{\textcolor{keyword}{struct\ }\mbox{\hyperlink{structSetDrawIdCommand}{SetDrawIdCommand}}\{}
+\DoxyCodeLine{\ \ uint32\_t\ \textcolor{keywordtype}{id}\ =\ 0;\ }
+\DoxyCodeLine{\};}
+
+\end{DoxyCodeInclude}
+ Pokud se v \doxylink{structCommandBuffer}{Command\+Buffer(u)} objeví tento příkaz, je nutné nastavit v paměti gpu \+: \doxylink{structGPUMemory_aa6541055bfd7af94a91f35bfe0cd9aad}{GPUMemory\+::gl\+\_\+\+Draw\+ID}. 

@@ -1,0 +1,85 @@
+/**
+
+\page p14_pipeline_clipping 14 Ořez
+
+Tento úkol opravuje vykreslování pokud je geometrie za pozorovatelem.
+Tyto úkoly můžete přeskočit a vrátit se k nim později. Pokud se na geometrii budete dívat tak, že leží vždy před vámi, nepoznáte rozdíl.
+
+\section ClippingTheory Teorie ořezu
+Ořez (clipping) slouží pro odstranění částí trojúhelníků, které leží mimo pohledový jehlan.
+Nejdůležitější je však ořez near ořezovou rovinou pohledoveho jehlanu.
+Pokud by se neprovedl ořez pomocí near roviny, pak by se vrcholy nebo i celé trojúhělníky, které leží za středem projekce promítly při perspektivním dělení na průmětnu.
+Ořez se provádí v clip-space -- po Primitive Assembly jednotce.
+Pro body, které leží uvnitř pohledového tělesa platí, že jejich souřadnice splňují následující nerovnice: \f$ -A_w \leq A_i \leq +A_w \f$, \f$i \in \left\{ x,y,z \right\}\f$.
+Těchto 6 nerovnic reprezentuje jednotlivé svěny pohledového jehlanu.
+Nerovnice \f$ -A_w \leq A_z \f$ reprezentuje podmínku pro near ořezovou rovinu.
+<br>
+Při ořezu trojúhelníku můžou nastat 4 případy, jsou znázorněny na následujícím obrázku:
+
+\image html docSrc/images/clip_variants.svg "4 varianty ořezu trojúhelníku pomocí near roviny. Počet vrcholů, které leží před ořezovou rovinou určuje typ ořezu. Při ořezu může vzniknout 0 až 2 nové trojúhelníky."
+
+Ořez trojúhelníku pomocí near roviny lze zjednodušit na ořez hran trojúhelníku.
+Bod na hraně (úsečce) trojúhelníku lze vyjádřit jako: \f$ \overrightarrow{X(t)} = \overrightarrow{A} + t \cdot (\overrightarrow{B}-\overrightarrow{A}) \f$, \f$t \in [0,1] \f$.
+\f$ \overrightarrow{A}, \overrightarrow{B} \f$ jsou vrcholy trojúhelníka, \f$ \overrightarrow{X(t)} \f$ je bod na hraně a parametr \f$ t \f$ udává posun na úsečce.
+
+\image html docSrc/images/clip.svg "Ořez trojúhelníku pomocí ořezu hran. Při ořezu hran vzniknou nové body, ze kterých jsou následně sestaveny nové trojúhelníky."
+
+Souřadnice bodu \f$ \overrightarrow{X(t)} \f$ lze určit při vypočtení parametru \f$ t \f$, při kterém přestane platit nerovnice pro near rovinu \f$ -X(t)_w \leq X(t)_z \f$.
+Takové místo nastává v situaci \f$ -X(t)_w = X(t)_z \f$.
+Po dosazení z rovnice úsečky lze vztah přepsat na: 
+\f{eqnarray*}{
+-X(t)_w &=& X(t)_z \\
+0 &=& X(t)_w + X(t)_z \\
+0 &=& A_w + t \cdot (B_w-A_w) + A_z + t \cdot (B_z - A_z) \\
+0 &=& A_w + A_z + t \cdot (B_w-A_w+B_z-A_z) \\
+-A_w-A_z &=& t \cdot (B_w-A_w+B_z-A_z) \\
+\frac{-A_w - A_z}{B_w-A_w+B_z-A_z} &=& t\\
+\f}
+
+Pozice bodu \f$ \overrightarrow{X(t)} \f$ a hodnoty dalších vertex atributů lze vypočítat lineární kombinací hodnot z vrcholů úsečky pomocí parametru \f$ t \f$ následovně: \f$ \overrightarrow{X(t)} = \overrightarrow{A} + t \cdot (\overrightarrow{B}-\overrightarrow{A}) \f$.
+
+
+\section clip Úkol 7 -- naprogramovat ořez trojúhelníků blízkou ořezovou rovinou
+Testy, které kontrolují ořez, jsou 39. -- 42:
+\code{.sh}
+izgProject -c --test 42 --up-to-test 42
+\endcode
+Pseudokód ořezu může vypadat takto:
+\snippet docSrc/drawExample.cpp student_GPU_run_clipping
+
+
+\subsection clipping_all Test 39 -- ořez celého CW trojúhelníku, který je příliš blízko kamery.
+Tento test zkouší, zda funguje ořez celého trojúhelníka definovaného jako CC (clock wise).
+\code{.sh}
+izgProject -c --test 39
+\endcode
+
+\subsection clipping_0 Test 40 -- ořez celého CCW trojúhelníku, který je příliš blízko kamery.
+Tento test zkouší, zda funguje ořez celého trojúhelníku definovaného jako CCW (counter clock wise)
+\code{.sh}
+izgProject -c --test 40
+\endcode
+
+\subsection clipping_1 Test 41 -- Ořez trojúhelníku, když je 1 vrchol ořezán
+Tento test zkouší ořezat trojúhelník, když je mimo pohledové těleso jeden vrchol.
+\code{.sh}
+izgProject -c --test 41
+\endcode
+
+\subsection clipping_2 Test 42 -- Ořez trojúhelníku, když jsou 2 vrcholy ořezány
+Tento test zkouší ořezat trojúhelník, když jsou mimo pohledové těloso dva vrcholy.
+\code{.sh}
+izgProject -c --test 42
+\endcode
+
+\section finalGPU Hotová grafická karta
+Pokud budete mít ořez hotový, dokončili jste implementaci grafické karty!
+Byla to fuška, ale věřte, že skutečné grafické karty jsou alespoň milionkrát složitější.
+Takto vypadá celý vykreslovací řetězec:
+
+\image html images/rendering_pipeline.svg "Simplified rendering pipeline"
+Měly by vám fungovat příklady, které nevyžadují načítání modelů:
+\image html images/examples.svg "příklady" width=1000
+Další úkoly jsou zaměřené už na vykreslování modelů s využitím stínů.
+
+*/

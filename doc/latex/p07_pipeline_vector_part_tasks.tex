@@ -1,0 +1,354 @@
+\chapter{07 Vektorová čast GPU\+: část vertexů}
+\hypertarget{p07_pipeline_vector_part_tasks}{}\label{p07_pipeline_vector_part_tasks}\index{07 Vektorová čast GPU: část vertexů@{07 Vektorová čast GPU: část vertexů}}
+\hypertarget{p07_pipeline_vector_part_tasks_vector_part_theory_pipeline}{}\doxysection{\texorpdfstring{Vertexová část zobrazovacího řetězce}{Vertexová část zobrazovacího řetězce}}\label{p07_pipeline_vector_part_tasks_vector_part_theory_pipeline}
+Cílem vektorové části je zpravovávat vektorovou grafiku\+: body, trojúhelníky. Většinou se tím myslí\+: čtení z paměti a sestavení vrcholů, vyvolání vertex shaderu nad každým vrcholem, sestavení trojúhelníků, ořez, perspektivní dělení a připravení pro rasterizaci (viewport transformace). Rasterizace rasterizuje připravené trojúhelníky a produkuje fragmenty (čtvercové úlomky trojúhelníku, které se nakonec zapíšou do framebufferu). Cílem rastrové části je obarvit tyto fragmenty pomocí fragment shaderu, odfiltrovat fragmenty, které jsou příliš daleko (depth test) a smíchat je s framebufferem (blending).~\newline
+ Ze začátku implementace kreslení se budete zabývat pouze vektorovou částí -- a to částí před vertex shaderem (včetně).  Vertex assembly jednota se stará o sestavování vrcholů. Vertex processor tyto vrcholy "{}prožene"{} uživatelem specifikovaným vertex shaderem. Část za vertex shaderem se stará o sestavení trojúhelníku, jeho ořezu a ztransformování pro rasterizaci.~\newline
+\hypertarget{p07_pipeline_vector_part_tasks_index_draw}{}\doxysubsection{\texorpdfstring{Neindexované a indexované kreslení}{Neindexované a indexované kreslení}}\label{p07_pipeline_vector_part_tasks_index_draw}
+Existují dva druhy vykreslování\+:
+\begin{DoxyItemize}
+\item neindexované,
+\item indexované.
+\end{DoxyItemize}
+
+Indexované kreslení je způsob snížení redundance dat s využitím indexů na vrcholy. 
+
+Vrcholy jsou během kreslení číslovány pomocí čísla \doxylink{structInVertex_aa4d31911053492bffe4b41dae12ee000}{In\+Vertex\+::gl\+\_\+\+Vertex\+ID}. \doxylink{structInVertex_aa4d31911053492bffe4b41dae12ee000}{In\+Vertex\+::gl\+\_\+\+Vertex\+ID} je unikátní číslo vrcholu do paměti vertexů, na jehož základě pracuje Vertex Assembly jednotka.\hypertarget{p07_pipeline_vector_part_tasks_VertexAssembly}{}\doxysubsection{\texorpdfstring{Vertex Assembly jednotka}{Vertex Assembly jednotka}}\label{p07_pipeline_vector_part_tasks_VertexAssembly}
+Vertex Assembly (nebo taky Vertex Puller, Vertex Specification, ...) je zařízení na grafické kartě, které se stará o sestavení vrcholů. 
+
+Vertex není jen bod v prostoru. Vertex je uživatelem specifikovaná struktura. Uživatel může chtít do vrcholů uložit různá data, proto do nich může přidat vertex attributy. Kromě uživatelem specifikovaných atributů, obsahují i pevně vestavěné atributy (gl\+\_\+\+Vertex\+ID a další).
+
+
+
+Sestavené vcholy jsou posílány do vertex shaderu pro zpracování uživetelem definovaným kódem. Vertex shader transformuje vrcholy maticemi a vypočítává výstupní vrcholy.  Vrchol (\doxylink{structInVertex}{In\+Vertex}) je složen z \doxylink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a8938ad0ed0735df8ab181ffadae5f489}{max\+Attribs} vertex attributů, každý může být různého typu (\doxylink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a8cc36b907e294f5e78e1b479cac369dd}{Attrib\+Type} (float, vec2, vec3, vec4, ...) a čísla vrcholu \doxylink{structInVertex_aa4d31911053492bffe4b41dae12ee000}{In\+Vertex\+::gl\+\_\+\+Vertex\+ID}.~\newline
+\hypertarget{p07_pipeline_vector_part_tasks_ss_vertexArray}{}\doxysubsection{\texorpdfstring{Tabulka nastavení Vertex Array}{Tabulka nastavení Vertex Array}}\label{p07_pipeline_vector_part_tasks_ss_vertexArray}
+Vertex Assembly jednotka se řídí podle nastavení ze struktury \doxylink{structVertexArray}{Vertex\+Array}. 
+
+Vertex Assembly jednotka je složena z \doxylink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a8938ad0ed0735df8ab181ffadae5f489}{max\+Attribs} čtecích hlav, které sestavují jednotlivé vertex attributy. \doxylink{structInVertex}{In\+Vertex} je složen z \doxylink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a8938ad0ed0735df8ab181ffadae5f489}{max\+Attribs} atributů, každý odpovídá jedné čtecí hlavě z Vertex Assembly jednotky. Čtecí hlava obsahuje nastavení -- offset, stride, type a buffer. Pokud je čtecí hlava povolena (typ není empty), měla by zkopírovat data (o velikosti vertex atributu) z bufferu od daného offsetu, s krokem stride. Všechny velikosti jsou v bajtech. Krok se použije při čtení různých vrcholů\+: atributy by měly být čteny z adresy\+: buf\+\_\+ptr + offset + stride\texorpdfstring{$\ast$}{*}gl\+\_\+\+Vertex\+ID ~\newline
+ Na dalších dvou obrázcích je příklad stavu Vertex Assembly jednotky ve dvou (0. a 1.) invokaci vertex shaderu.  \hypertarget{p07_pipeline_vector_part_tasks_vector_part_theory_vs}{}\doxysubsection{\texorpdfstring{Vertex Processor}{Vertex Processor}}\label{p07_pipeline_vector_part_tasks_vector_part_theory_vs}
+Úkolem vertex processoru je pouštět uživatelem specifikovaný vertex shader. Obvykle provádí transformace vrcholů pomocí transformačních matic. Vertex processor vykonává shader (kus programu), kterému se říká vertex shader. Vstupem vertex shaderu je vrchol \doxylink{structInVertex}{In\+Vertex}, výstupem je vrchol \doxylink{structOutVertex}{Out\+Vertex}. Dalším (konstatním) vstupem vertex shaderu jsou uniformní proměnné a textury \doxylink{structShaderInterface}{Shader\+Interface}, které jsou uložené v rámci shader programu. Pokud se uživatel rozhodne vykreslit 5 trojúhelníků je vertex shader spuštěn $ 5 \cdot 3 = 15 $. Jednotlivé spuštění (invokace) vertex shaderu vyžadují nové vstupní vrcholy a produkují nové výstupní vrcholy. To ve výsledku znamená, že se pro každou invokaci vertex shaderu spustí Vertex Assembly jednotka, která sestaví vstupní vrchol. \hypertarget{p07_pipeline_vector_part_tasks_vector_part_task}{}\doxysection{\texorpdfstring{Úkol 3\+: kreslící příkaz – vertexová část GPU}{Úkol 3: kreslící příkaz – vertexová část GPU}}\label{p07_pipeline_vector_part_tasks_vector_part_task}
+Cílem této sekce je obsloužit vertexovou část GPU. Do této části spadá\+: Vertex Array, Vertex Shader, Buffery, Indexy, gl\+\_\+\+Vertex\+ID, gl\+\_\+\+Draw\+ID a čtení z bufferů. Vážou se k tomu tyto testy\+: 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{./izgProject\ -\/c\ -\/-\/test\ 21\ -\/-\/up-\/to-\/test}
+
+\end{DoxyCode}
+ Opět editujete funkci \doxylink{studentSolution_2src_2studentSolution_2gpu_8cpp_acb235bf1bd34504bf58828aac4d40b11}{student\+\_\+\+GPU\+\_\+run} v souboru \doxylink{studentSolution_2src_2studentSolution_2gpu_8cpp}{student\+Solution/src/student\+Solution/gpu.\+cpp}.~\newline
+\hypertarget{p07_pipeline_vector_part_tasks_drawCmdPractice}{}\doxysubsection{\texorpdfstring{Test 14 – spouštění vertex shaderu}{Test 14 – spouštění vertex shaderu}}\label{p07_pipeline_vector_part_tasks_drawCmdPractice}
+Úkol je zprovoznit spouštění vertex shaderu. K tomtu se váže test\+:~\newline
+ 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{./izgProject\ -\/c\ -\/-\/test\ 14}
+
+\end{DoxyCode}
+ Při kreslení musíte zavolat vertex shader tolikrát, kolik je zadáno v kreslícím příkazu (\doxylink{structDrawCommand}{Draw\+Command}). Kreslící příkaz je struktura\+: 
+\begin{DoxyCodeInclude}{0}
+\DoxyCodeLine{\textcolor{keyword}{struct\ }\mbox{\hyperlink{structDrawCommand}{DrawCommand}}\{}
+\DoxyCodeLine{\ \ uint32\_t\ \mbox{\hyperlink{structDrawCommand_a4a7376486faf9f07fccb7de82d86566b}{nofVertices}}\ =\ 0;\ }
+\DoxyCodeLine{\};}
+
+\end{DoxyCodeInclude}
+ Struktura obsahuje počet vertexů pro vykreslení. \doxylink{structProgram}{Program}, který by se pro kreslení měl využít se nachází v paměti grafické karty \doxylink{structGPUMemory}{GPUMemory}. 
+\begin{DoxyCodeInclude}{0}
+\DoxyCodeLine{\textcolor{keyword}{struct\ }\mbox{\hyperlink{structGPUMemory}{GPUMemory}}\{}
+\DoxyCodeLine{\ \ uint32\_t\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structGPUMemory_aa73d331b9be494e550928fad4ac6c23d}{maxUniforms}}\ \ \ \ \ \ \ \ \ \ =\ 0\ \ \ \ \ \ ;\ }
+\DoxyCodeLine{\ \ uint32\_t\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structGPUMemory_a3798310241309de18f5561931d1d2665}{maxVertexArrays}}\ \ \ \ \ \ =\ 0\ \ \ \ \ \ ;\ }
+\DoxyCodeLine{\ \ uint32\_t\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structGPUMemory_a8fa73be85fde25818e8b63d71fd7dd60}{maxTextures}}\ \ \ \ \ \ \ \ \ \ =\ 0\ \ \ \ \ \ ;\ }
+\DoxyCodeLine{\ \ uint32\_t\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structGPUMemory_a0be973077c6d15f40e31d0781b1ea8e6}{maxBuffers}}\ \ \ \ \ \ \ \ \ \ \ =\ 0\ \ \ \ \ \ ;\ }
+\DoxyCodeLine{\ \ uint32\_t\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structGPUMemory_aa8e57983bda33e4ef48e825d5bf261eb}{maxPrograms}}\ \ \ \ \ \ \ \ \ \ =\ 0\ \ \ \ \ \ ;\ }
+\DoxyCodeLine{\ \ uint32\_t\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structGPUMemory_ad9cda42fea22fb0d5347a91f101d15d2}{maxFramebuffers}}\ \ \ \ \ \ =\ 0\ \ \ \ \ \ ;\ }
+\DoxyCodeLine{\ \ uint32\_t\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structGPUMemory_a7f32178fb1950dde77a2133bb93bbe5b}{defaultFramebuffer}}\ \ \ =\ 0\ \ \ \ \ \ ;\ }
+\DoxyCodeLine{\ \ \mbox{\hyperlink{structBuffer}{Buffer}}\ \ \ \ \ \ \ \ \ \ *\mbox{\hyperlink{structGPUMemory_a4755d327262c8020766718bb31f92d0b}{buffers}}\ \ \ \ \ \ \ \ \ \ \ \ \ \ =\ \textcolor{keyword}{nullptr};\ }
+\DoxyCodeLine{\ \ \mbox{\hyperlink{structTexture}{Texture}}\ \ \ \ \ \ \ \ \ *\mbox{\hyperlink{structGPUMemory_ac07704dd918f18a48644abdabbdf6f0d}{textures}}\ \ \ \ \ \ \ \ \ \ \ \ \ =\ \textcolor{keyword}{nullptr};\ }
+\DoxyCodeLine{\ \ \mbox{\hyperlink{unionUniform}{Uniform}}\ \ \ \ \ \ \ \ \ *\mbox{\hyperlink{structGPUMemory_a21eab797fb058f9cc8ceb26d5993f018}{uniforms}}\ \ \ \ \ \ \ \ \ \ \ \ \ =\ \textcolor{keyword}{nullptr};\ }
+\DoxyCodeLine{\ \ \mbox{\hyperlink{structProgram}{Program}}\ \ \ \ \ \ \ \ \ *\mbox{\hyperlink{structGPUMemory_a50091de928f20fa9d84c6bd137dab3a6}{programs}}\ \ \ \ \ \ \ \ \ \ \ \ \ =\ \textcolor{keyword}{nullptr};\ }
+\DoxyCodeLine{\ \ \mbox{\hyperlink{structFramebuffer}{Framebuffer}}\ \ \ \ \ *\mbox{\hyperlink{structGPUMemory_abd0d80589104a936db46ae766bc7975e}{framebuffers}}\ \ \ \ \ \ \ \ \ =\ \textcolor{keyword}{nullptr};\ }
+\DoxyCodeLine{\ \ \mbox{\hyperlink{structVertexArray}{VertexArray}}\ \ \ \ \ *\mbox{\hyperlink{structGPUMemory_acab4bb492d24e78131d39ea7997266cb}{vertexArrays}}\ \ \ \ \ \ \ \ \ =\ \textcolor{keyword}{nullptr};\ }
+\DoxyCodeLine{\ \ uint32\_t\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structGPUMemory_acd06344c1c43bef8df606d6664fee4b4}{activatedFramebuffer}}\ =\ 0\ \ \ \ \ \ ;\ }
+\DoxyCodeLine{\ \ uint32\_t\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structGPUMemory_a7b289e72424eb0cf9b7aa920386f7565}{activatedProgram}}\ \ \ \ \ =\ 0\ \ \ \ \ \ ;\ }
+\DoxyCodeLine{\ \ uint32\_t\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structGPUMemory_af2f8e1efb9217022ced48eeb04b79810}{activatedVertexArray}}\ =\ 0\ \ \ \ \ \ ;\ }
+\DoxyCodeLine{\ \ uint32\_t\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structGPUMemory_aa6541055bfd7af94a91f35bfe0cd9aad}{gl\_DrawID}}\ \ \ \ \ \ \ \ \ \ \ \ =\ 0\ \ \ \ \ \ ;\ }
+\DoxyCodeLine{\ \ \mbox{\hyperlink{structStencilSettings}{StencilSettings}}\ \ \mbox{\hyperlink{structGPUMemory_a00d576026cb037973a8cdb85ba6e5498}{stencilSettings}}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ;\ }
+\DoxyCodeLine{\ \ \mbox{\hyperlink{structBlendingSettings}{BlendingSettings}}\ \mbox{\hyperlink{structGPUMemory_a3ae3396312e75582f1645e5a30fd829b}{blendingSettings}}\ \ \ \ \ \ \ \ \ \ \ \ \ \ ;\ }
+\DoxyCodeLine{\ \ \mbox{\hyperlink{structBlockWrites}{BlockWrites}}\ \ \ \ \ \ \mbox{\hyperlink{structGPUMemory_ac8733e2ed174d07681ccb20407ac2933}{blockWrites}}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ;\ }
+\DoxyCodeLine{\ \ \mbox{\hyperlink{structBackfaceCulling}{BackfaceCulling}}\ \ \mbox{\hyperlink{structGPUMemory_a08ac73715dd9138f6dfc6b04b7ec3860}{backfaceCulling}}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ;\ }
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \textcolor{comment}{//Do\ not\ worry\ about\ these.}}
+\DoxyCodeLine{\ \ \textcolor{comment}{//This\ is\ just\ to\ suppress\ valgrind\ warnings\ because\ of\ the\ large\ stack.}}
+\DoxyCodeLine{\ \ \textcolor{comment}{//Otherwise\ everything\ would\ be\ placed\ on\ the\ stack\ and\ not\ on\ the\ heap.}}
+\DoxyCodeLine{\ \ \textcolor{comment}{//I\ had\ to\ allocated\ this\ structure\ on\ the\ heap,\ because\ it\ is\ too\ large.}}
+\DoxyCodeLine{\ \ \mbox{\hyperlink{structGPUMemory_a9b333f6f69347068f349d05961c7bf39}{GPUMemory}}();\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\ \ \mbox{\hyperlink{structGPUMemory_a9b333f6f69347068f349d05961c7bf39}{GPUMemory}}(\mbox{\hyperlink{structGPUMemory}{GPUMemory}}\ \textcolor{keyword}{const}\&o);}
+\DoxyCodeLine{\ \ \mbox{\hyperlink{structGPUMemory_aba0548cad16f8557782a5b2a409685b0}{\string~GPUMemory}}();\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\ \ \mbox{\hyperlink{structGPUMemory}{GPUMemory}}\&\mbox{\hyperlink{structGPUMemory_a59c169462c028204dfca9b92f5cd9230}{operator=}}(\mbox{\hyperlink{structGPUMemory}{GPUMemory}}\ \textcolor{keyword}{const}\&o);}
+\DoxyCodeLine{\};}
+
+\end{DoxyCodeInclude}
+ Správný program je vybrán pomocí čísla aktivního programu \doxylink{structGPUMemory_a7b289e72424eb0cf9b7aa920386f7565}{GPUMemory\+::activated\+Program}. \doxylink{structProgram}{Program} je opět struktura\+: 
+\begin{DoxyCodeInclude}{0}
+\DoxyCodeLine{\textcolor{keyword}{struct\ }\mbox{\hyperlink{structProgram}{Program}}\{}
+\DoxyCodeLine{\ \ \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a61e7df3fcaa53829be20be29b197e3e6}{VertexShader}}\ \ \ \mbox{\hyperlink{structProgram_a2bcea678985527f04a87be358ff1f78b}{vertexShader}}\ \ \ =\ \textcolor{keyword}{nullptr};\ }
+\DoxyCodeLine{\ \ \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_ac2dd95ee5e44978647da13fc95b9420e}{FragmentShader}}\ \mbox{\hyperlink{structProgram_a5faf623d0af27d6000ebcacafecf2eb5}{fragmentShader}}\ =\ \textcolor{keyword}{nullptr};\ }
+\DoxyCodeLine{\ \ \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a8cc36b907e294f5e78e1b479cac369dd}{AttribType}}\ \ \mbox{\hyperlink{structProgram_ac9033c6597b5c092dc2393965ce57b0c}{vs2fs}}[\mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a8938ad0ed0735df8ab181ffadae5f489}{maxAttribs}}]\ =\ \{\mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a8cc36b907e294f5e78e1b479cac369ddaba2b45bdc11e2a4a6e86aab2ac693cbb}{AttribType::EMPTY}}\};\ }
+\DoxyCodeLine{\};}
+
+\end{DoxyCodeInclude}
+ Struktura programu obsahuje vertex shader. Vertex shader je v ukazatel na funkci. Na normálním GPU se jedná o program (třeba v GLSL), který se kompiluje. V tomto projektu je to C/\+C++ funkce, která je uložena v ukazateli na funkci. Vertex shader bere 3 parametry 
+\begin{DoxyCodeInclude}{0}
+\DoxyCodeLine{\textcolor{keyword}{using\ }\mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a61e7df3fcaa53829be20be29b197e3e6}{VertexShader}}\ =\ void(*)(}
+\DoxyCodeLine{\ \ \ \ \mbox{\hyperlink{structOutVertex}{OutVertex}}\ \ \ \ \ \ \ \ \ \ \ \ \&outVertex,}
+\DoxyCodeLine{\ \ \ \ \mbox{\hyperlink{structInVertex}{InVertex}}\ \ \ \ \ \ \ \ \textcolor{keyword}{const}\&inVertex\ ,}
+\DoxyCodeLine{\ \ \ \ \mbox{\hyperlink{structShaderInterface}{ShaderInterface}}\ \textcolor{keyword}{const}\&si\ \ \ \ \ \ \ );}
+
+\end{DoxyCodeInclude}
+
+
+V tomto testu byste měli správně nastavit \doxylink{structInVertex_aa4d31911053492bffe4b41dae12ee000}{In\+Vertex\+::gl\+\_\+\+Vertex\+ID}. Obdobně jako číslování kreslících příkazů, existuje i číslování vrcholů. Zatím bude stačit pořadové číslo vrcholu. Vstupní vrchol se nachází ve struktuře \doxylink{structInVertex}{In\+Vertex} 
+\begin{DoxyCodeInclude}{0}
+\DoxyCodeLine{\textcolor{keyword}{struct\ }\mbox{\hyperlink{structInVertex}{InVertex}}\{}
+\DoxyCodeLine{\ \ \mbox{\hyperlink{unionAttrib}{Attrib}}\ \ \ \mbox{\hyperlink{structInVertex_a90ec7fd87b6a7f776638cd5aa23f2ecb}{attributes}}[\mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a8938ad0ed0735df8ab181ffadae5f489}{maxAttribs}}]\ \ \ \ ;\ }
+\DoxyCodeLine{\ \ uint32\_t\ \mbox{\hyperlink{structInVertex_aa4d31911053492bffe4b41dae12ee000}{gl\_VertexID}}\ \ \ \ \ \ \ \ \ \ \ \ =\ 0;\ }
+\DoxyCodeLine{\};}
+
+\end{DoxyCodeInclude}
+\hypertarget{p07_pipeline_vector_part_tasks_ShaderInterFace_gl_DrawID}{}\doxysubsection{\texorpdfstring{Test 15 – test číslování vykreslovacích příkazů}{Test 15 – test číslování vykreslovacích příkazů}}\label{p07_pipeline_vector_part_tasks_ShaderInterFace_gl_DrawID}
+Úkol je zprovoznit proměnnou \doxylink{structShaderInterface_acdb2c4b2df7bd9535ddde723b86eabc7}{Shader\+Interface\+::gl\+\_\+\+Draw\+ID}. Vertex shader obdrží mimo vstupního vertexu ještě \doxylink{structShaderInterface}{Shader\+Interface}. \doxylink{structShaderInterface}{Shader\+Interface} obsahuje konstanty. 
+\begin{DoxyCodeInclude}{0}
+\DoxyCodeLine{\textcolor{keyword}{struct\ }\mbox{\hyperlink{structShaderInterface}{ShaderInterface}}\{}
+\DoxyCodeLine{\ \ \mbox{\hyperlink{unionUniform}{Uniform}}\ \textcolor{keyword}{const}*\mbox{\hyperlink{structShaderInterface_a03009720e763e8efe2bfa4d4607dcc10}{uniforms}}\ \ =\ \textcolor{keyword}{nullptr};\ }
+\DoxyCodeLine{\ \ \mbox{\hyperlink{structTexture}{Texture}}\ \textcolor{keyword}{const}*\mbox{\hyperlink{structShaderInterface_ad33e6e9e4ff2fbf3853b4430f05188cb}{textures}}\ \ =\ \textcolor{keyword}{nullptr};\ }
+\DoxyCodeLine{\ \ uint32\_t\ \ \ \ \ \ \mbox{\hyperlink{structShaderInterface_acdb2c4b2df7bd9535ddde723b86eabc7}{gl\_DrawID}}\ =\ 0\ \ \ \ \ \ ;\ }
+\DoxyCodeLine{\};}
+
+\end{DoxyCodeInclude}
+ K tomtu se váže test\+:~\newline
+ 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{./izgProject\ -\/c\ -\/-\/test\ 15}
+
+\end{DoxyCode}
+ Vertex shader by měl vědět, v rámci jakého vykreslovacího příkazu byl puštěn.\hypertarget{p07_pipeline_vector_part_tasks_ss_mixed_clear_draw}{}\doxysubsection{\texorpdfstring{Test 16 – test proloženého kreslení a čistění}{Test 16 – test proloženého kreslení a čistění}}\label{p07_pipeline_vector_part_tasks_ss_mixed_clear_draw}
+Tento test zkouší do \doxylink{structCommandBuffer}{Command\+Buffer(u)} uložit prokládané příkazy kreslení a čistění. K tomtu se váže test\+:~\newline
+ 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{./izgProject\ -\/c\ -\/-\/test\ 16}
+
+\end{DoxyCode}
+\hypertarget{p07_pipeline_vector_part_tasks_ss_shaderInterface}{}\doxysubsection{\texorpdfstring{Test 17 – ověření Shader\+Interface}{Test 17 – ověření ShaderInterface}}\label{p07_pipeline_vector_part_tasks_ss_shaderInterface}
+Tento test zkouší, zda vertex shader obdržel správnou strukturu \doxylink{structShaderInterface}{Shader\+Interface}. K tomtu se váže test\+:~\newline
+ 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{./izgProject\ -\/c\ -\/-\/test\ 17}
+
+\end{DoxyCode}
+ \doxylink{structShaderInterface}{Shader\+Interface} jsou konstantní vstupy do shaderu a vypadá následovně\+: 
+\begin{DoxyCodeInclude}{0}
+\DoxyCodeLine{\textcolor{keyword}{struct\ }\mbox{\hyperlink{structShaderInterface}{ShaderInterface}}\{}
+\DoxyCodeLine{\ \ \mbox{\hyperlink{unionUniform}{Uniform}}\ \textcolor{keyword}{const}*\mbox{\hyperlink{structShaderInterface_a03009720e763e8efe2bfa4d4607dcc10}{uniforms}}\ \ =\ \textcolor{keyword}{nullptr};\ }
+\DoxyCodeLine{\ \ \mbox{\hyperlink{structTexture}{Texture}}\ \textcolor{keyword}{const}*\mbox{\hyperlink{structShaderInterface_ad33e6e9e4ff2fbf3853b4430f05188cb}{textures}}\ \ =\ \textcolor{keyword}{nullptr};\ }
+\DoxyCodeLine{\ \ uint32\_t\ \ \ \ \ \ \mbox{\hyperlink{structShaderInterface_acdb2c4b2df7bd9535ddde723b86eabc7}{gl\_DrawID}}\ =\ 0\ \ \ \ \ \ ;\ }
+\DoxyCodeLine{\};}
+
+\end{DoxyCodeInclude}
+ Ukazatele \doxylink{structShaderInterface_a03009720e763e8efe2bfa4d4607dcc10}{Shader\+Interface\+::uniforms} a \doxylink{structShaderInterface_ad33e6e9e4ff2fbf3853b4430f05188cb}{Shader\+Interface\+::textures} by měly obsahovat stejné ukazatele, které jsou uvedeny v paměti grafické karty \doxylink{structGPUMemory_a21eab797fb058f9cc8ceb26d5993f018}{GPUMemory\+::uniforms}, \doxylink{structGPUMemory_ac07704dd918f18a48644abdabbdf6f0d}{GPUMemory\+::textures}.\hypertarget{p07_pipeline_vector_part_tasks_gl_VertexIDIndex32}{}\doxysubsection{\texorpdfstring{Test 18 – číslování vrcholů s indexováním.}{Test 18 – číslování vrcholů s indexováním.}}\label{p07_pipeline_vector_part_tasks_gl_VertexIDIndex32}
+Tento test zkouší využít indexační buffer pro číslování vrcholů \doxylink{structInVertex_aa4d31911053492bffe4b41dae12ee000}{In\+Vertex\+::gl\+\_\+\+Vertex\+ID} 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{./izgProject\ -\/c\ -\/-\/test\ 18}
+
+\end{DoxyCode}
+ Musíte správně číslovat vstupní vrcholy, když je zapnuté indexování.~\newline
+
+
+Indexování může být zapnuto nebo vypnuto -- o tom rozhoduje nastavení ve struktuře \doxylink{structVertexArray}{Vertex\+Array} V paměti grafické karty je pole vertex array objektů \doxylink{structGPUMemory_acab4bb492d24e78131d39ea7997266cb}{GPUMemory\+::vertex\+Arrays}. Každý vertex array je tabulka nastavení takzvané vertex assembly jednotky (jednotka sestavující vrcholy). Struktura \doxylink{structVertexArray}{Vertex\+Array} vypadá následnovně\+: 
+\begin{DoxyCodeInclude}{0}
+\DoxyCodeLine{\textcolor{keyword}{struct\ }\mbox{\hyperlink{structVertexArray}{VertexArray}}\{}
+\DoxyCodeLine{\ \ \mbox{\hyperlink{structVertexAttrib}{VertexAttrib}}\ \mbox{\hyperlink{structVertexArray_a97057a034a7eb5dcd2bd38fad989687c}{vertexAttrib}}[\mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a8938ad0ed0735df8ab181ffadae5f489}{maxAttribs}}]\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ;\ }
+\DoxyCodeLine{\ \ int32\_t\ \ \ \ \ \ \mbox{\hyperlink{structVertexArray_a7648ec169177dbb70b495b51ffcfb606}{indexBufferID}}\ \ \ \ \ \ \ \ \ \ \ \ =\ -\/1\ \ \ \ \ \ \ \ \ \ \ \ ;\ }
+\DoxyCodeLine{\ \ uint64\_t\ \ \ \ \ \mbox{\hyperlink{structVertexArray_a89b9faa058891874f5bf63064deafe99}{indexOffset}}\ \ \ \ \ \ \ \ \ \ \ \ \ \ =\ 0\ \ \ \ \ \ \ \ \ \ \ \ \ ;\ }
+\DoxyCodeLine{\ \ \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a862161defe984b09e24dfec9e0540a3e}{IndexType}}\ \ \ \ \mbox{\hyperlink{structVertexArray_a7822420a93f7334ffdb1a0992de59ae3}{indexType}}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ =\ \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a862161defe984b09e24dfec9e0540a3eac8bd5bedff8ef192d39a962afc0e19ee}{IndexType::U32}};\ }
+\DoxyCodeLine{\};}
+
+\end{DoxyCodeInclude}
+ V této struktuře jsou pro indexovaní podstatné položky \doxylink{structVertexArray_a7648ec169177dbb70b495b51ffcfb606}{Vertex\+Array\+::index\+Buffer\+ID}, \doxylink{structVertexArray_a89b9faa058891874f5bf63064deafe99}{Vertex\+Array\+::index\+Offset} a \doxylink{structVertexArray_a7822420a93f7334ffdb1a0992de59ae3}{Vertex\+Array\+::index\+Type}. index\+Buffer\+ID je číslo bufferu nebo -\/1 pokud je indexing vypnutý. index\+Offset je posun v bajtech od začátku bufferu, kde se nacházejí indexy. index\+Type je typ indexu.~\newline
+ Všechny buffery (stejně jako programy) se nachází v paměti grafické karty (\doxylink{structGPUMemory}{GPUMemory}). 
+\begin{DoxyCodeInclude}{0}
+\DoxyCodeLine{\textcolor{keyword}{struct\ }\mbox{\hyperlink{structGPUMemory}{GPUMemory}}\{}
+\DoxyCodeLine{\ \ uint32\_t\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structGPUMemory_aa73d331b9be494e550928fad4ac6c23d}{maxUniforms}}\ \ \ \ \ \ \ \ \ \ =\ 0\ \ \ \ \ \ ;\ }
+\DoxyCodeLine{\ \ uint32\_t\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structGPUMemory_a3798310241309de18f5561931d1d2665}{maxVertexArrays}}\ \ \ \ \ \ =\ 0\ \ \ \ \ \ ;\ }
+\DoxyCodeLine{\ \ uint32\_t\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structGPUMemory_a8fa73be85fde25818e8b63d71fd7dd60}{maxTextures}}\ \ \ \ \ \ \ \ \ \ =\ 0\ \ \ \ \ \ ;\ }
+\DoxyCodeLine{\ \ uint32\_t\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structGPUMemory_a0be973077c6d15f40e31d0781b1ea8e6}{maxBuffers}}\ \ \ \ \ \ \ \ \ \ \ =\ 0\ \ \ \ \ \ ;\ }
+\DoxyCodeLine{\ \ uint32\_t\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structGPUMemory_aa8e57983bda33e4ef48e825d5bf261eb}{maxPrograms}}\ \ \ \ \ \ \ \ \ \ =\ 0\ \ \ \ \ \ ;\ }
+\DoxyCodeLine{\ \ uint32\_t\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structGPUMemory_ad9cda42fea22fb0d5347a91f101d15d2}{maxFramebuffers}}\ \ \ \ \ \ =\ 0\ \ \ \ \ \ ;\ }
+\DoxyCodeLine{\ \ uint32\_t\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structGPUMemory_a7f32178fb1950dde77a2133bb93bbe5b}{defaultFramebuffer}}\ \ \ =\ 0\ \ \ \ \ \ ;\ }
+\DoxyCodeLine{\ \ \mbox{\hyperlink{structBuffer}{Buffer}}\ \ \ \ \ \ \ \ \ \ *\mbox{\hyperlink{structGPUMemory_a4755d327262c8020766718bb31f92d0b}{buffers}}\ \ \ \ \ \ \ \ \ \ \ \ \ \ =\ \textcolor{keyword}{nullptr};\ }
+\DoxyCodeLine{\ \ \mbox{\hyperlink{structTexture}{Texture}}\ \ \ \ \ \ \ \ \ *\mbox{\hyperlink{structGPUMemory_ac07704dd918f18a48644abdabbdf6f0d}{textures}}\ \ \ \ \ \ \ \ \ \ \ \ \ =\ \textcolor{keyword}{nullptr};\ }
+\DoxyCodeLine{\ \ \mbox{\hyperlink{unionUniform}{Uniform}}\ \ \ \ \ \ \ \ \ *\mbox{\hyperlink{structGPUMemory_a21eab797fb058f9cc8ceb26d5993f018}{uniforms}}\ \ \ \ \ \ \ \ \ \ \ \ \ =\ \textcolor{keyword}{nullptr};\ }
+\DoxyCodeLine{\ \ \mbox{\hyperlink{structProgram}{Program}}\ \ \ \ \ \ \ \ \ *\mbox{\hyperlink{structGPUMemory_a50091de928f20fa9d84c6bd137dab3a6}{programs}}\ \ \ \ \ \ \ \ \ \ \ \ \ =\ \textcolor{keyword}{nullptr};\ }
+\DoxyCodeLine{\ \ \mbox{\hyperlink{structFramebuffer}{Framebuffer}}\ \ \ \ \ *\mbox{\hyperlink{structGPUMemory_abd0d80589104a936db46ae766bc7975e}{framebuffers}}\ \ \ \ \ \ \ \ \ =\ \textcolor{keyword}{nullptr};\ }
+\DoxyCodeLine{\ \ \mbox{\hyperlink{structVertexArray}{VertexArray}}\ \ \ \ \ *\mbox{\hyperlink{structGPUMemory_acab4bb492d24e78131d39ea7997266cb}{vertexArrays}}\ \ \ \ \ \ \ \ \ =\ \textcolor{keyword}{nullptr};\ }
+\DoxyCodeLine{\ \ uint32\_t\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structGPUMemory_acd06344c1c43bef8df606d6664fee4b4}{activatedFramebuffer}}\ =\ 0\ \ \ \ \ \ ;\ }
+\DoxyCodeLine{\ \ uint32\_t\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structGPUMemory_a7b289e72424eb0cf9b7aa920386f7565}{activatedProgram}}\ \ \ \ \ =\ 0\ \ \ \ \ \ ;\ }
+\DoxyCodeLine{\ \ uint32\_t\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structGPUMemory_af2f8e1efb9217022ced48eeb04b79810}{activatedVertexArray}}\ =\ 0\ \ \ \ \ \ ;\ }
+\DoxyCodeLine{\ \ uint32\_t\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structGPUMemory_aa6541055bfd7af94a91f35bfe0cd9aad}{gl\_DrawID}}\ \ \ \ \ \ \ \ \ \ \ \ =\ 0\ \ \ \ \ \ ;\ }
+\DoxyCodeLine{\ \ \mbox{\hyperlink{structStencilSettings}{StencilSettings}}\ \ \mbox{\hyperlink{structGPUMemory_a00d576026cb037973a8cdb85ba6e5498}{stencilSettings}}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ;\ }
+\DoxyCodeLine{\ \ \mbox{\hyperlink{structBlendingSettings}{BlendingSettings}}\ \mbox{\hyperlink{structGPUMemory_a3ae3396312e75582f1645e5a30fd829b}{blendingSettings}}\ \ \ \ \ \ \ \ \ \ \ \ \ \ ;\ }
+\DoxyCodeLine{\ \ \mbox{\hyperlink{structBlockWrites}{BlockWrites}}\ \ \ \ \ \ \mbox{\hyperlink{structGPUMemory_ac8733e2ed174d07681ccb20407ac2933}{blockWrites}}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ;\ }
+\DoxyCodeLine{\ \ \mbox{\hyperlink{structBackfaceCulling}{BackfaceCulling}}\ \ \mbox{\hyperlink{structGPUMemory_a08ac73715dd9138f6dfc6b04b7ec3860}{backfaceCulling}}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ;\ }
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \textcolor{comment}{//Do\ not\ worry\ about\ these.}}
+\DoxyCodeLine{\ \ \textcolor{comment}{//This\ is\ just\ to\ suppress\ valgrind\ warnings\ because\ of\ the\ large\ stack.}}
+\DoxyCodeLine{\ \ \textcolor{comment}{//Otherwise\ everything\ would\ be\ placed\ on\ the\ stack\ and\ not\ on\ the\ heap.}}
+\DoxyCodeLine{\ \ \textcolor{comment}{//I\ had\ to\ allocated\ this\ structure\ on\ the\ heap,\ because\ it\ is\ too\ large.}}
+\DoxyCodeLine{\ \ \mbox{\hyperlink{structGPUMemory_a9b333f6f69347068f349d05961c7bf39}{GPUMemory}}();\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\ \ \mbox{\hyperlink{structGPUMemory_a9b333f6f69347068f349d05961c7bf39}{GPUMemory}}(\mbox{\hyperlink{structGPUMemory}{GPUMemory}}\ \textcolor{keyword}{const}\&o);}
+\DoxyCodeLine{\ \ \mbox{\hyperlink{structGPUMemory_aba0548cad16f8557782a5b2a409685b0}{\string~GPUMemory}}();\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\ \ \mbox{\hyperlink{structGPUMemory}{GPUMemory}}\&\mbox{\hyperlink{structGPUMemory_a59c169462c028204dfca9b92f5cd9230}{operator=}}(\mbox{\hyperlink{structGPUMemory}{GPUMemory}}\ \textcolor{keyword}{const}\&o);}
+\DoxyCodeLine{\};}
+
+\end{DoxyCodeInclude}
+ \doxylink{structBuffer}{Buffer} je lineární paměť, reprezentovano strukturou\+: 
+\begin{DoxyCodeInclude}{0}
+\DoxyCodeLine{\textcolor{keyword}{struct\ }\mbox{\hyperlink{structBuffer}{Buffer}}\{}
+\DoxyCodeLine{\ \ \textcolor{keywordtype}{void}\ \textcolor{keyword}{const}*\ \mbox{\hyperlink{structBuffer_a8fbe8b3fba53c8ff7fcd44f9c4f463c7}{data}}\ =\ \textcolor{keyword}{nullptr};\ }
+\DoxyCodeLine{\ \ uint64\_t\ \ \ \ \mbox{\hyperlink{structBuffer_a3d37b3ab0942c1222347f8de7520f9ef}{size}}\ =\ 0\ \ \ \ \ \ ;\ }
+\DoxyCodeLine{\};}
+
+\end{DoxyCodeInclude}
+
+
+Indexační buffer může mít růzou velikost indexu -- 8bit, 16bit a 32bit\+: 
+\begin{DoxyCodeInclude}{0}
+\DoxyCodeLine{\textcolor{keyword}{enum\ class}\ \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a862161defe984b09e24dfec9e0540a3e}{IndexType}}\ :\ uint8\_t\{}
+\DoxyCodeLine{\ \ \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a862161defe984b09e24dfec9e0540a3ea6669348b484e3008dca2bfa8e85e40b5}{U8}}\ \ =\ 1,\ }
+\DoxyCodeLine{\ \ \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a862161defe984b09e24dfec9e0540a3eaef9ef3ebca4d2b64b6ec83808bafa5f2}{U16}}\ =\ 2,\ }
+\DoxyCodeLine{\ \ \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a862161defe984b09e24dfec9e0540a3eac8bd5bedff8ef192d39a962afc0e19ee}{U32}}\ =\ 4,\ }
+\DoxyCodeLine{\};}
+
+\end{DoxyCodeInclude}
+ Pokud je zapnuto indexování, pak je číslo vrcholu dáno položkou v indexačním bufferu, kde je položka (index) v bufferu vybrána na základě čísla invokace vertex shaderu. Pseudokód\+: 
+\begin{DoxyCodeInclude}{0}
+\DoxyCodeLine{uint32\_t\ getIndex(\mbox{\hyperlink{structGPUMemory}{GPUMemory}}\ \textcolor{keyword}{const}\&mem,uint32\_t\ i)\{}
+\DoxyCodeLine{\ \ \textcolor{comment}{//\ aktivovaná\ tabulka\ nastavení\ pro\ vertex\ assembly\ jednotu}}
+\DoxyCodeLine{\ \ \textcolor{keyword}{auto}\ vao\ =\ mem.\mbox{\hyperlink{structGPUMemory_acab4bb492d24e78131d39ea7997266cb}{vertexArrays}}[mem.\mbox{\hyperlink{structGPUMemory_af2f8e1efb9217022ced48eeb04b79810}{activatedVertexArray}}];}
+\DoxyCodeLine{\ \ \textcolor{keywordflow}{if}(vao.indexBufferID\ >=\ 0)\{\ \textcolor{comment}{//\ je\ použito\ indexování?}}
+\DoxyCodeLine{\ \ \ \ \mbox{\hyperlink{structBuffer}{Buffer}}\ indexBuffer\ =\ mem.\mbox{\hyperlink{structGPUMemory_a4755d327262c8020766718bb31f92d0b}{buffers}}[vao.indexBufferID];\ \textcolor{comment}{//indexový\ buffer}}
+\DoxyCodeLine{\ \ \ \ \textcolor{keywordflow}{if}(vao.indexType\ ==\ \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a862161defe984b09e24dfec9e0540a3ea6669348b484e3008dca2bfa8e85e40b5}{IndexType::U8}})\{\ \textcolor{comment}{//\ je\ typ\ indexu\ uint8\_t}}
+\DoxyCodeLine{\ \ \ \ \ \ uint8\_t*ptr\ =\ (uint8\_t*)indexBuffer.\mbox{\hyperlink{structBuffer_a8fbe8b3fba53c8ff7fcd44f9c4f463c7}{data}};\ \textcolor{comment}{//ukazatel\ na\ data}}
+\DoxyCodeLine{\ \ \ \ \ \ ptr\ +=\ vao.indexOffset;\ \textcolor{comment}{//\ posun\ ukazatele\ o\ offset\ v\ bajtech}}
+\DoxyCodeLine{\ \ \ \ \ \ \textcolor{keywordflow}{return}\ ...}
+\DoxyCodeLine{\ \ \ \ \}}
+\DoxyCodeLine{\ \ \}\textcolor{keywordflow}{else}}
+\DoxyCodeLine{\ \ \ \ \textcolor{comment}{//\ ....}}
+\DoxyCodeLine{\}}
+
+\end{DoxyCodeInclude}
+\hypertarget{p07_pipeline_vector_part_tasks_VertexPuller_Att}{}\doxysubsection{\texorpdfstring{Testy 19-\/21 – Vertex Atributy, Vertex Assembly jednotka}{Testy 19-21 – Vertex Atributy, Vertex Assembly jednotka}}\label{p07_pipeline_vector_part_tasks_VertexPuller_Att}
+Tyto testy ověřují, zda vám správně jednotka Vertex Assembly sestavuje vrcholy z paměti\+: 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{./izgProject\ -\/c\ -\/-\/test\ 19}
+\DoxyCodeLine{./izgProject\ -\/c\ -\/-\/test\ 20}
+\DoxyCodeLine{./izgProject\ -\/c\ -\/-\/test\ 21}
+
+\end{DoxyCode}
+ V tomto testu musíte naprogramovat funkcionalitu Vertex Assembly jednotky.
+
+
+
+Vertex Assembly jednotka sestavuje vstupní vrcholy (\doxylink{structInVertex}{In\+Vertex}) z paměti (\doxylink{structGPUMemory}{GPUMemory}) pomocí nastavení z tabulky \doxylink{structVertexArray}{Vertex\+Array}.\hypertarget{p07_pipeline_vector_part_tasks_sss_vertexAssembly_inputs}{}\doxysubsubsection{\texorpdfstring{Vstupy\+:}{Vstupy:}}\label{p07_pipeline_vector_part_tasks_sss_vertexAssembly_inputs}
+Nastavení je uloženo ve struktuře \doxylink{structVertexArray}{Vertex\+Array} 
+\begin{DoxyCodeInclude}{0}
+\DoxyCodeLine{\textcolor{keyword}{struct\ }\mbox{\hyperlink{structVertexArray}{VertexArray}}\{}
+\DoxyCodeLine{\ \ \mbox{\hyperlink{structVertexAttrib}{VertexAttrib}}\ \mbox{\hyperlink{structVertexArray_a97057a034a7eb5dcd2bd38fad989687c}{vertexAttrib}}[\mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a8938ad0ed0735df8ab181ffadae5f489}{maxAttribs}}]\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ;\ }
+\DoxyCodeLine{\ \ int32\_t\ \ \ \ \ \ \mbox{\hyperlink{structVertexArray_a7648ec169177dbb70b495b51ffcfb606}{indexBufferID}}\ \ \ \ \ \ \ \ \ \ \ \ =\ -\/1\ \ \ \ \ \ \ \ \ \ \ \ ;\ }
+\DoxyCodeLine{\ \ uint64\_t\ \ \ \ \ \mbox{\hyperlink{structVertexArray_a89b9faa058891874f5bf63064deafe99}{indexOffset}}\ \ \ \ \ \ \ \ \ \ \ \ \ \ =\ 0\ \ \ \ \ \ \ \ \ \ \ \ \ ;\ }
+\DoxyCodeLine{\ \ \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a862161defe984b09e24dfec9e0540a3e}{IndexType}}\ \ \ \ \mbox{\hyperlink{structVertexArray_a7822420a93f7334ffdb1a0992de59ae3}{indexType}}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ =\ \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a862161defe984b09e24dfec9e0540a3eac8bd5bedff8ef192d39a962afc0e19ee}{IndexType::U32}};\ }
+\DoxyCodeLine{\};}
+
+\end{DoxyCodeInclude}
+ Je složeno z nastavení pro indexování a nastavení pro vertex attributy. ~\newline
+ \doxylink{structVertexAttrib}{Vertex\+Attrib} je struktura obsahují nastavení, jak číst jeden Vertex Attribut. 
+\begin{DoxyCodeInclude}{0}
+\DoxyCodeLine{\textcolor{keyword}{struct\ }\mbox{\hyperlink{structVertexAttrib}{VertexAttrib}}\{}
+\DoxyCodeLine{\ \ int32\_t\ \ \ \ \mbox{\hyperlink{structVertexAttrib_a4578d3605e0f61b7bfd1f5e24df7c9bf}{bufferID}}\ =\ -\/1\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ;}
+\DoxyCodeLine{\ \ uint64\_t\ \ \ \mbox{\hyperlink{structVertexAttrib_aef250d71bce43e96a6efb9180f24d079}{stride}}\ \ \ =\ 0\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ;}
+\DoxyCodeLine{\ \ uint64\_t\ \ \ \mbox{\hyperlink{structVertexAttrib_a58f3129f893d0ce72ec7d364fef21840}{offset}}\ \ \ =\ 0\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ;}
+\DoxyCodeLine{\ \ \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a8cc36b907e294f5e78e1b479cac369dd}{AttribType}}\ \mbox{\hyperlink{structVertexAttrib_a407a6d51ebdbc42b00d0c811b95d8e9d}{type}}\ \ \ \ \ =\ \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a8cc36b907e294f5e78e1b479cac369ddaba2b45bdc11e2a4a6e86aab2ac693cbb}{AttribType::EMPTY}};}
+\DoxyCodeLine{\};}
+
+\end{DoxyCodeInclude}
+
+
+Paměť \doxylink{structGPUMemory}{GPUMemory} obsahuje \doxylink{structBuffer}{Buffer(y)} 
+\begin{DoxyCodeInclude}{0}
+\DoxyCodeLine{\textcolor{keyword}{struct\ }\mbox{\hyperlink{structGPUMemory}{GPUMemory}}\{}
+\DoxyCodeLine{\ \ uint32\_t\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structGPUMemory_aa73d331b9be494e550928fad4ac6c23d}{maxUniforms}}\ \ \ \ \ \ \ \ \ \ =\ 0\ \ \ \ \ \ ;\ }
+\DoxyCodeLine{\ \ uint32\_t\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structGPUMemory_a3798310241309de18f5561931d1d2665}{maxVertexArrays}}\ \ \ \ \ \ =\ 0\ \ \ \ \ \ ;\ }
+\DoxyCodeLine{\ \ uint32\_t\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structGPUMemory_a8fa73be85fde25818e8b63d71fd7dd60}{maxTextures}}\ \ \ \ \ \ \ \ \ \ =\ 0\ \ \ \ \ \ ;\ }
+\DoxyCodeLine{\ \ uint32\_t\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structGPUMemory_a0be973077c6d15f40e31d0781b1ea8e6}{maxBuffers}}\ \ \ \ \ \ \ \ \ \ \ =\ 0\ \ \ \ \ \ ;\ }
+\DoxyCodeLine{\ \ uint32\_t\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structGPUMemory_aa8e57983bda33e4ef48e825d5bf261eb}{maxPrograms}}\ \ \ \ \ \ \ \ \ \ =\ 0\ \ \ \ \ \ ;\ }
+\DoxyCodeLine{\ \ uint32\_t\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structGPUMemory_ad9cda42fea22fb0d5347a91f101d15d2}{maxFramebuffers}}\ \ \ \ \ \ =\ 0\ \ \ \ \ \ ;\ }
+\DoxyCodeLine{\ \ uint32\_t\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structGPUMemory_a7f32178fb1950dde77a2133bb93bbe5b}{defaultFramebuffer}}\ \ \ =\ 0\ \ \ \ \ \ ;\ }
+\DoxyCodeLine{\ \ \mbox{\hyperlink{structBuffer}{Buffer}}\ \ \ \ \ \ \ \ \ \ *\mbox{\hyperlink{structGPUMemory_a4755d327262c8020766718bb31f92d0b}{buffers}}\ \ \ \ \ \ \ \ \ \ \ \ \ \ =\ \textcolor{keyword}{nullptr};\ }
+\DoxyCodeLine{\ \ \mbox{\hyperlink{structTexture}{Texture}}\ \ \ \ \ \ \ \ \ *\mbox{\hyperlink{structGPUMemory_ac07704dd918f18a48644abdabbdf6f0d}{textures}}\ \ \ \ \ \ \ \ \ \ \ \ \ =\ \textcolor{keyword}{nullptr};\ }
+\DoxyCodeLine{\ \ \mbox{\hyperlink{unionUniform}{Uniform}}\ \ \ \ \ \ \ \ \ *\mbox{\hyperlink{structGPUMemory_a21eab797fb058f9cc8ceb26d5993f018}{uniforms}}\ \ \ \ \ \ \ \ \ \ \ \ \ =\ \textcolor{keyword}{nullptr};\ }
+\DoxyCodeLine{\ \ \mbox{\hyperlink{structProgram}{Program}}\ \ \ \ \ \ \ \ \ *\mbox{\hyperlink{structGPUMemory_a50091de928f20fa9d84c6bd137dab3a6}{programs}}\ \ \ \ \ \ \ \ \ \ \ \ \ =\ \textcolor{keyword}{nullptr};\ }
+\DoxyCodeLine{\ \ \mbox{\hyperlink{structFramebuffer}{Framebuffer}}\ \ \ \ \ *\mbox{\hyperlink{structGPUMemory_abd0d80589104a936db46ae766bc7975e}{framebuffers}}\ \ \ \ \ \ \ \ \ =\ \textcolor{keyword}{nullptr};\ }
+\DoxyCodeLine{\ \ \mbox{\hyperlink{structVertexArray}{VertexArray}}\ \ \ \ \ *\mbox{\hyperlink{structGPUMemory_acab4bb492d24e78131d39ea7997266cb}{vertexArrays}}\ \ \ \ \ \ \ \ \ =\ \textcolor{keyword}{nullptr};\ }
+\DoxyCodeLine{\ \ uint32\_t\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structGPUMemory_acd06344c1c43bef8df606d6664fee4b4}{activatedFramebuffer}}\ =\ 0\ \ \ \ \ \ ;\ }
+\DoxyCodeLine{\ \ uint32\_t\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structGPUMemory_a7b289e72424eb0cf9b7aa920386f7565}{activatedProgram}}\ \ \ \ \ =\ 0\ \ \ \ \ \ ;\ }
+\DoxyCodeLine{\ \ uint32\_t\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structGPUMemory_af2f8e1efb9217022ced48eeb04b79810}{activatedVertexArray}}\ =\ 0\ \ \ \ \ \ ;\ }
+\DoxyCodeLine{\ \ uint32\_t\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structGPUMemory_aa6541055bfd7af94a91f35bfe0cd9aad}{gl\_DrawID}}\ \ \ \ \ \ \ \ \ \ \ \ =\ 0\ \ \ \ \ \ ;\ }
+\DoxyCodeLine{\ \ \mbox{\hyperlink{structStencilSettings}{StencilSettings}}\ \ \mbox{\hyperlink{structGPUMemory_a00d576026cb037973a8cdb85ba6e5498}{stencilSettings}}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ;\ }
+\DoxyCodeLine{\ \ \mbox{\hyperlink{structBlendingSettings}{BlendingSettings}}\ \mbox{\hyperlink{structGPUMemory_a3ae3396312e75582f1645e5a30fd829b}{blendingSettings}}\ \ \ \ \ \ \ \ \ \ \ \ \ \ ;\ }
+\DoxyCodeLine{\ \ \mbox{\hyperlink{structBlockWrites}{BlockWrites}}\ \ \ \ \ \ \mbox{\hyperlink{structGPUMemory_ac8733e2ed174d07681ccb20407ac2933}{blockWrites}}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ;\ }
+\DoxyCodeLine{\ \ \mbox{\hyperlink{structBackfaceCulling}{BackfaceCulling}}\ \ \mbox{\hyperlink{structGPUMemory_a08ac73715dd9138f6dfc6b04b7ec3860}{backfaceCulling}}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ;\ }
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \textcolor{comment}{//Do\ not\ worry\ about\ these.}}
+\DoxyCodeLine{\ \ \textcolor{comment}{//This\ is\ just\ to\ suppress\ valgrind\ warnings\ because\ of\ the\ large\ stack.}}
+\DoxyCodeLine{\ \ \textcolor{comment}{//Otherwise\ everything\ would\ be\ placed\ on\ the\ stack\ and\ not\ on\ the\ heap.}}
+\DoxyCodeLine{\ \ \textcolor{comment}{//I\ had\ to\ allocated\ this\ structure\ on\ the\ heap,\ because\ it\ is\ too\ large.}}
+\DoxyCodeLine{\ \ \mbox{\hyperlink{structGPUMemory_a9b333f6f69347068f349d05961c7bf39}{GPUMemory}}();\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\ \ \mbox{\hyperlink{structGPUMemory_a9b333f6f69347068f349d05961c7bf39}{GPUMemory}}(\mbox{\hyperlink{structGPUMemory}{GPUMemory}}\ \textcolor{keyword}{const}\&o);}
+\DoxyCodeLine{\ \ \mbox{\hyperlink{structGPUMemory_aba0548cad16f8557782a5b2a409685b0}{\string~GPUMemory}}();\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\ \ \mbox{\hyperlink{structGPUMemory}{GPUMemory}}\&\mbox{\hyperlink{structGPUMemory_a59c169462c028204dfca9b92f5cd9230}{operator=}}(\mbox{\hyperlink{structGPUMemory}{GPUMemory}}\ \textcolor{keyword}{const}\&o);}
+\DoxyCodeLine{\};}
+
+\end{DoxyCodeInclude}
+
+
+\doxylink{structBuffer}{Buffer} je struktura obsahují pointer a velikost. 
+\begin{DoxyCodeInclude}{0}
+\DoxyCodeLine{\textcolor{keyword}{struct\ }\mbox{\hyperlink{structBuffer}{Buffer}}\{}
+\DoxyCodeLine{\ \ \textcolor{keywordtype}{void}\ \textcolor{keyword}{const}*\ \mbox{\hyperlink{structBuffer_a8fbe8b3fba53c8ff7fcd44f9c4f463c7}{data}}\ =\ \textcolor{keyword}{nullptr};\ }
+\DoxyCodeLine{\ \ uint64\_t\ \ \ \ \mbox{\hyperlink{structBuffer_a3d37b3ab0942c1222347f8de7520f9ef}{size}}\ =\ 0\ \ \ \ \ \ ;\ }
+\DoxyCodeLine{\};}
+
+\end{DoxyCodeInclude}
+\hypertarget{p07_pipeline_vector_part_tasks_sss_vertexAssembly_outputs}{}\doxysubsubsection{\texorpdfstring{Výstupy\+:}{Výstupy:}}\label{p07_pipeline_vector_part_tasks_sss_vertexAssembly_outputs}
+Strukura \doxylink{structInVertex}{In\+Vertex} vypadá takto\+: 
+\begin{DoxyCodeInclude}{0}
+\DoxyCodeLine{\textcolor{keyword}{struct\ }\mbox{\hyperlink{structInVertex}{InVertex}}\{}
+\DoxyCodeLine{\ \ \mbox{\hyperlink{unionAttrib}{Attrib}}\ \ \ \mbox{\hyperlink{structInVertex_a90ec7fd87b6a7f776638cd5aa23f2ecb}{attributes}}[\mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a8938ad0ed0735df8ab181ffadae5f489}{maxAttribs}}]\ \ \ \ ;\ }
+\DoxyCodeLine{\ \ uint32\_t\ \mbox{\hyperlink{structInVertex_aa4d31911053492bffe4b41dae12ee000}{gl\_VertexID}}\ \ \ \ \ \ \ \ \ \ \ \ =\ 0;\ }
+\DoxyCodeLine{\};}
+
+\end{DoxyCodeInclude}
+
+
+Data atributu vypadají takto\+: 
+\begin{DoxyCodeInclude}{0}
+\DoxyCodeLine{\textcolor{keyword}{union\ }\mbox{\hyperlink{unionAttrib}{Attrib}}\{}
+\DoxyCodeLine{\ \ \mbox{\hyperlink{unionAttrib}{Attrib}}():\mbox{\hyperlink{unionAttrib_a696593a1622617ea27804091988b9c6f}{v4}}(glm::vec4(1.f))\{\}}
+\DoxyCodeLine{\ \ \textcolor{keywordtype}{float}\ \ \ \ \ \ \mbox{\hyperlink{unionAttrib_a929882245d506dfa31022f10d12a9ad6}{v1}};\ }
+\DoxyCodeLine{\ \ glm::vec2\ \ \mbox{\hyperlink{unionAttrib_ac4dfb066bf0f2631cf74bd1d9c40e07b}{v2}};\ }
+\DoxyCodeLine{\ \ glm::vec3\ \ \mbox{\hyperlink{unionAttrib_ae33a694a9c3ba540167b192fd83eb767}{v3}};\ }
+\DoxyCodeLine{\ \ glm::vec4\ \ \mbox{\hyperlink{unionAttrib_a696593a1622617ea27804091988b9c6f}{v4}};\ }
+\DoxyCodeLine{\ \ uint32\_t\ \ \ \mbox{\hyperlink{unionAttrib_ae0e1021f00fb48b7455a5dce14e9e043}{u1}};\ }
+\DoxyCodeLine{\ \ glm::uvec2\ \mbox{\hyperlink{unionAttrib_ae52385fd24c40ddf0e739b02805ee223}{u2}};\ }
+\DoxyCodeLine{\ \ glm::uvec3\ \mbox{\hyperlink{unionAttrib_a5cdee2c35b06a7cea44de8fd65a1a025}{u3}};\ }
+\DoxyCodeLine{\ \ glm::uvec4\ \mbox{\hyperlink{unionAttrib_a5940b2a6c6d819a502e1e0921c061974}{u4}};\ }
+\DoxyCodeLine{\};}
+
+\end{DoxyCodeInclude}
+\hypertarget{p07_pipeline_vector_part_tasks_sss_vertexAssembly_attribTask}{}\doxysubsubsection{\texorpdfstring{Úkol\+:}{Úkol:}}\label{p07_pipeline_vector_part_tasks_sss_vertexAssembly_attribTask}
+Vašim úkolem je správně číst data atributů z paměti a zapisovat je do struktury \doxylink{structInVertex}{In\+Vertex}.
+
+Po těchto úkolech byste měli mít hotovou vertexovou část. To je část, před sestavením primitiv (Primitiv Assembly Unit). 

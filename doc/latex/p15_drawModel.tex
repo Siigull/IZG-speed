@@ -1,0 +1,497 @@
+\chapter{15 Implementace vykreslování modelů se stíny -- soubor student/prepare\+Model.cpp}
+\hypertarget{p15_drawModel}{}\label{p15_drawModel}\index{15 Implementace vykreslování modelů se stíny -- soubor student/prepareModel.cpp@{15 Implementace vykreslování modelů se stíny -- soubor student/prepareModel.cpp}}
+Druhá věc, co se asi ptáte je\+: "{}\+K čemu se dá grafická karta využít?"{} Cílem této části projektu je vykreslit modely se stíny pomocí vámi vytvořené grafické karty. Všechny úkoly této části se týkají souboru student/student\+\_\+prepare\+Model.\+cpp.\hypertarget{p15_drawModel_drawModel_fce}{}\doxysection{\texorpdfstring{Úkol 8 – Vykreslování modelů – funkce student\+\_\+prepare\+Model}{Úkol 8 – Vykreslování modelů – funkce student\_prepareModel}}\label{p15_drawModel_drawModel_fce}
+Tento úkol už se neváže k zobrazovacímu řetězci, ale k jeho využívání. Cílem je naprogramovat zobrazování modelů načtených ze souboru na disku. Načítání modelů už je uděláno a předpřipraveno. Vaším úkolem je jen správně vytvořit command buffer a zapsat správně data do grafické karty. Budete editovat funkci \doxylink{prepareModel_8cpp_a46fe75e58d09064a5a33d511123d3a4d}{student\+\_\+prepare\+Model} v souboru \doxylink{prepareModel_8cpp}{student\+Solution/src/student\+Solution/prepare\+Model.\+cpp}. Samotné volání kreslení nebudete dělat, připravujete command buffer a paměť, které zpracuje příklad model\+Method.\+cpp.~\newline
+ Struktura modelu je\+:  Vážou s k němu struktury \doxylink{structModel}{Model}, \doxylink{structNode}{Node}, \doxylink{structMesh}{Mesh}, \doxylink{structBuffer}{Buffer}, \doxylink{structTexture}{Texture}. 
+\begin{DoxyCodeInclude}{0}
+\DoxyCodeLine{\textcolor{keyword}{struct\ }\mbox{\hyperlink{structModel}{Model}}\{}
+\DoxyCodeLine{\ \ \mbox{\hyperlink{structNode}{Node}}*\ \ \ \mbox{\hyperlink{structModel_abe700d873065c063798de61304d3dc6f}{roots}}\ \ \ \ \ \ \ =\ \textcolor{keyword}{nullptr};}
+\DoxyCodeLine{\ \ \mbox{\hyperlink{structBuffer}{Buffer}}*\ \mbox{\hyperlink{structModel_ad634c4bc84af0a8a2476826b7830fdaa}{buffers}}\ \ \ \ \ =\ \textcolor{keyword}{nullptr};}
+\DoxyCodeLine{\ \ \mbox{\hyperlink{structMesh}{Mesh}}*\ \ \ \mbox{\hyperlink{structModel_a7f93cb54ea24bf7924d4f80108a08830}{meshes}}\ \ \ \ \ \ =\ \textcolor{keyword}{nullptr};}
+\DoxyCodeLine{\ \ \mbox{\hyperlink{structTexture}{Texture}}*\mbox{\hyperlink{structModel_abd92fc8cd2b8471c39becb81f7af99b3}{textures}}\ \ \ \ =\ \textcolor{keyword}{nullptr};}
+\DoxyCodeLine{\ \ \textcolor{keywordtype}{size\_t}\ \ \mbox{\hyperlink{structModel_a41a135cc6f72c29e282f2c4dcc299cb1}{nofRoots}}\ \ \ \ =\ 0\ \ \ \ \ \ ;}
+\DoxyCodeLine{\ \ \textcolor{keywordtype}{size\_t}\ \ \mbox{\hyperlink{structModel_a0b12753c02b4f28c0bd54be0a5bd8b10}{nofBuffers}}\ \ =\ 0\ \ \ \ \ \ ;}
+\DoxyCodeLine{\ \ \textcolor{keywordtype}{size\_t}\ \ \mbox{\hyperlink{structModel_a3ba7fb1915ee8e2e2b6052bc356c2618}{nofMeshes}}\ \ \ =\ 0\ \ \ \ \ \ ;}
+\DoxyCodeLine{\ \ \textcolor{keywordtype}{size\_t}\ \ \mbox{\hyperlink{structModel_ae6c95be3cb0d5759cb8f5233db7362ef}{nofTextures}}\ =\ 0\ \ \ \ \ \ ;}
+\DoxyCodeLine{\};}
+
+\end{DoxyCodeInclude}
+ 
+\begin{DoxyCodeInclude}{0}
+\DoxyCodeLine{\textcolor{keyword}{struct\ }\mbox{\hyperlink{structNode}{Node}}\{}
+\DoxyCodeLine{\ \ glm::mat4\ \mbox{\hyperlink{structNode_a825a38e1f0d49fcc1a0cdbad46473bf2}{modelMatrix}}\ =\ glm::mat4(1.f);}
+\DoxyCodeLine{\ \ int32\_t\ \ \ \mbox{\hyperlink{structNode_ad4e3fcf9fdbd325a83e87cfb7ab86554}{mesh}}\ \ \ \ \ \ \ \ =\ -\/1\ \ \ \ \ \ \ \ \ \ \ \ ;}
+\DoxyCodeLine{\ \ \mbox{\hyperlink{structNode}{Node}}*\ \ \ \ \ \mbox{\hyperlink{structNode_a240d352d8f3afe39579d1403e0c67343}{children}}\ \ \ \ =\ nullptr\ \ \ \ \ \ \ ;}
+\DoxyCodeLine{\ \ \textcolor{keywordtype}{size\_t}\ \ \ \ \mbox{\hyperlink{structNode_ad0ce456a3b928e29de17c1bc79278adb}{nofChildren}}\ =\ 0\ \ \ \ \ \ \ \ \ \ \ \ \ ;}
+\DoxyCodeLine{\};}
+
+\end{DoxyCodeInclude}
+ 
+\begin{DoxyCodeInclude}{0}
+\DoxyCodeLine{\textcolor{keyword}{struct\ }\mbox{\hyperlink{structMesh}{Mesh}}\{}
+\DoxyCodeLine{\ \ int32\_t\ \ \ \ \ \ \mbox{\hyperlink{structMesh_a6ee7d4182d7a50b63cafca5b0b66c715}{indexBufferID}}\ \ =\ -\/1\ \ \ \ \ \ \ \ \ \ \ \ ;}
+\DoxyCodeLine{\ \ \textcolor{keywordtype}{size\_t}\ \ \ \ \ \ \ \mbox{\hyperlink{structMesh_ae334cf0d47655e3daefe644b574468d5}{indexOffset}}\ \ \ \ =\ 0\ \ \ \ \ \ \ \ \ \ \ \ \ ;}
+\DoxyCodeLine{\ \ \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a862161defe984b09e24dfec9e0540a3e}{IndexType}}\ \ \ \ \mbox{\hyperlink{structMesh_a55de606f67f2aa169ef7b51042ade990}{indexType}}\ \ \ \ \ \ =\ \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a862161defe984b09e24dfec9e0540a3eac8bd5bedff8ef192d39a962afc0e19ee}{IndexType::U32}};}
+\DoxyCodeLine{\ \ \mbox{\hyperlink{structVertexAttrib}{VertexAttrib}}\ \mbox{\hyperlink{structMesh_a00f5a9d0221fc4e66dc165520a835460}{position}}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ;}
+\DoxyCodeLine{\ \ \mbox{\hyperlink{structVertexAttrib}{VertexAttrib}}\ \mbox{\hyperlink{structMesh_abc59ae5bf8f9b8d5b806e6e91ae5e1f5}{normal}}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ;}
+\DoxyCodeLine{\ \ \mbox{\hyperlink{structVertexAttrib}{VertexAttrib}}\ \mbox{\hyperlink{structMesh_a64c4b4488ba4d235f2b6e7c0e4d47cd7}{texCoord}}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ;}
+\DoxyCodeLine{\ \ uint32\_t\ \ \ \ \ \mbox{\hyperlink{structMesh_ad60502867a78d6e442172d1ea5b679d6}{nofIndices}}\ \ \ \ \ =\ 0\ \ \ \ \ \ \ \ \ \ \ \ \ ;}
+\DoxyCodeLine{\ \ glm::vec4\ \ \ \ \mbox{\hyperlink{structMesh_a12235d3eae977558b64d1f5ec3022db7}{diffuseColor}}\ \ \ =\ glm::vec4(1.f);}
+\DoxyCodeLine{\ \ \textcolor{keywordtype}{int}\ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structMesh_ad0ab81099a4d195182afafa8c03c8371}{diffuseTexture}}\ =\ -\/1\ \ \ \ \ \ \ \ \ \ \ \ ;}
+\DoxyCodeLine{\ \ \textcolor{keywordtype}{bool}\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structMesh_abc3edaf6225dd67400f33e59edc598c4}{doubleSided}}\ \ \ \ =\ false\ \ \ \ \ \ \ \ \ ;}
+\DoxyCodeLine{\};}
+
+\end{DoxyCodeInclude}
+ 
+\begin{DoxyCodeInclude}{0}
+\DoxyCodeLine{\textcolor{keyword}{struct\ }\mbox{\hyperlink{structBuffer}{Buffer}}\{}
+\DoxyCodeLine{\ \ \textcolor{keywordtype}{void}\ \textcolor{keyword}{const}*\ \mbox{\hyperlink{structBuffer_a8fbe8b3fba53c8ff7fcd44f9c4f463c7}{data}}\ =\ \textcolor{keyword}{nullptr};\ }
+\DoxyCodeLine{\ \ uint64\_t\ \ \ \ \mbox{\hyperlink{structBuffer_a3d37b3ab0942c1222347f8de7520f9ef}{size}}\ =\ 0\ \ \ \ \ \ ;\ }
+\DoxyCodeLine{\};}
+
+\end{DoxyCodeInclude}
+ 
+\begin{DoxyCodeInclude}{0}
+\DoxyCodeLine{\textcolor{keyword}{struct\ }\mbox{\hyperlink{structTexture}{Texture}}\{}
+\DoxyCodeLine{\ \ uint32\_t\ \mbox{\hyperlink{structTexture_a48c85d8e7c257d854238980f5bcc3b75}{width}}\ \ =\ 0;\ }
+\DoxyCodeLine{\ \ uint32\_t\ \mbox{\hyperlink{structTexture_a35691eb813ceb8467b436092b1c9d8ed}{height}}\ =\ 0;\ }
+\DoxyCodeLine{\ \ \mbox{\hyperlink{structImage}{Image}}\ \ \ \ \mbox{\hyperlink{structTexture_a64d1fdc3117ab704bc4c4c9696d7237e}{img}}\ \ \ \ \ \ \ ;\ }
+\DoxyCodeLine{\};}
+
+\end{DoxyCodeInclude}
+ Pro správné vytvoření command bufferu je potřeba projít kořeny modelu a vložit všechny uzly, které mají mesh. Procházejte stromy průchodem \href{https://en.wikipedia.org/wiki/Tree_traversal}{\texttt{ pre order}}. Uzly se mohou odkazovat na mesh nebo nemusí (pokud je mesh=-\/1).~\newline
+ \doxylink{structMesh}{Mesh} se může odkazovat na texturu nebo nemusí (pokud je diffuse\+Texture=-\/1).~\newline
+ V zásadě jde o to ke každému uzlu, ve kterém je odkaz na mesh, vytvořit \doxylink{structDrawCommand}{Draw\+Command} a vložit jej do \doxylink{structCommandBuffer}{Command\+Buffer} a vytvořit \doxylink{structVertexArray}{Vertex\+Array} a vložit jej do paměti grafické karty \doxylink{structGPUMemory}{GPUMemory}.~\newline
+ Je potřeba správně spočítat modelové matice, které se budují postupný pronásobováním z kořenového uzlu.~\newline
+ Vytvoření command bufferu lze napsat s výhodou rekurzivně. Pseudokód možné implementace\+: 
+\begin{DoxyCodeInclude}{0}
+\DoxyCodeLine{\textcolor{keywordtype}{void}\ student\_prepareNode(\mbox{\hyperlink{structGPUMemory}{GPUMemory}}\&mem,\mbox{\hyperlink{structCommandBuffer}{CommandBuffer}}\&cb,\mbox{\hyperlink{structNode}{Node}}\ \textcolor{keyword}{const}\&node,\mbox{\hyperlink{structModel}{Model}}\ \textcolor{keyword}{const}\&model,glm::mat4\ \textcolor{keyword}{const}\&prubeznaMatice,...)\{}
+\DoxyCodeLine{\ \ \textcolor{keywordflow}{if}(node.\mbox{\hyperlink{structNode_ad4e3fcf9fdbd325a83e87cfb7ab86554}{mesh}}>=0)\{}
+\DoxyCodeLine{\ \ \ \ \mbox{\hyperlink{structMesh}{Mesh}}\ mesh\ =\ model.\mbox{\hyperlink{structModel_a7f93cb54ea24bf7924d4f80108a08830}{meshes}}[node.\mbox{\hyperlink{structNode_ad4e3fcf9fdbd325a83e87cfb7ab86554}{mesh}}];}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ drawCounter;\ \textcolor{comment}{//\ pocitadlo\ kreslicich\ prikazu}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \textcolor{comment}{//\ vytvoření\ vertex\ array}}
+\DoxyCodeLine{\ \ \ \ \mbox{\hyperlink{structVertexArray}{VertexArray}}\ vao;}
+\DoxyCodeLine{\ \ \ \ vao.\mbox{\hyperlink{structVertexArray_a7648ec169177dbb70b495b51ffcfb606}{indexBufferID}}\ =\ mesh.\mbox{\hyperlink{structMesh_a6ee7d4182d7a50b63cafca5b0b66c715}{indexBufferID}};}
+\DoxyCodeLine{\ \ \ \ vao.\mbox{\hyperlink{structVertexArray_a89b9faa058891874f5bf63064deafe99}{indexOffset}}\ =\ ...;}
+\DoxyCodeLine{\ \ \ \ vao.indexType\ =\ ...;}
+\DoxyCodeLine{\ \ \ \ vao.vertexAttrib[0]\ =\ ...;\ \textcolor{comment}{//\ pozice}}
+\DoxyCodeLine{\ \ \ \ vao.vertexAttrib[1]\ =\ ...;\ \textcolor{comment}{//\ normala}}
+\DoxyCodeLine{\ \ \ \ vao.vertexAttrib[2]\ =\ ...;\ \textcolor{comment}{//\ texturovaci\ souradnice}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \textcolor{comment}{//\ vlozeni\ vao\ na\ spravne\ misto\ v\ pameti\ (aby\ jej\ bylo\ mozne\ najit\ }}
+\DoxyCodeLine{\ \ \ \ mem.vertexArrays[drawCounter]\ =\ vao;}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \mbox{\hyperlink{structBindVertexArrayCommand}{BindVertexArrayCommand}}\ bindVaoCmd;}
+\DoxyCodeLine{\ \ \ \ bindVaoCmd.\mbox{\hyperlink{structBindVertexArrayCommand_a2dedaac94feb65b7c932753adba273e9}{id}}\ =\ drawCounter;}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \mbox{\hyperlink{structDrawCommand}{DrawCommand}}\ drawCmd;}
+\DoxyCodeLine{\ \ \ \ drawCmd.backfaceCulling\ =\ ...;\ \textcolor{comment}{//\ pokud\ je\ double\ sided\ tak\ by\ se\ nemelo\ orezavat}}
+\DoxyCodeLine{\ \ \ \ drawCmd.\mbox{\hyperlink{structDrawCommand_a4a7376486faf9f07fccb7de82d86566b}{nofVertices}}\ =\ ...;\ \textcolor{comment}{//\ pocet\ vertexu}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \textcolor{comment}{//\ vlozeni\ bindVaoCmd\ a\ drawCmd\ do\ command\ buffer\ cb}}
+\DoxyCodeLine{\ \ \ \ cb.commands[...\ \ \ \ ]\ =\ bindVaoCmd;}
+\DoxyCodeLine{\ \ \ \ cb.commands[...\ +1\ ]\ =\ setBackfaceCulling;}
+\DoxyCodeLine{\ \ \ \ cb.commands[...\ +2\ ]\ =\ drawCmd\ \ \ ;}
+\DoxyCodeLine{\ \ \ \ }
+\DoxyCodeLine{\ \ \ \ \textcolor{comment}{//zapis\ uniformnich\ dat\ do\ pameti}}
+\DoxyCodeLine{\ \ \ \ ZKOBINUJ(prubeznaMatice,node.modelMatrix);}
+\DoxyCodeLine{\ \ \ \ vypocitej\ inverzni\ transponovanou\ matici\ pro\ normaly...}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ mem.uniforms[\mbox{\hyperlink{uniformLocations_8hpp_a241376a8739e67201690479ef6125052}{getUniformLocation}}(cmdID,MODEL\_MATRIX\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ )].m4\ =\ modelMatrix\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ;}
+\DoxyCodeLine{\ \ \ \ mem.uniforms[\mbox{\hyperlink{uniformLocations_8hpp_a241376a8739e67201690479ef6125052}{getUniformLocation}}(cmdID,INVERSE\_TRANSPOSE\_MODEL\_MATRIX)].m4\ =\ inverzniTransponovana\ Modelova;}
+\DoxyCodeLine{\ \ \ \ mem.uniforms[\mbox{\hyperlink{uniformLocations_8hpp_a241376a8739e67201690479ef6125052}{getUniformLocation}}(cmdID,DIFFUSE\_COLOR\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ )].v4\ =\ difuzni\ barva\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ;}
+\DoxyCodeLine{\ \ \ \ mem.uniforms[\mbox{\hyperlink{uniformLocations_8hpp_a241376a8739e67201690479ef6125052}{getUniformLocation}}(cmdID,TEXTURE\_ID\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ )].i1\ =\ \textcolor{keywordtype}{id}\ textury\ nebo\ -\/1\ pokud\ neni\ ;}
+\DoxyCodeLine{\ \ \ \ mem.uniforms[\mbox{\hyperlink{uniformLocations_8hpp_a241376a8739e67201690479ef6125052}{getUniformLocation}}(cmdID,DOUBLE\_SIDED\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ )].v1\ =\ \textcolor{keywordtype}{double}\ sided\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ;}
+\DoxyCodeLine{}
+\DoxyCodeLine{}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ writeToMemory(mem);}
+\DoxyCodeLine{\ \ \}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \textcolor{keywordflow}{for}(\textcolor{keywordtype}{size\_t}\ i=0;i<node.children.size();++i)}
+\DoxyCodeLine{\ \ \ \ prepareNode(mem,node.children[i],model,...);\ rekurze}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordtype}{void}\ prepareModel(\mbox{\hyperlink{structGPUMemory}{GPUMemory}}\&mem,\mbox{\hyperlink{structCommandBuffer}{CommandBuffer}}\&cb,\mbox{\hyperlink{structModel}{Model}}\ \textcolor{keyword}{const}\&model)\{}
+\DoxyCodeLine{\ \ mem.\mbox{\hyperlink{structGPUMemory_a4755d327262c8020766718bb31f92d0b}{buffers}}\ \ =\ ...;}
+\DoxyCodeLine{\ \ mem.textures\ =\ ...;}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ glm::mat4\ jednotkovaMatrice\ =\ glm::mat4(1.f);}
+\DoxyCodeLine{\ \ \textcolor{keywordflow}{for}(\textcolor{keywordtype}{size\_t}\ i=0;i<model.roots.size();++i)}
+\DoxyCodeLine{\ \ \ \ prepareNode(mem,cb,model.roots[i],jednotkovaMatrice,...);}
+\DoxyCodeLine{\}}
+
+\end{DoxyCodeInclude}
+ Příklad, jak připravit command buffer, můžete najít v souboru examples/phong\+Method.\+cpp 
+\begin{DoxyCodeInclude}{0}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordtype}{void}\ vertexShader(\mbox{\hyperlink{structOutVertex}{OutVertex}}\&outVertex,\mbox{\hyperlink{structInVertex}{InVertex}}\ \textcolor{keyword}{const}\&inVertex,\mbox{\hyperlink{structShaderInterface}{ShaderInterface}}\ \textcolor{keyword}{const}\&si)\{}
+\DoxyCodeLine{\ \ \textcolor{keyword}{auto}\ \textcolor{keyword}{const}\ pos\ =\ glm::vec4(inVertex.\mbox{\hyperlink{structInVertex_a90ec7fd87b6a7f776638cd5aa23f2ecb}{attributes}}[0].\mbox{\hyperlink{unionAttrib_ae33a694a9c3ba540167b192fd83eb767}{v3}},1.f);}
+\DoxyCodeLine{\ \ \textcolor{keyword}{auto}\ \textcolor{keyword}{const}\&nor\ =\ inVertex.\mbox{\hyperlink{structInVertex_a90ec7fd87b6a7f776638cd5aa23f2ecb}{attributes}}[1].\mbox{\hyperlink{unionAttrib_ae33a694a9c3ba540167b192fd83eb767}{v3}};}
+\DoxyCodeLine{\ \ \textcolor{keyword}{auto}\ \textcolor{keyword}{const}\&viewMatrix\ \ \ \ \ \ \ =\ si.\mbox{\hyperlink{structShaderInterface_a03009720e763e8efe2bfa4d4607dcc10}{uniforms}}[0].\mbox{\hyperlink{unionUniform_aec09b95ed538f79020d6e70323b27771}{m4}};}
+\DoxyCodeLine{\ \ \textcolor{keyword}{auto}\ \textcolor{keyword}{const}\&projectionMatrix\ =\ si.\mbox{\hyperlink{structShaderInterface_a03009720e763e8efe2bfa4d4607dcc10}{uniforms}}[1].\mbox{\hyperlink{unionUniform_aec09b95ed538f79020d6e70323b27771}{m4}};}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \textcolor{keyword}{auto}\ mvp\ =\ projectionMatrix*viewMatrix;}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ outVertex.\mbox{\hyperlink{structOutVertex_a9ca7de8eef8d688163497a7d34c76d7b}{gl\_Position}}\ =\ mvp\ *\ pos;}
+\DoxyCodeLine{\ \ outVertex.\mbox{\hyperlink{structOutVertex_a94f0934abc3c37a700428b7a6dd005e7}{attributes}}[0].\mbox{\hyperlink{unionAttrib_ae33a694a9c3ba540167b192fd83eb767}{v3}}\ =\ pos;}
+\DoxyCodeLine{\ \ outVertex.\mbox{\hyperlink{structOutVertex_a94f0934abc3c37a700428b7a6dd005e7}{attributes}}[1].\mbox{\hyperlink{unionAttrib_ae33a694a9c3ba540167b192fd83eb767}{v3}}\ =\ nor;}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordtype}{void}\ fragmentShader(\mbox{\hyperlink{structOutFragment}{OutFragment}}\&outFragment,\mbox{\hyperlink{structInFragment}{InFragment}}\ \textcolor{keyword}{const}\&inFragment,\mbox{\hyperlink{structShaderInterface}{ShaderInterface}}\ \textcolor{keyword}{const}\&si)\{}
+\DoxyCodeLine{\ \ \textcolor{keyword}{auto}\ \textcolor{keyword}{const}\&\ light\ \ \ \ \ \ \ \ \ \ =\ si.\mbox{\hyperlink{structShaderInterface_a03009720e763e8efe2bfa4d4607dcc10}{uniforms}}[2].\mbox{\hyperlink{unionUniform_a70392e438c775c6213e6c2dec76b29c4}{v3}};}
+\DoxyCodeLine{\ \ \textcolor{keyword}{auto}\ \textcolor{keyword}{const}\&\ cameraPosition\ =\ si.\mbox{\hyperlink{structShaderInterface_a03009720e763e8efe2bfa4d4607dcc10}{uniforms}}[3].\mbox{\hyperlink{unionUniform_a70392e438c775c6213e6c2dec76b29c4}{v3}};}
+\DoxyCodeLine{\ \ \textcolor{keyword}{auto}\ \textcolor{keyword}{const}\&\ vpos\ \ \ \ \ \ \ \ \ \ \ =\ inFragment.\mbox{\hyperlink{structInFragment_a18c45ea10a91005cd27dd6554202a4b2}{attributes}}[0].\mbox{\hyperlink{unionAttrib_ae33a694a9c3ba540167b192fd83eb767}{v3}};}
+\DoxyCodeLine{\ \ \textcolor{keyword}{auto}\ \textcolor{keyword}{const}\&\ vnor\ \ \ \ \ \ \ \ \ \ \ =\ inFragment.\mbox{\hyperlink{structInFragment_a18c45ea10a91005cd27dd6554202a4b2}{attributes}}[1].\mbox{\hyperlink{unionAttrib_ae33a694a9c3ba540167b192fd83eb767}{v3}};}
+\DoxyCodeLine{\ \ \textcolor{keyword}{auto}\ vvnor\ =\ glm::normalize(vnor);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \textcolor{keyword}{auto}\ l\ =\ glm::normalize(light-\/vpos);}
+\DoxyCodeLine{\ \ \textcolor{keywordtype}{float}\ diffuseFactor\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ =\ glm::dot(l,\ vvnor);}
+\DoxyCodeLine{\ \ \textcolor{keywordflow}{if}\ (diffuseFactor\ <\ 0.f)\ diffuseFactor\ =\ 0.f;}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \textcolor{keyword}{auto}\ v\ =\ glm::normalize(cameraPosition-\/vpos);}
+\DoxyCodeLine{\ \ \textcolor{keyword}{auto}\ r\ =\ -\/glm::reflect(v,vvnor);}
+\DoxyCodeLine{\ \ \textcolor{keywordtype}{float}\ specularFactor\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ =\ glm::dot(r,\ l);}
+\DoxyCodeLine{\ \ \textcolor{keywordflow}{if}\ (specularFactor\ <\ 0.f)\ specularFactor\ =\ 0.f;}
+\DoxyCodeLine{\ \ \textcolor{keywordtype}{float}\ \textcolor{keyword}{const}\ shininess\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ =\ 40.f;}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \textcolor{keywordflow}{if}\ (diffuseFactor\ <\ 0)}
+\DoxyCodeLine{\ \ \ \ specularFactor\ =\ 0;}
+\DoxyCodeLine{\ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{\ \ \ \ specularFactor\ =\ powf(specularFactor,\ shininess);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \textcolor{keywordtype}{float}\ t\ =\ vvnor[1];}
+\DoxyCodeLine{\ \ \textcolor{keywordflow}{if}(t<0.f)t=0.f;}
+\DoxyCodeLine{\ \ t*=t;}
+\DoxyCodeLine{\ \ \textcolor{keyword}{auto}\ materialDiffuseColor\ =\ glm::mix(glm::vec3(0.f,1.f,0.f),glm::vec3(1.f,1.f,1.f),t);}
+\DoxyCodeLine{\ \ }
+\DoxyCodeLine{\ \ \textcolor{keywordtype}{float}\ \textcolor{keyword}{const}\ nofStripes\ =\ 10;}
+\DoxyCodeLine{\ \ \textcolor{keywordtype}{float}\ factor\ =\ 1.f\ /\ nofStripes\ *\ 2.f;}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \textcolor{keyword}{auto}\ xs\ =\ \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{float}\textcolor{keyword}{>}(glm::mod(vpos.x+glm::sin(vpos.y*10.f)*.1f,factor)/factor\ >\ 0.5);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ materialDiffuseColor\ =\ glm::mix(glm::mix(glm::vec3(0.f,.5f,0.f),glm::vec3(1.f,1.f,0.f),xs),glm::vec3(1.f),t);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \textcolor{keyword}{auto}\ materialSpecularColor\ =\ glm::vec3(1.f);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \textcolor{keyword}{auto}\ diffuseColor\ \ =\ materialDiffuseColor\ \ *\ diffuseFactor;}
+\DoxyCodeLine{\ \ \textcolor{keyword}{auto}\ specularColor\ =\ materialSpecularColor\ *\ specularFactor;}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \textcolor{keyword}{auto}\ \textcolor{keyword}{const}\ color\ =\ glm::min(diffuseColor\ +\ specularColor,glm::vec3(1.f));}
+\DoxyCodeLine{\ \ outFragment.\mbox{\hyperlink{structOutFragment_a9670bf5a31a5c23fccdbeaad959cc3cf}{gl\_FragColor}}\ =\ glm::vec4(color,1.f);}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{}
+\DoxyCodeLine{Method::Method(\mbox{\hyperlink{structGPUMemory}{GPUMemory}}\&m,MethodConstructionData\ \textcolor{keyword}{const}*):\ ::Method(m)\{}
+\DoxyCodeLine{\ \ mem.buffers[0].data\ =\ (\textcolor{keywordtype}{void}\ \textcolor{keyword}{const}*)bunnyVertices;}
+\DoxyCodeLine{\ \ mem.buffers[0].size\ =\ \textcolor{keyword}{sizeof}(bunnyVertices);}
+\DoxyCodeLine{\ \ mem.buffers[1].data\ =\ (\textcolor{keywordtype}{void}\ \textcolor{keyword}{const}*)bunnyIndices;}
+\DoxyCodeLine{\ \ mem.buffers[1].size\ =\ \textcolor{keyword}{sizeof}(bunnyIndices);}
+\DoxyCodeLine{\ \ mem.programs[0].vertexShader\ \ \ =\ vertexShader;}
+\DoxyCodeLine{\ \ mem.programs[0].fragmentShader\ =\ fragmentShader;}
+\DoxyCodeLine{\ \ mem.programs[0].vs2fs[0]\ \ \ \ \ \ \ =\ \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a8cc36b907e294f5e78e1b479cac369ddaa7c116def9f212182aa52ab1e936d77d}{AttribType::VEC3}};}
+\DoxyCodeLine{\ \ mem.programs[0].vs2fs[1]\ \ \ \ \ \ \ =\ \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a8cc36b907e294f5e78e1b479cac369ddaa7c116def9f212182aa52ab1e936d77d}{AttribType::VEC3}};}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ mem.vertexArrays[0].vertexAttrib[0].bufferID\ \ \ =\ 0\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ;}
+\DoxyCodeLine{\ \ mem.vertexArrays[0].vertexAttrib[0].type\ \ \ \ \ \ \ =\ \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a8cc36b907e294f5e78e1b479cac369ddaa7c116def9f212182aa52ab1e936d77d}{AttribType::VEC3}};}
+\DoxyCodeLine{\ \ mem.vertexArrays[0].vertexAttrib[0].stride\ \ \ \ \ =\ \textcolor{keyword}{sizeof}(BunnyVertex);}
+\DoxyCodeLine{\ \ mem.vertexArrays[0].vertexAttrib[0].offset\ \ \ \ \ =\ 0\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ;}
+\DoxyCodeLine{\ \ mem.vertexArrays[0].vertexAttrib[1].bufferID\ \ \ =\ 0\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ;}
+\DoxyCodeLine{\ \ mem.vertexArrays[0].vertexAttrib[1].type\ \ \ \ \ \ \ =\ \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a8cc36b907e294f5e78e1b479cac369ddaa7c116def9f212182aa52ab1e936d77d}{AttribType::VEC3}};}
+\DoxyCodeLine{\ \ mem.vertexArrays[0].vertexAttrib[1].stride\ \ \ \ \ =\ \textcolor{keyword}{sizeof}(BunnyVertex);}
+\DoxyCodeLine{\ \ mem.vertexArrays[0].vertexAttrib[1].offset\ \ \ \ \ =\ \textcolor{keyword}{sizeof}(glm::vec3)\ \ ;}
+\DoxyCodeLine{\ \ mem.vertexArrays[0].indexBufferID\ =\ 1\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ;}
+\DoxyCodeLine{\ \ mem.vertexArrays[0].indexOffset\ \ \ =\ 0\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ;}
+\DoxyCodeLine{\ \ mem.vertexArrays[0].indexType\ \ \ \ \ =\ \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a862161defe984b09e24dfec9e0540a3eac8bd5bedff8ef192d39a962afc0e19ee}{IndexType::U32}};}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_ac92555f5be8a27d6c2538eb56e8e8dd6}{pushClearColorCommand}}(commandBuffer,glm::vec4(.5,.5,.5,1));}
+\DoxyCodeLine{\ \ \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_ab21e6fb22fc5a0695585d9b49d488419}{pushClearDepthCommand}}(commandBuffer,10e10f);}
+\DoxyCodeLine{\ \ \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_ad35fa691c90051fd7b24f95fb6c4b55d}{pushBindProgramCommand}}(commandBuffer,0);}
+\DoxyCodeLine{\ \ \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a6a83b6ff420e4e17a9aef5a4a11a2499}{pushBindVertexArrayCommand}}(commandBuffer,0);}
+\DoxyCodeLine{\ \ \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_ad08d6b1878961c799d005fa3e3778f40}{pushDrawCommand}}\ (commandBuffer,\textcolor{keyword}{sizeof}(bunnyIndices)/\textcolor{keyword}{sizeof}(VertexIndex));}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordtype}{void}\ Method::onDraw(SceneParam\ \textcolor{keyword}{const}\&sceneParam)\{}
+\DoxyCodeLine{\ \ mem.uniforms[0].m4\ =\ sceneParam.view\ \ ;}
+\DoxyCodeLine{\ \ mem.uniforms[1].m4\ =\ sceneParam.proj\ \ ;}
+\DoxyCodeLine{\ \ mem.uniforms[2].v3\ =\ sceneParam.light\ ;}
+\DoxyCodeLine{\ \ mem.uniforms[3].v3\ =\ sceneParam.camera;}
+\DoxyCodeLine{\ \ }
+\DoxyCodeLine{\ \ gpuRun(mem,commandBuffer);}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{}
+
+\end{DoxyCodeInclude}
+ K tomuto úkolu se vážou testy 43. až 55 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{./izgProject\ -\/c\ -\/-\/test\ 43}
+\DoxyCodeLine{./izgProject\ -\/c\ -\/-\/test\ 44}
+\DoxyCodeLine{...}
+\DoxyCodeLine{./izgProject\ -\/c\ -\/-\/test\ 55}
+
+\end{DoxyCode}
+\hypertarget{p15_drawModel_modelTraverse}{}\doxysubsection{\texorpdfstring{Testy 43-\/48 – Průchod modelem}{Testy 43-48 – Průchod modelem}}\label{p15_drawModel_modelTraverse}
+Testy 43. -- 48. kontrolují, jestli správně vytváříte command buffer.\hypertarget{p15_drawModel_modelMemory}{}\doxysubsection{\texorpdfstring{Testy 48-\/56 – paměť}{Testy 48-56 – paměť}}\label{p15_drawModel_modelMemory}
+Testy 48. -- 56. kontrolují, jestli správně plníte paměť grafické karty.\hypertarget{p15_drawModel_drawModel_vs}{}\doxysection{\texorpdfstring{Úkol 9 – Vykreslování modelů – vertex shader student\+\_\+draw\+Model\+\_\+vertex\+Shader}{Úkol 9 – Vykreslování modelů – vertex shader student\_drawModel\_vertexShader}}\label{p15_drawModel_drawModel_vs}
+Funkce \doxylink{prepareModel_8cpp_a034552bbcfbd934b738aacf12ea64839}{student\+\_\+draw\+Model\+\_\+vertex\+Shader} reprezentuje vertex shader pro zobrazení modelů.~\newline
+ Jeho funkcionalita spočívá v transformování vrcholů pomocí matic.~\newline
+ Vstupem jsou vrcholy, které mají pozici (3f), normálu (3f) a texturovací souřadnice (2f) (atributy 0, 1 a 2).~\newline
+ Vertex Attributy \doxylink{structInVertex}{In\+Vertex}\+: 
+\begin{DoxyItemize}
+\item in\+Vertex.\+attributes\mbox{[}0\mbox{]}.v3 -- pozice vertexu v model-\/space 
+\item in\+Vertex.\+attributes\mbox{[}1\mbox{]}.v3 -- normála vertexu v model-\/space 
+\item in\+Vertex.\+attributes\mbox{[}2\mbox{]}.v2 -- tex. koordináty 
+\end{DoxyItemize}Výstupem jsou vrcholy, které mají pozici (3f) a normálu (3f) ve world space, texturovací souřadnice (2f) a pozici vrcholu v clip-\/space světla (4f) (atributy 0, 1, 2, 3).~\newline
+ Vertex Attributy \doxylink{structOutVertex}{Out\+Vertex}\+: 
+\begin{DoxyItemize}
+\item out\+Vertex.\+attributes\mbox{[}0\mbox{]}.v3 -- pozice vertexu ve world-\/space 
+\item out\+Vertex.\+attributes\mbox{[}1\mbox{]}.v3 -- normála vertexu ve world-\/space 
+\item out\+Vertex.\+attributes\mbox{[}2\mbox{]}.v2 -- tex. koordináty 
+\item out\+Vertex.\+attributes\mbox{[}3\mbox{]}.v4 -- pozice vertexu v clip-\/space světla. 
+\end{DoxyItemize}Uniformní proměnné obsahují projection\+View matici, modelovou matici, a inverzní transponovanou matici.~\newline
+ Uniformní proměnné Uniforms\+: 
+\begin{DoxyItemize}
+\item si.\+uniforms\mbox{[}get\+Uniform\+Location(gl\+\_\+\+Draw\+ID,\+PROJECTION\+\_\+\+VIEW\+\_\+\+MATRIX        )\mbox{]}.m4 -- camera\+Projection\+View projekční a view matice kamery 
+\item si.\+uniforms\mbox{[}get\+Uniform\+Location(gl\+\_\+\+Draw\+ID,\+USE\+\_\+\+SHADOW\+\_\+\+MAP\+\_\+\+MATRIX         )\mbox{]}.m4 -- light\+Projection\+View projekční a view matice světla -- pro stíny 
+\item si.\+uniforms\mbox{[}get\+Uniform\+Location(gl\+\_\+\+Draw\+ID,\+MODEL\+\_\+\+MATRIX                  )\mbox{]}.m4 -- modelová matice 
+\item si.\+uniforms\mbox{[}get\+Uniform\+Location(gl\+\_\+\+Draw\+ID,\+INVERSE\+\_\+\+TRANSPOSE\+\_\+\+MODEL\+\_\+\+MATRIX)\mbox{]}.m4 -- inverzní transponovaná matice 
+\item s.\+gl\+\_\+\+Draw\+ID -- číslo vykreslovacího příkazu 
+\end{DoxyItemize}
+
+Pozice by se měla pronásobit modelovou maticí "{}m\texorpdfstring{$\ast$}{*}glm\+::vec4(pos,1.\+f)"{}, aby se ztransformovala do world-\/space.~\newline
+ Normála by se měla pronásobit inverzní transponovanou modelovou maticí "{}itm\texorpdfstring{$\ast$}{*}glm\+::vec4(nor,0.\+f)"{} aby se dostala do world-\/space.~\newline
+ Texturovací souřadnice se pouze přepošlou.~\newline
+ Pozice vrcholu gl\+\_\+\+Position by měla být vypočtena pronásobením camera\+Projection\+View\texorpdfstring{$\ast$}{*}model\texorpdfstring{$\ast$}{*}pos.~\newline
+ Pozice vrcholu v prostoru clip-\/space prostoru světla pro stíny by se měla vypočítat light\+Projection\+View\texorpdfstring{$\ast$}{*}model\texorpdfstring{$\ast$}{*}pos.~\newline
+ K tomuto úkolu se váže tests 57. \hypertarget{p15_drawModel_vertex_task}{}\doxysubsection{\texorpdfstring{Test 57 – Vertex Shader}{Test 57 – Vertex Shader}}\label{p15_drawModel_vertex_task}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{izgProject\ -\/c\ -\/-\/test\ 57}
+
+\end{DoxyCode}
+\hypertarget{p15_drawModel_drawModel_fs}{}\doxysection{\texorpdfstring{Úkol 10 – Vykreslování modelů – fragment shader draw\+Mode\+\_\+fragment\+Shader}{Úkol 10 – Vykreslování modelů – fragment shader drawMode\_fragmentShader}}\label{p15_drawModel_drawModel_fs}
+Funkce \doxylink{prepareModel_8cpp_a8fd935a09a7659cb2858aca6d22d827c}{student\+\_\+draw\+Model\+\_\+fragment\+Shader} reprezentuje fragment shader pro zobrazení modelů.~\newline
+ Jeho funkcionalita spočívá v obarvování fragmentů, počítání lambertova osvětlovacího modelu a výpočtu stínu.~\newline
+ Vstupem jsou fragmenty, které mají\+: pozici (3f), normálu (3f), texturovací souřadnice (2f) a pozici v clip-\/space prostoru světla pro čtení ze stínové mapy. (atributy 0,1,2,3).~\newline
+ Fragment Attributy \doxylink{structInFragment}{In\+Fragment}\+: 
+\begin{DoxyItemize}
+\item in\+Fragment.\+attributes\mbox{[}0\mbox{]}.v3 -- pozice fragmentu ve world-\/space 
+\item in\+Fragment.\+attributes\mbox{[}1\mbox{]}.v3 -- normála fragmentu ve world-\/space 
+\item in\+Fragment.\+attributes\mbox{[}2\mbox{]}.v2 -- tex. koordináty 
+\item in\+Fragment.\+attributes\mbox{[}3\mbox{]}.v4 -- pozice fragmentu v clip-\/space světla pro adresaci stínové mapy a výpočet stínu 
+\end{DoxyItemize}Výstupem je fragment s barvou a správnou průhledností $\alpha$.
+
+Uniformní proměnné obsahují pozici světla (3f), pozici kamery (3f), difuzní barvu (4f), číslo textury (1i) a příznak double\+Sided (1f).~\newline
+ Vzhledem k tomu, že má každý mesh jinou texturu a jiné nastavení, je nutné najít správné textury podle gl\+\_\+\+Draw\+ID.~\newline
+ Uniformní proměnné Uniforms\+: 
+\begin{DoxyItemize}
+\item si.\+uniforms\mbox{[}get\+Uniform\+Location(gl\+\_\+\+Draw\+ID,\+LIGHT\+\_\+\+POSITION     )\mbox{]}.v3 -- pozice světla ve world-\/space 
+\item si.\+uniforms\mbox{[}get\+Uniform\+Location(gl\+\_\+\+Draw\+ID,\+CAMERA\+\_\+\+POSITION    )\mbox{]}.v3 -- pozice kamery ve world-\/space 
+\item si.\+uniforms\mbox{[}get\+Uniform\+Location(gl\+\_\+\+Draw\+ID,\+SHADOWMAP\+\_\+\+ID       )\mbox{]}.i1 -- číslo textury, která obsahuje stínovou mapu, nebo -\/1 pokud stíny nejsou 
+\item si.\+uniforms\mbox{[}get\+Uniform\+Location(gl\+\_\+\+Draw\+ID,\+AMBIENT\+\_\+\+LIGHT\+\_\+\+COLOR)\mbox{]}.v3 -- barva ambientního světla 
+\item si.\+uniforms\mbox{[}get\+Uniform\+Location(gl\+\_\+\+Draw\+ID,\+LIGHT\+\_\+\+COLOR        )\mbox{]}.v3 -- barva světla 
+\item si.\+uniforms\mbox{[}get\+Uniform\+Location(gl\+\_\+\+Draw\+ID,\+DIFFUSE\+\_\+\+COLOR      )\mbox{]}.v4 -- difuzní barva 
+\item si.\+uniforms\mbox{[}get\+Uniform\+Location(gl\+\_\+\+Draw\+ID,\+TEXTURE\+\_\+\+ID         )\mbox{]}.i1 -- číslo textury nebo -\/1 pokud textura není 
+\item si.\+uniforms\mbox{[}get\+Uniform\+Location(gl\+\_\+\+Draw\+ID,\+DOUBLE\+\_\+\+SIDED       )\mbox{]}.v1 -- příznak double\+Sided (1.\+f pokud je, 0.\+f pokud není) 
+\end{DoxyItemize}Vstupní normálu byste měli znormalizovat N=glm\+::normalize(nor).~\newline
+ Difuzní barva materiálu je buď uložena v uniformní proměnné nebo v textuře.~\newline
+ Rozhoduje se podle toho, jestli je čístlo textury záporné nebo ne.~\newline
+ Pokud je nastaven příznak double\+Sided (je \texorpdfstring{$>$}{>} 0), jedná se o doustraný povrch. ~\newline
+ V takovém případě je nutné otočit normálu, pokud je otočená od kamery (využijte pozici kamery v uniformní proměnné). ~\newline
+ Spočítejte lambertův osvětlovací model se stíny pomocí shadow mappingu. ~\newline
+ Spočítejte, zda je fragment ve stínu. ~\newline
+ K tomu je potřeba vyčíst hloubku ze stínové mapy a porovnat ji se vzdáleností ke světlu.~\newline
+ Testy vás povedou.~\newline
+ K tomuto úkolu se váže testy 58-\/62. \hypertarget{p15_drawModel_fragment_task}{}\doxysubsection{\texorpdfstring{Test 58-\/62 – Fragment Shader}{Test 58-62 – Fragment Shader}}\label{p15_drawModel_fragment_task}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{izgProject\ -\/c\ -\/-\/test\ 58}
+\DoxyCodeLine{izgProject\ -\/c\ -\/-\/test\ 59}
+\DoxyCodeLine{izgProject\ -\/c\ -\/-\/test\ 60}
+\DoxyCodeLine{izgProject\ -\/c\ -\/-\/test\ 61}
+\DoxyCodeLine{izgProject\ -\/c\ -\/-\/test\ 62}
+
+\end{DoxyCode}
+
+
+Ukázka, jak se počítá celý shadow mapping je v souboru\+: 
+\begin{DoxyCodeInclude}{0}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{class\ }Method:\ \textcolor{keyword}{public}\ ::Method\{}
+\DoxyCodeLine{\ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{\ \ \ \ Method(\mbox{\hyperlink{structGPUMemory}{GPUMemory}}\&m,MethodConstructionData\ \textcolor{keyword}{const}*);}
+\DoxyCodeLine{\ \ \ \ \textcolor{keyword}{virtual}\ \string~Method()\{\}}
+\DoxyCodeLine{\ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ onDraw(SceneParam\ \textcolor{keyword}{const}\&sceneParam)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{\ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ onUpdate(\textcolor{keywordtype}{float}\ dt)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{\ \ \ \ \textcolor{keywordtype}{float}\ time\ =\ 0;}
+\DoxyCodeLine{\ \ \ \ \mbox{\hyperlink{structCommandBuffer}{CommandBuffer}}\ commandBuffer;}
+\DoxyCodeLine{\ \ \ \ TextureData\ shadowMap;}
+\DoxyCodeLine{\};}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{//\ struktura\ reprezentujici\ vertex}}
+\DoxyCodeLine{\textcolor{keyword}{struct\ }Vertex\{}
+\DoxyCodeLine{\ \ vec3\ pos;\ \textcolor{comment}{//\ pozice}}
+\DoxyCodeLine{\ \ vec3\ col;\ \textcolor{comment}{//\ barva}}
+\DoxyCodeLine{\};}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{//\ vertex\ sceny\ -\/\ dva\ čtverce,\ jeden\ zeleny\ a\ druhy\ červený}}
+\DoxyCodeLine{Vertex\ \textcolor{keyword}{const}\ vertices[]\ =\ \{}
+\DoxyCodeLine{\ \ \{vec3(-\/8,8,-\/8),vec3(1,0,0)\},}
+\DoxyCodeLine{\ \ \{vec3(+8,8,-\/8),vec3(1,0,0)\},}
+\DoxyCodeLine{\ \ \{vec3(-\/8,8,+8),vec3(1,0,0)\},}
+\DoxyCodeLine{\ \ \{vec3(-\/8,8,+8),vec3(1,0,0)\},}
+\DoxyCodeLine{\ \ \{vec3(+8,8,-\/8),vec3(1,0,0)\},}
+\DoxyCodeLine{\ \ \{vec3(+8,8,+8),vec3(1,0,0)\},}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \{vec3(-\/100,0,-\/100),vec3(0,1,0)\},}
+\DoxyCodeLine{\ \ \{vec3(+100,0,-\/100),vec3(0,1,0)\},}
+\DoxyCodeLine{\ \ \{vec3(-\/100,0,+100),vec3(0,1,0)\},}
+\DoxyCodeLine{\ \ \{vec3(-\/100,0,+100),vec3(0,1,0)\},}
+\DoxyCodeLine{\ \ \{vec3(+100,0,-\/100),vec3(0,1,0)\},}
+\DoxyCodeLine{\ \ \{vec3(+100,0,+100),vec3(0,1,0)\},}
+\DoxyCodeLine{}
+\DoxyCodeLine{\};}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{//\ vertex\ shader\ pro\ vytvoření\ shadow\ mapy}}
+\DoxyCodeLine{\textcolor{keywordtype}{void}\ createShadowMap\_vs(\mbox{\hyperlink{structOutVertex}{OutVertex}}\&outVertex,\mbox{\hyperlink{structInVertex}{InVertex}}\ \textcolor{keyword}{const}\&inVertex,\mbox{\hyperlink{structShaderInterface}{ShaderInterface}}\ \textcolor{keyword}{const}\&si)\{}
+\DoxyCodeLine{\ \ \textcolor{keyword}{auto}\ gl\_VertexID\ =\ inVertex.\mbox{\hyperlink{structInVertex_aa4d31911053492bffe4b41dae12ee000}{gl\_VertexID}};}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \textcolor{comment}{//\ light\ view\ matice}}
+\DoxyCodeLine{\ \ \textcolor{keyword}{auto}\ view\ =\ si.\mbox{\hyperlink{structShaderInterface_a03009720e763e8efe2bfa4d4607dcc10}{uniforms}}[2].\mbox{\hyperlink{unionUniform_aec09b95ed538f79020d6e70323b27771}{m4}};}
+\DoxyCodeLine{\ \ \textcolor{comment}{//\ light\ projekční\ matice\ }}
+\DoxyCodeLine{\ \ \textcolor{keyword}{auto}\ proj\ =\ si.\mbox{\hyperlink{structShaderInterface_a03009720e763e8efe2bfa4d4607dcc10}{uniforms}}[3].\mbox{\hyperlink{unionUniform_aec09b95ed538f79020d6e70323b27771}{m4}};}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \textcolor{comment}{//\ vypočet\ pozice\ vrcholu\ v\ clip-\/space}}
+\DoxyCodeLine{\ \ outVertex.\mbox{\hyperlink{structOutVertex_a9ca7de8eef8d688163497a7d34c76d7b}{gl\_Position}}\ =\ view*vec4(vertices[gl\_VertexID].pos,1.f);}
+\DoxyCodeLine{\ \ outVertex.\mbox{\hyperlink{structOutVertex_a9ca7de8eef8d688163497a7d34c76d7b}{gl\_Position}}.z\ -\/=\ .5f;\ \textcolor{comment}{//\ bias\ (proti\ self\ shadowingu)}}
+\DoxyCodeLine{\ \ outVertex.\mbox{\hyperlink{structOutVertex_a9ca7de8eef8d688163497a7d34c76d7b}{gl\_Position}}\ =\ proj\ *\ outVertex.\mbox{\hyperlink{structOutVertex_a9ca7de8eef8d688163497a7d34c76d7b}{gl\_Position}};}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{//\ nepotřebujeme\ fragment\ shader,\ stačí\ nám\ hloubka}}
+\DoxyCodeLine{\textcolor{keywordtype}{void}\ createShadowMap\_fs(\mbox{\hyperlink{structOutFragment}{OutFragment}}\&,\mbox{\hyperlink{structInFragment}{InFragment}}\ \textcolor{keyword}{const}\&,\mbox{\hyperlink{structShaderInterface}{ShaderInterface}}\ \textcolor{keyword}{const}\&)\{}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{//\ vertex\ shader\ pro\ výpočet\ stínu}}
+\DoxyCodeLine{\textcolor{keywordtype}{void}\ scene\_vs(\mbox{\hyperlink{structOutVertex}{OutVertex}}\&outVertex,\mbox{\hyperlink{structInVertex}{InVertex}}\ \textcolor{keyword}{const}\&inVertex,\mbox{\hyperlink{structShaderInterface}{ShaderInterface}}\ \textcolor{keyword}{const}\&si)\{}
+\DoxyCodeLine{\ \ \textcolor{comment}{//\ číslo\ vrcholu}}
+\DoxyCodeLine{\ \ \textcolor{keyword}{auto}\ gl\_VertexID\ =\ inVertex.\mbox{\hyperlink{structInVertex_aa4d31911053492bffe4b41dae12ee000}{gl\_VertexID}};}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \textcolor{comment}{//\ view\ matice\ kamery}}
+\DoxyCodeLine{\ \ \textcolor{keyword}{auto}\ view\ =\ si.\mbox{\hyperlink{structShaderInterface_a03009720e763e8efe2bfa4d4607dcc10}{uniforms}}[0].\mbox{\hyperlink{unionUniform_aec09b95ed538f79020d6e70323b27771}{m4}};}
+\DoxyCodeLine{\ \ \textcolor{comment}{//\ projekční\ matice\ kamery}}
+\DoxyCodeLine{\ \ \textcolor{keyword}{auto}\ proj\ =\ si.\mbox{\hyperlink{structShaderInterface_a03009720e763e8efe2bfa4d4607dcc10}{uniforms}}[1].\mbox{\hyperlink{unionUniform_aec09b95ed538f79020d6e70323b27771}{m4}};}
+\DoxyCodeLine{\ \ \textcolor{comment}{//\ view\ matice\ světla}}
+\DoxyCodeLine{\ \ \textcolor{keyword}{auto}\ lightView\ =\ si.\mbox{\hyperlink{structShaderInterface_a03009720e763e8efe2bfa4d4607dcc10}{uniforms}}[2].\mbox{\hyperlink{unionUniform_aec09b95ed538f79020d6e70323b27771}{m4}};}
+\DoxyCodeLine{\ \ \textcolor{comment}{//\ projekční\ matice\ světla}}
+\DoxyCodeLine{\ \ \textcolor{keyword}{auto}\ lightProj\ =\ si.\mbox{\hyperlink{structShaderInterface_a03009720e763e8efe2bfa4d4607dcc10}{uniforms}}[3].\mbox{\hyperlink{unionUniform_aec09b95ed538f79020d6e70323b27771}{m4}};}
+\DoxyCodeLine{\ \ \textcolor{comment}{//\ bias\ matice\ světla}}
+\DoxyCodeLine{\ \ \textcolor{keyword}{auto}\ lightBias\ =\ si.\mbox{\hyperlink{structShaderInterface_a03009720e763e8efe2bfa4d4607dcc10}{uniforms}}[4].\mbox{\hyperlink{unionUniform_aec09b95ed538f79020d6e70323b27771}{m4}};}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \textcolor{comment}{//\ pozice\ vertexu\ ve\ world-\/space}}
+\DoxyCodeLine{\ \ \textcolor{keyword}{auto}\ vertex\ =\ vec4(vertices[gl\_VertexID].pos,1.f);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \textcolor{comment}{//\ zápis\ barvy}}
+\DoxyCodeLine{\ \ outVertex.\mbox{\hyperlink{structOutVertex_a94f0934abc3c37a700428b7a6dd005e7}{attributes}}[0].\mbox{\hyperlink{unionAttrib_ae33a694a9c3ba540167b192fd83eb767}{v3}}\ =\ vertices[gl\_VertexID].col;}
+\DoxyCodeLine{\ \ \textcolor{comment}{//\ zápis\ pozice\ vertexu\ v\ clip-\/space\ světla,\ tady\ jsou\ uvedeny\ všechny\ matice\ explicitně}}
+\DoxyCodeLine{\ \ outVertex.\mbox{\hyperlink{structOutVertex_a94f0934abc3c37a700428b7a6dd005e7}{attributes}}[1].\mbox{\hyperlink{unionAttrib_a696593a1622617ea27804091988b9c6f}{v4}}\ =\ lightBias*lightProj*lightView*vertex;}
+\DoxyCodeLine{\ \ \textcolor{comment}{//\ zápis\ pozice\ vertexu\ v\ clip-\/space\ kamery}}
+\DoxyCodeLine{\ \ outVertex.\mbox{\hyperlink{structOutVertex_a9ca7de8eef8d688163497a7d34c76d7b}{gl\_Position}}\ =\ proj*view*vertex;}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{//\ fragment\ shader\ pro\ výpočet\ stínu}}
+\DoxyCodeLine{\textcolor{keywordtype}{void}\ scene\_fs(\mbox{\hyperlink{structOutFragment}{OutFragment}}\&outFragment,\mbox{\hyperlink{structInFragment}{InFragment}}\ \textcolor{keyword}{const}\&inFragment,\mbox{\hyperlink{structShaderInterface}{ShaderInterface}}\ \textcolor{keyword}{const}\&si)\{}
+\DoxyCodeLine{\ \ \textcolor{comment}{//\ barva}}
+\DoxyCodeLine{\ \ \textcolor{keyword}{auto}\ color\ \ \ \ \ =\ inFragment.\mbox{\hyperlink{structInFragment_a18c45ea10a91005cd27dd6554202a4b2}{attributes}}[0].\mbox{\hyperlink{unionAttrib_ae33a694a9c3ba540167b192fd83eb767}{v3}};}
+\DoxyCodeLine{\ \ \textcolor{comment}{//\ pozice\ fragmentu\ v\ clip-\/space\ světla}}
+\DoxyCodeLine{\ \ \textcolor{keyword}{auto}\ shadowPos\ =\ inFragment.\mbox{\hyperlink{structInFragment_a18c45ea10a91005cd27dd6554202a4b2}{attributes}}[1].\mbox{\hyperlink{unionAttrib_a696593a1622617ea27804091988b9c6f}{v4}};}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \textcolor{comment}{//\ perspektivní\ dělení}}
+\DoxyCodeLine{\ \ shadowPos/=shadowPos.w;}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \textcolor{comment}{//\ vyčtení\ hloubky\ ze\ stínové\ mapy}}
+\DoxyCodeLine{\ \ \textcolor{keyword}{auto}\ sm\ =\ read\_textureClamp(si.\mbox{\hyperlink{structShaderInterface_ad33e6e9e4ff2fbf3853b4430f05188cb}{textures}}[1],glm::vec2(shadowPos)).r;}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \textcolor{comment}{//\ je\ hloubka\ fragmentu\ větší\ než\ to,\ co\ je\ ve\ stínové\ mapě?}}
+\DoxyCodeLine{\ \ \textcolor{keyword}{auto}\ isShadow\ =\ (float)(shadowPos.z\ >\ sm);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \textcolor{comment}{//\ útlum\ barvy\ stínem}}
+\DoxyCodeLine{\ \ color\ *=\ (1.f\ -\/\ .5f*isShadow);}
+\DoxyCodeLine{\ \ }
+\DoxyCodeLine{\ \ \textcolor{comment}{//\ zápis\ barvy}}
+\DoxyCodeLine{\ \ outFragment.\mbox{\hyperlink{structOutFragment_a9670bf5a31a5c23fccdbeaad959cc3cf}{gl\_FragColor}}\ =\ vec4(color,1.f);}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{}
+\DoxyCodeLine{}
+\DoxyCodeLine{Method::Method(\mbox{\hyperlink{structGPUMemory}{GPUMemory}}\&m,MethodConstructionData\ \textcolor{keyword}{const}*):\ ::Method(m)\{}
+\DoxyCodeLine{\ \ \textcolor{comment}{//\ vytvoření\ stínové\ mapy\ (data)}}
+\DoxyCodeLine{\ \ shadowMap\ =\ TextureData(m.\mbox{\hyperlink{structGPUMemory_abd0d80589104a936db46ae766bc7975e}{framebuffers}}[0].\mbox{\hyperlink{structFramebuffer_ad2efd3ac1249da4ce70d478cd48d0e22}{width}},m.\mbox{\hyperlink{structGPUMemory_abd0d80589104a936db46ae766bc7975e}{framebuffers}}[0].\mbox{\hyperlink{structFramebuffer_a614fd13812430c2ffb379b3b050780c4}{height}},1,\mbox{\hyperlink{structImage_a1d53cd4fd9e5b67d38d49bc2c5ebd0dbafa6421ccf72f08668e45d9a70c657a1e}{Image::F32}});}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \textcolor{comment}{//\ program\ pro\ vytvoření\ stínové\ mapy}}
+\DoxyCodeLine{\ \ \textcolor{keyword}{auto}\&prg0\ =\ m.\mbox{\hyperlink{structGPUMemory_a50091de928f20fa9d84c6bd137dab3a6}{programs}}[0];}
+\DoxyCodeLine{\ \ prg0.\mbox{\hyperlink{structProgram_a2bcea678985527f04a87be358ff1f78b}{vertexShader}}\ \ \ =\ createShadowMap\_vs;}
+\DoxyCodeLine{\ \ prg0.fragmentShader\ =\ createShadowMap\_fs;}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \textcolor{comment}{//\ program\ pro\ vykreslení\ scény\ se\ stíny}}
+\DoxyCodeLine{\ \ \textcolor{keyword}{auto}\&prg1\ =\ m.\mbox{\hyperlink{structGPUMemory_a50091de928f20fa9d84c6bd137dab3a6}{programs}}[1];}
+\DoxyCodeLine{\ \ prg1.\mbox{\hyperlink{structProgram_a2bcea678985527f04a87be358ff1f78b}{vertexShader}}\ \ \ =\ scene\_vs;}
+\DoxyCodeLine{\ \ prg1.fragmentShader\ =\ scene\_fs;}
+\DoxyCodeLine{\ \ prg1.vs2fs[0]\ =\ \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a8cc36b907e294f5e78e1b479cac369ddaa7c116def9f212182aa52ab1e936d77d}{AttribType::VEC3}};}
+\DoxyCodeLine{\ \ prg1.vs2fs[1]\ =\ \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a8cc36b907e294f5e78e1b479cac369ddaee190f7a0572504036effa0134dc5d88}{AttribType::VEC4}};}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \textcolor{comment}{//\ framebuffer\ pro\ vykreslování\ stínové\ mapy}}
+\DoxyCodeLine{\ \ m.\mbox{\hyperlink{structGPUMemory_ac07704dd918f18a48644abdabbdf6f0d}{textures}}[1]\ =\ shadowMap.getTexture();}
+\DoxyCodeLine{\ \ m.\mbox{\hyperlink{structGPUMemory_abd0d80589104a936db46ae766bc7975e}{framebuffers}}[1].\mbox{\hyperlink{structFramebuffer_ad56ef80596abe229e99657865ae8a79b}{depth}}\ \ =\ m.\mbox{\hyperlink{structGPUMemory_ac07704dd918f18a48644abdabbdf6f0d}{textures}}[1].\mbox{\hyperlink{structTexture_a64d1fdc3117ab704bc4c4c9696d7237e}{img}};}
+\DoxyCodeLine{\ \ m.\mbox{\hyperlink{structGPUMemory_abd0d80589104a936db46ae766bc7975e}{framebuffers}}[1].\mbox{\hyperlink{structFramebuffer_ad2efd3ac1249da4ce70d478cd48d0e22}{width}}\ \ =\ m.\mbox{\hyperlink{structGPUMemory_ac07704dd918f18a48644abdabbdf6f0d}{textures}}[1].\mbox{\hyperlink{structTexture_a48c85d8e7c257d854238980f5bcc3b75}{width}};}
+\DoxyCodeLine{\ \ m.\mbox{\hyperlink{structGPUMemory_abd0d80589104a936db46ae766bc7975e}{framebuffers}}[1].\mbox{\hyperlink{structFramebuffer_a614fd13812430c2ffb379b3b050780c4}{height}}\ =\ m.\mbox{\hyperlink{structGPUMemory_ac07704dd918f18a48644abdabbdf6f0d}{textures}}[1].\mbox{\hyperlink{structTexture_a35691eb813ceb8467b436092b1c9d8ed}{height}};}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \textcolor{comment}{//\ vykreslení\ stínové\ mapy}}
+\DoxyCodeLine{\ \ \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_aaf908caefd690c7d905eb3baa9e1a569}{pushBindFramebufferCommand}}(commandBuffer,1);}
+\DoxyCodeLine{\ \ \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_ad35fa691c90051fd7b24f95fb6c4b55d}{pushBindProgramCommand}}(commandBuffer,0);}
+\DoxyCodeLine{\ \ \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_ac92555f5be8a27d6c2538eb56e8e8dd6}{pushClearColorCommand}}(commandBuffer,glm::vec4(0,0,0,1));}
+\DoxyCodeLine{\ \ \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_ab21e6fb22fc5a0695585d9b49d488419}{pushClearDepthCommand}}(commandBuffer);}
+\DoxyCodeLine{\ \ \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_ad08d6b1878961c799d005fa3e3778f40}{pushDrawCommand}}(commandBuffer,12);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \textcolor{comment}{//\ vykreslení\ scény}}
+\DoxyCodeLine{\ \ \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_aaf908caefd690c7d905eb3baa9e1a569}{pushBindFramebufferCommand}}(commandBuffer,0);}
+\DoxyCodeLine{\ \ \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_ad35fa691c90051fd7b24f95fb6c4b55d}{pushBindProgramCommand}}(commandBuffer,1);}
+\DoxyCodeLine{\ \ \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_ac92555f5be8a27d6c2538eb56e8e8dd6}{pushClearColorCommand}}(commandBuffer,glm::vec4(0,0,0,1));}
+\DoxyCodeLine{\ \ \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_ab21e6fb22fc5a0695585d9b49d488419}{pushClearDepthCommand}}(commandBuffer);}
+\DoxyCodeLine{\ \ \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_ad08d6b1878961c799d005fa3e3778f40}{pushDrawCommand}}(commandBuffer,12);}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{//\ časovač}}
+\DoxyCodeLine{\textcolor{keywordtype}{void}\ Method::onUpdate(\textcolor{keywordtype}{float}\ dt)\{}
+\DoxyCodeLine{\ \ time\ +=\ dt;}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordtype}{void}\ Method::onDraw(SceneParam\ \textcolor{keyword}{const}\&sceneParam)\{}
+\DoxyCodeLine{\ \ \textcolor{comment}{//\ výpočet\ matic}}
+\DoxyCodeLine{\ \ \textcolor{keyword}{auto}\ lightView\ =\ glm::lookAt(glm::vec3(100*glm::cos(time),100,100*glm::sin(time)),glm::vec3(0,0,0),glm::vec3(0,1,0));}
+\DoxyCodeLine{\ \ \textcolor{keyword}{auto}\ lightProj\ =\ glm::ortho(-\/100.f,+100.f,-\/100.f,+100.f,0.f,1000.f);}
+\DoxyCodeLine{\ \ \textcolor{keyword}{auto}\ lightBias\ =\ glm::scale(glm::mat4(1.f),glm::vec3(.5f,.5f,1.f))*glm::translate(glm::mat4(1.f),glm::vec3(1,1,0));}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \textcolor{comment}{//\ nastavení\ uniformních\ proměnných}}
+\DoxyCodeLine{\ \ mem.uniforms[0].m4\ =\ sceneParam.view;}
+\DoxyCodeLine{\ \ mem.uniforms[1].m4\ =\ sceneParam.proj;}
+\DoxyCodeLine{\ \ mem.uniforms[2].m4\ =\ lightView;}
+\DoxyCodeLine{\ \ mem.uniforms[3].m4\ =\ lightProj;}
+\DoxyCodeLine{\ \ mem.uniforms[4].m4\ =\ lightBias;}
+\DoxyCodeLine{\ \ mem.uniforms[5].i1\ =\ -\/1;}
+\DoxyCodeLine{\ \ mem.uniforms[7].v3\ =\ glm::vec3(0.2f);}
+\DoxyCodeLine{\ \ mem.uniforms[8].v3\ =\ glm::vec3(1.f);}
+\DoxyCodeLine{\ \ gpuRun(mem,commandBuffer);}
+\DoxyCodeLine{\}}
+
+\end{DoxyCodeInclude}
+ Není třeba jej opisovat, vše je v podstatě uděláno, jen shadery můžete použít jako inspiraci.\hypertarget{p15_drawModel_finalCountDown}{}\doxysection{\texorpdfstring{Úkol 11 – finální render}{Úkol 11 – finální render}}\label{p15_drawModel_finalCountDown}
+\hypertarget{p15_drawModel_finalCountDown_task}{}\doxysubsection{\texorpdfstring{Test 63 – finální render}{Test 63 – finální render}}\label{p15_drawModel_finalCountDown_task}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{izgProject\ -\/c\ -\/-\/test\ 63}
+
+\end{DoxyCode}
+
+
+A je to! Gratuluji k vypracování celého projektu. Děkuji, že jste jej vypracovali celý. Teď by vám mělo fungovat vše.    

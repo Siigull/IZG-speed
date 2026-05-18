@@ -1,0 +1,19 @@
+/**
+\page p22_caste_chyby 22 Časté chyby, které nedělejte
+<ol>
+<li> student se mě nezeptá pokud neví, jak něco vyřešit. Ptejte se. Odpovím, pokud budu vědět.
+<li> student neodevzdá korektně zabalené soubory.
+<li> student si inkluduje nějake soubory z windows, třeba windows.h -- to nedělejte, překlad musí fungovat na merlinovi.
+<li> student si přibalí nějaké náhodné soubory s MAC -- to nedělejte, překlad musí fungovat na merlinovi.
+<li> min, max funkce si berete odnikud -- vyzkoušejte, jestli vám jde překlad na merlinovi, nebo použijte glm::min, glm::max
+<li> špatně pojmenovaný archiv při odevzdávání
+<li> soubory navíc, nebo přejmenované soubory v odevzdaném archivu
+<li> memory corruption, přistupujete do paměti, kam nemáte (na to je valgrind)
+<li> student odevzdá soubory v nějakém exotickém archivu, rar, tar.gz, 7z, iso...
+<li> student zkouší projekt na systemu, který nebyl ověřen (ověřeno to bylo na Linuxu, Windows by měl běžet, ale ...).
+<li> VirtualBox s Ubuntu je +- možný, ale může se narazit na SDL chybu no video device (asi je potřeba nainstalovat SDL: sudo apt install xorg-dev libx11-dev libgl1-mesa-glx).
+<li> Nějaký problém se CMake a zprovoznením překladu na Windows (většinou je problém s cestami, zkuste dát projekt někam do jednoduché složky C:\).
+<li> Projekt máte příliš pomalý a tak jej automatické testy předčasně utnou.
+</ol>
+
+*/

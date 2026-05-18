@@ -1,0 +1,28 @@
+/**
+\page p21_odevzdavani 21 Odevzdávání
+
+Odevzdejte <b>proj.zip</b>, který obsahuje jen soubory studentSolution/src/studentSolution/gpu.cpp a studentSolution/src/studentSolution/prepareModel.cpp, žádné složky.<br>
+Můžete odevzdat částečné řešení, hodnotí se to, co jste odevzdali a kolik bodů vám to vypočetlo.<br>
+
+Před odevzdáváním si zkontrolujte, že váš projekt lze přeložit na merlinovi.<br>
+Pro ověření kompilace nemusíte na merlin kopírovat složku resources (je velká).<br>
+Pokud si chcete na merlinovi ověřit i akceptační testy stačí zkopírovat jen resources/models/parrots.glb.<br>
+Zkopirujte projekt na merlin a spusťte skript: <b>./merlinCompilationTest.sh</b>.<br><br>
+Odevzdávejte pouze soubory gpu.cpp, prepareModel.cpp
+Soubory zabalte do archivu proj.zip. Po rozbalení archivu
+se <b>NESMÍ</b> vytvořit žádná složka. Příkazy pro ověření na Linuxu:
+\code{.sh}
+zip -j proj.zip studentSolution/src/studentSolution/gpu.cpp studentSolution/src/studentSolution/prepareModel.cpp
+\endcode
+Rozbalení:
+\code{.sh}
+unzip proj.zip
+\endcode
+Studenti pracují na řešení projektu samostatně a každý odevzdá své vlastnířešení.
+Poraďte si, ale řešení vypracujte samostatně! Žádné kopírování kódu!
+Nedávejte svůj projekt veřejně na github, gitlab, soureforge, pastebin, discord nebo jinam, tím se automaticky stávate plagiátory.<br>
+Neposílejte svým kamarádům kódy.
+Možná jim věříte, že to neokopírují, ale divili byste se.
+Pak byste se dostali mezi plagiátory.
+
+*/

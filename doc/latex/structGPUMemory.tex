@@ -1,0 +1,137 @@
+\doxysection{GPUMemory Struct Reference}
+\hypertarget{structGPUMemory}{}\label{structGPUMemory}\index{GPUMemory@{GPUMemory}}
+
+
+\mbox{[}\doxylink{structBackfaceCulling}{Backface\+Culling}\mbox{]}  
+
+
+
+
+{\ttfamily \#include $<$gpu.\+hpp$>$}
+
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{structGPUMemory_a9b333f6f69347068f349d05961c7bf39}\label{structGPUMemory_a9b333f6f69347068f349d05961c7bf39} 
+{\bfseries GPUMemory} ()
+\begin{DoxyCompactList}\small\item\em Constructor. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{structGPUMemory_aa4029f03d462f74659188127d0db57b2}{GPUMemory}} (\mbox{\hyperlink{structGPUMemory}{GPUMemory}} const \&o)
+\begin{DoxyCompactList}\small\item\em Copy constructor. \end{DoxyCompactList}\item 
+\Hypertarget{structGPUMemory_aba0548cad16f8557782a5b2a409685b0}\label{structGPUMemory_aba0548cad16f8557782a5b2a409685b0} 
+{\bfseries \texorpdfstring{$\sim$}{\string~}\+GPUMemory} ()
+\begin{DoxyCompactList}\small\item\em Destructor. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{structGPUMemory}{GPUMemory}} \& \mbox{\hyperlink{structGPUMemory_a59c169462c028204dfca9b92f5cd9230}{operator=}} (\mbox{\hyperlink{structGPUMemory}{GPUMemory}} const \&o)
+\begin{DoxyCompactList}\small\item\em Assign operator. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{structGPUMemory_aa73d331b9be494e550928fad4ac6c23d}\label{structGPUMemory_aa73d331b9be494e550928fad4ac6c23d} 
+uint32\+\_\+t {\bfseries max\+Uniforms} = 0
+\begin{DoxyCompactList}\small\item\em maximal number of uniforms \end{DoxyCompactList}\item 
+\Hypertarget{structGPUMemory_a3798310241309de18f5561931d1d2665}\label{structGPUMemory_a3798310241309de18f5561931d1d2665} 
+uint32\+\_\+t {\bfseries max\+Vertex\+Arrays} = 0
+\begin{DoxyCompactList}\small\item\em maximal number of vertex arrays \end{DoxyCompactList}\item 
+\Hypertarget{structGPUMemory_a8fa73be85fde25818e8b63d71fd7dd60}\label{structGPUMemory_a8fa73be85fde25818e8b63d71fd7dd60} 
+uint32\+\_\+t {\bfseries max\+Textures} = 0
+\begin{DoxyCompactList}\small\item\em maximal number of textures \end{DoxyCompactList}\item 
+\Hypertarget{structGPUMemory_a0be973077c6d15f40e31d0781b1ea8e6}\label{structGPUMemory_a0be973077c6d15f40e31d0781b1ea8e6} 
+uint32\+\_\+t {\bfseries max\+Buffers} = 0
+\begin{DoxyCompactList}\small\item\em maximal number of buffers \end{DoxyCompactList}\item 
+\Hypertarget{structGPUMemory_aa8e57983bda33e4ef48e825d5bf261eb}\label{structGPUMemory_aa8e57983bda33e4ef48e825d5bf261eb} 
+uint32\+\_\+t {\bfseries max\+Programs} = 0
+\begin{DoxyCompactList}\small\item\em maximal number of programs \end{DoxyCompactList}\item 
+\Hypertarget{structGPUMemory_ad9cda42fea22fb0d5347a91f101d15d2}\label{structGPUMemory_ad9cda42fea22fb0d5347a91f101d15d2} 
+uint32\+\_\+t {\bfseries max\+Framebuffers} = 0
+\begin{DoxyCompactList}\small\item\em maximal number of framebuffers \end{DoxyCompactList}\item 
+\Hypertarget{structGPUMemory_a7f32178fb1950dde77a2133bb93bbe5b}\label{structGPUMemory_a7f32178fb1950dde77a2133bb93bbe5b} 
+uint32\+\_\+t {\bfseries default\+Framebuffer} = 0
+\begin{DoxyCompactList}\small\item\em id of default framebuffer \end{DoxyCompactList}\item 
+\Hypertarget{structGPUMemory_a4755d327262c8020766718bb31f92d0b}\label{structGPUMemory_a4755d327262c8020766718bb31f92d0b} 
+\mbox{\hyperlink{structBuffer}{Buffer}} \texorpdfstring{$\ast$}{*} {\bfseries buffers} = nullptr
+\begin{DoxyCompactList}\small\item\em array of all buffers \end{DoxyCompactList}\item 
+\Hypertarget{structGPUMemory_ac07704dd918f18a48644abdabbdf6f0d}\label{structGPUMemory_ac07704dd918f18a48644abdabbdf6f0d} 
+\mbox{\hyperlink{structTexture}{Texture}} \texorpdfstring{$\ast$}{*} {\bfseries textures} = nullptr
+\begin{DoxyCompactList}\small\item\em array of all textures \end{DoxyCompactList}\item 
+\Hypertarget{structGPUMemory_a21eab797fb058f9cc8ceb26d5993f018}\label{structGPUMemory_a21eab797fb058f9cc8ceb26d5993f018} 
+\mbox{\hyperlink{unionUniform}{Uniform}} \texorpdfstring{$\ast$}{*} {\bfseries uniforms} = nullptr
+\begin{DoxyCompactList}\small\item\em array of all uniform variables \end{DoxyCompactList}\item 
+\Hypertarget{structGPUMemory_a50091de928f20fa9d84c6bd137dab3a6}\label{structGPUMemory_a50091de928f20fa9d84c6bd137dab3a6} 
+\mbox{\hyperlink{structProgram}{Program}} \texorpdfstring{$\ast$}{*} {\bfseries programs} = nullptr
+\begin{DoxyCompactList}\small\item\em array of all programs \end{DoxyCompactList}\item 
+\Hypertarget{structGPUMemory_abd0d80589104a936db46ae766bc7975e}\label{structGPUMemory_abd0d80589104a936db46ae766bc7975e} 
+\mbox{\hyperlink{structFramebuffer}{Framebuffer}} \texorpdfstring{$\ast$}{*} {\bfseries framebuffers} = nullptr
+\begin{DoxyCompactList}\small\item\em framebuffer -\/ output of rendering, 0 is default framebuffer \end{DoxyCompactList}\item 
+\Hypertarget{structGPUMemory_acab4bb492d24e78131d39ea7997266cb}\label{structGPUMemory_acab4bb492d24e78131d39ea7997266cb} 
+\mbox{\hyperlink{structVertexArray}{Vertex\+Array}} \texorpdfstring{$\ast$}{*} {\bfseries vertex\+Arrays} = nullptr
+\begin{DoxyCompactList}\small\item\em array of all vertex arrays \end{DoxyCompactList}\item 
+\Hypertarget{structGPUMemory_acd06344c1c43bef8df606d6664fee4b4}\label{structGPUMemory_acd06344c1c43bef8df606d6664fee4b4} 
+uint32\+\_\+t {\bfseries activated\+Framebuffer} = 0
+\begin{DoxyCompactList}\small\item\em id of activated framebuffer \end{DoxyCompactList}\item 
+\Hypertarget{structGPUMemory_a7b289e72424eb0cf9b7aa920386f7565}\label{structGPUMemory_a7b289e72424eb0cf9b7aa920386f7565} 
+uint32\+\_\+t {\bfseries activated\+Program} = 0
+\begin{DoxyCompactList}\small\item\em id of activated program \end{DoxyCompactList}\item 
+\Hypertarget{structGPUMemory_af2f8e1efb9217022ced48eeb04b79810}\label{structGPUMemory_af2f8e1efb9217022ced48eeb04b79810} 
+uint32\+\_\+t {\bfseries activated\+Vertex\+Array} = 0
+\begin{DoxyCompactList}\small\item\em id of activated vertex array \end{DoxyCompactList}\item 
+\Hypertarget{structGPUMemory_aa6541055bfd7af94a91f35bfe0cd9aad}\label{structGPUMemory_aa6541055bfd7af94a91f35bfe0cd9aad} 
+uint32\+\_\+t {\bfseries gl\+\_\+\+Draw\+ID} = 0
+\begin{DoxyCompactList}\small\item\em draw call id \end{DoxyCompactList}\item 
+\Hypertarget{structGPUMemory_a00d576026cb037973a8cdb85ba6e5498}\label{structGPUMemory_a00d576026cb037973a8cdb85ba6e5498} 
+\mbox{\hyperlink{structStencilSettings}{Stencil\+Settings}} {\bfseries stencil\+Settings}
+\begin{DoxyCompactList}\small\item\em stencil test settings \end{DoxyCompactList}\item 
+\Hypertarget{structGPUMemory_a3ae3396312e75582f1645e5a30fd829b}\label{structGPUMemory_a3ae3396312e75582f1645e5a30fd829b} 
+\mbox{\hyperlink{structBlendingSettings}{Blending\+Settings}} {\bfseries blending\+Settings}
+\begin{DoxyCompactList}\small\item\em blending settings \end{DoxyCompactList}\item 
+\Hypertarget{structGPUMemory_ac8733e2ed174d07681ccb20407ac2933}\label{structGPUMemory_ac8733e2ed174d07681ccb20407ac2933} 
+\mbox{\hyperlink{structBlockWrites}{Block\+Writes}} {\bfseries block\+Writes}
+\begin{DoxyCompactList}\small\item\em block writes to buffers of framebuffer \end{DoxyCompactList}\item 
+\Hypertarget{structGPUMemory_a08ac73715dd9138f6dfc6b04b7ec3860}\label{structGPUMemory_a08ac73715dd9138f6dfc6b04b7ec3860} 
+\mbox{\hyperlink{structBackfaceCulling}{Backface\+Culling}} {\bfseries backface\+Culling}
+\begin{DoxyCompactList}\small\item\em backface culling \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\mbox{[}\doxylink{structBackfaceCulling}{Backface\+Culling}\mbox{]} 
+
+This structure represents memory on GPU A GPU memory has a lot of memory types ranging from buffers, textures, to uniforms programs, vertex arrays and framebuffers. \mbox{[}\doxylink{structGPUMemory}{GPUMemory}\mbox{]} 
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{structGPUMemory_aa4029f03d462f74659188127d0db57b2}\label{structGPUMemory_aa4029f03d462f74659188127d0db57b2} 
+\index{GPUMemory@{GPUMemory}!GPUMemory@{GPUMemory}}
+\index{GPUMemory@{GPUMemory}!GPUMemory@{GPUMemory}}
+\doxysubsubsection{\texorpdfstring{GPUMemory()}{GPUMemory()}}
+{\footnotesize\ttfamily GPUMemory\+::\+GPUMemory (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structGPUMemory}{GPUMemory}} const \&}]{o }\end{DoxyParamCaption})}
+
+
+
+Copy constructor. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em o} & other object \\
+\hline
+\end{DoxyParams}
+
+
+\doxysubsection{Member Function Documentation}
+\Hypertarget{structGPUMemory_a59c169462c028204dfca9b92f5cd9230}\label{structGPUMemory_a59c169462c028204dfca9b92f5cd9230} 
+\index{GPUMemory@{GPUMemory}!operator=@{operator=}}
+\index{operator=@{operator=}!GPUMemory@{GPUMemory}}
+\doxysubsubsection{\texorpdfstring{operator=()}{operator=()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{structGPUMemory}{GPUMemory}} \& GPUMemory\+::operator= (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structGPUMemory}{GPUMemory}} const \&}]{o }\end{DoxyParamCaption})}
+
+
+
+Assign operator. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em o} & other object \\
+\hline
+\end{DoxyParams}
+
+
+The documentation for this struct was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+solution\+Interface/src/solution\+Interface/\mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp}{gpu.\+hpp}}\item 
+solution\+Interface/src/solution\+Interface/gpu.\+cpp\end{DoxyCompactItemize}

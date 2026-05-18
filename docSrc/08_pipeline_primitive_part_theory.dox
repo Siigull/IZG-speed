@@ -1,0 +1,50 @@
+/**
+
+\page p08_pipeline_primitive_part_theory 08 Vektorová část GPU: část přimitiv
+
+Vektorová část zobrazovacího řetězce lze rozdělit na dvě části:
+- vertexová část,
+- část primitiv.
+
+Tyto dvě části jsou odděleny jednotkou Primitive Assembly, která ze streamu vertexů sestavuje stream primitiv.
+
+\image html docSrc/images/pipeline_primitive_assembly.svg "Jednotka Primitive assembly sestavuje ze streamu vertexů primitiva." width=800
+
+Vertexovou čast byste v tuto chvíli již měli mít hotovou. Zbývá část primitiv.
+
+\section pipeline_primitive_part Část primitiv
+
+Vertex Assembly jednotka chrlí vrcholy a vertex shader je zpracovává, transformuje.
+Je na čase z nich sestavit trojúhelníky a připravit je pro rasterizaci.
+Část za vertex shaderem je složena z několika částí.
+
+\image html docSrc/images/pipeline_primitive_part.svg "Část za vertex shaderem je složena z několika jednotek. Je to jednotka sestavení primitiv (trojúhelníků), ořez (ten teď dělat nebudete), perspektivní dělení, viewport transformace, (culling ten také není v tuto chvíli potřeba). Po vektorové části následuje rasterizace a fragment shader" width=800
+
+\subsection primitive_assembly Primitive Assembly
+Primitive Assembly je jednotka, která sestavuje trojúhelníky (mimo jiné).
+Trojúhelníku, úsečce, bodu se hromadně říká primitivum.
+V tomto projektu se používají pouze trojúhelníky.
+Primitive Assembly jednotka si počká na 3 po sobě jdoucí \ref OutVertex "výstupní vrcholy" z vertex shaderu a sestaví trojúhelník (struktura, která by měla obsahovat 3 výstupní vrcholy).
+Lze na to také nahlížet tak, že primitive assembly jednotka dostane příkaz vykreslit třeba 4 trojúhelníky. Jednotka tak spustí vertex shader 12x, který takto spustí 12x vertex assembly jednotku.
+
+\image html images/PrimitiveAssembly.svg "Vizualizace funkce primitive assembly jednotky. Primitive assembly jednotka sestaví trojúhelník ze 3 po sobě jdoucích výstupních vrcholů z vertex shaderu." width=800
+
+\subsection gpu_pd Perspektivní dělení
+Perspektivní dělení následuje za clippingem (ten bude až později, teď není potřeba) a provádí převod z homogenních souřadnic na kartézské pomocí dělení w.
+\image html images/PerspectiveDivision.svg "Perspektivní dělení. Převod z clip-space do NDC (normalized device coordinates). Dělí se pomocí w. Při tomto dělení vzniknou normalizované souřadnice x,y a normalizovaná hloubka." width=500
+
+\subsection gpu_Viewport Viewport transformace
+Viewport transformace provádí převod NDC (rozsah -1, +1) na rozlišení okna, aby se mohla provést rasterizace.
+\image html images/ViewportTransformation.svg "Vizualizace viewport transformace. Trojúhelníky jsou roztaženy na rozlišení obrazovky [width,height] do screen-space. Hloubka zůstane zachována v komponentě z." width=500
+
+\subsection gpu_Culling Culling / Backface Culling
+Backface Culling se stará o zahození trojúhelníků, které jsou odvráceny od pozorovatele.
+Culling lze zapnout nebo vypnout pomocí: \ref BackfaceCulling::enabled
+Pokud je zapnutý, trojúhelníky, které jsou odvrácené, jsou zahazovány.
+To, které jsou přivrácené a odvrácené je určeno:
+- nastasvením BackfaceCulling::frontFaceIsCounterClockWise,
+- pořadím vrcholů trojúhelníku na obrazovce, jsou-li specifikovány po směru nebo proti směru hodinových ručiček.
+Pokud je backface culling vypnutý, vykreslují se všechny trojúhelníky -- přivrácené i odvrácené -- specifikované po i proti směru hodinových ručiček.
+\image html images/backfaceCulling.svg "Levý trojúhelník je specifikovaný proti směru hodinových ručiček (counter clock wise) a je přivrácený k pozorovateli. Pravý je po směru (clock wise) a je odvrácený od uživatele. Levý se bude vždy vykreslovat, pravý pouze tehdy, pokud je back face culling vypnutý." width=500
+
+*/

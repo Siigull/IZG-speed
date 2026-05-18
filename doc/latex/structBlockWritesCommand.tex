@@ -1,0 +1,27 @@
+\doxysection{Block\+Writes\+Command Struct Reference}
+\hypertarget{structBlockWritesCommand}{}\label{structBlockWritesCommand}\index{BlockWritesCommand@{BlockWritesCommand}}
+
+
+\mbox{[}\doxylink{structSetBlendingCommand}{Set\+Blending\+Command}\mbox{]}  
+
+
+
+
+{\ttfamily \#include $<$gpu.\+hpp$>$}
+
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{structBlockWritesCommand_adb7b8be1c92fe13e2d3b4e9e26b85a0c}\label{structBlockWritesCommand_adb7b8be1c92fe13e2d3b4e9e26b85a0c} 
+\mbox{\hyperlink{structBlockWrites}{Block\+Writes}} {\bfseries block\+Writes}
+\begin{DoxyCompactList}\small\item\em which writes are blocked \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\mbox{[}\doxylink{structSetBlendingCommand}{Set\+Blending\+Command}\mbox{]} 
+
+This structure represents block writes command. A block write command sets a blocking mask for writes to color, depth and stencil buffer. When a GPU rasterizes a triangle, it produces fragments. These fragments can modify color buffer, depth buffer and stencil buffer. If a blocking mask is set to true, this modifications are disabled. Student should implement correct behaviour of this command. \mbox{[}\doxylink{structBlockWritesCommand}{Block\+Writes\+Command}\mbox{]} 
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+solution\+Interface/src/solution\+Interface/\mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp}{gpu.\+hpp}}\end{DoxyCompactItemize}

@@ -1,0 +1,39 @@
+\doxysection{task\+Functions.\+hpp}
+\hypertarget{taskFunctions_8hpp_source}{}\label{taskFunctions_8hpp_source}\index{solutionInterface/src/solutionInterface/taskFunctions.hpp@{solutionInterface/src/solutionInterface/taskFunctions.hpp}}
+\mbox{\hyperlink{taskFunctions_8hpp}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ }
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#include<\mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp}{solutionInterface/gpu.hpp}}>}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#include<\mbox{\hyperlink{modelFwd_8hpp}{solutionInterface/modelFwd.hpp}}>}}
+\DoxyCodeLine{00012\ }
+\DoxyCodeLine{00014\ \textcolor{keyword}{using\ }GPU\_Run\ \ \ \ \ \ \ \ \ \ \ =\ void(*)(\mbox{\hyperlink{structGPUMemory}{GPUMemory}}\&,\mbox{\hyperlink{structCommandBuffer}{CommandBuffer}}\ \textcolor{keyword}{const}\&\ \ \ \ \ \ \ \ \ \ \ \ \ );}
+\DoxyCodeLine{00015\ \textcolor{keyword}{using\ }PrepareModel\ \ \ \ \ \ =\ void(*)(\mbox{\hyperlink{structGPUMemory}{GPUMemory}}\&,\mbox{\hyperlink{structCommandBuffer}{CommandBuffer}}\ \ \ \ \ \ \&,\mbox{\hyperlink{structModel}{Model}}\ \textcolor{keyword}{const}\&);\ }
+\DoxyCodeLine{00016\ \textcolor{keyword}{using\ }Read\_Texture\ \ \ \ \ \ =\ glm::vec4(*)(\mbox{\hyperlink{structTexture}{Texture}}\ \textcolor{keyword}{const}\&,glm::vec2\ \ \textcolor{keyword}{const}\&);\ }
+\DoxyCodeLine{00017\ \textcolor{keyword}{using\ }Read\_TextureClamp\ =\ glm::vec4(*)(\mbox{\hyperlink{structTexture}{Texture}}\ \textcolor{keyword}{const}\&,glm::vec2\ \ \textcolor{keyword}{const}\&);\ }
+\DoxyCodeLine{00018\ \textcolor{keyword}{using\ }TexelFetch\ \ \ \ \ \ \ \ =\ glm::vec4(*)(\mbox{\hyperlink{structTexture}{Texture}}\ \textcolor{keyword}{const}\&,glm::uvec2\ \textcolor{keyword}{const}\&);\ }
+\DoxyCodeLine{00019\ }
+\DoxyCodeLine{00020\ \textcolor{keywordtype}{void}\ \ \ \ \ \ gpuRun\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (\mbox{\hyperlink{structGPUMemory}{GPUMemory}}\&mem,\mbox{\hyperlink{structCommandBuffer}{CommandBuffer}}\ \textcolor{keyword}{const}\&cb);}
+\DoxyCodeLine{00021\ \textcolor{keywordtype}{void}\ \ \ \ \ \ prepareModel\ \ \ \ \ \ \ \ \ \ \ \ (\mbox{\hyperlink{structGPUMemory}{GPUMemory}}\&mem,\mbox{\hyperlink{structCommandBuffer}{CommandBuffer}}\&cb,\mbox{\hyperlink{structModel}{Model}}\ \textcolor{keyword}{const}\&model);}
+\DoxyCodeLine{00022\ \textcolor{keywordtype}{void}\ \ \ \ \ \ drawModel\_vertexShader\ \ (\mbox{\hyperlink{structOutVertex}{OutVertex}}\ \ \&outVertex\ \ ,\mbox{\hyperlink{structInVertex}{InVertex}}\ \ \ \textcolor{keyword}{const}\&inVertex\ \ ,\mbox{\hyperlink{structShaderInterface}{ShaderInterface}}\ \textcolor{keyword}{const}\&si);}
+\DoxyCodeLine{00023\ \textcolor{keywordtype}{void}\ \ \ \ \ \ drawModel\_fragmentShader(\mbox{\hyperlink{structOutFragment}{OutFragment}}\&outFragment,\mbox{\hyperlink{structInFragment}{InFragment}}\ \textcolor{keyword}{const}\&inFragment,\mbox{\hyperlink{structShaderInterface}{ShaderInterface}}\ \textcolor{keyword}{const}\&si);}
+\DoxyCodeLine{00024\ glm::vec4\ read\_texture\ \ \ \ \ \ \ \ \ \ \ \ (\mbox{\hyperlink{structTexture}{Texture}}\ \textcolor{keyword}{const}\&texture,glm::vec2\ \ \textcolor{keyword}{const}\&uv);}
+\DoxyCodeLine{00025\ glm::vec4\ read\_textureClamp\ \ \ \ \ \ \ (\mbox{\hyperlink{structTexture}{Texture}}\ \textcolor{keyword}{const}\&texture,glm::vec2\ \ \textcolor{keyword}{const}\&uv);}
+\DoxyCodeLine{00026\ glm::vec4\ texelFetch\ \ \ \ \ \ \ \ \ \ \ \ \ \ (\mbox{\hyperlink{structTexture}{Texture}}\ \textcolor{keyword}{const}\&texture,glm::uvec2\ \textcolor{keyword}{const}\&uv);}
+\DoxyCodeLine{00028\ }
+\DoxyCodeLine{00032\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structTaskFunctions}{TaskFunctions}}\{}
+\DoxyCodeLine{00033\ \ \ GPU\_Run\ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structTaskFunctions_a321461b07aa851bcd30cea1b2d72b7fa}{gpu\_run}}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ =\ \textcolor{keyword}{nullptr};\ }
+\DoxyCodeLine{00034\ \ \ PrepareModel\ \ \ \ \ \ \mbox{\hyperlink{structTaskFunctions_a47a10e9585d46f403cf353eb2320bd46}{prepareModel}}\ \ \ \ \ \ \ \ \ \ \ \ \ =\ \textcolor{keyword}{nullptr};\ }
+\DoxyCodeLine{00035\ \ \ \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a61e7df3fcaa53829be20be29b197e3e6}{VertexShader}}\ \ \ \ \ \ \mbox{\hyperlink{structTaskFunctions_a5adf92e5ae082fd895d68e32e9ed8e95}{drawModel\_vertexShader}}\ \ \ =\ \textcolor{keyword}{nullptr};\ }
+\DoxyCodeLine{00036\ \ \ \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_ac2dd95ee5e44978647da13fc95b9420e}{FragmentShader}}\ \ \ \ \mbox{\hyperlink{structTaskFunctions_a6f0db3dc413866fac9173f9fe6546984}{drawModel\_fragmentShader}}\ =\ \textcolor{keyword}{nullptr};\ }
+\DoxyCodeLine{00037\ \ \ Read\_Texture\ \ \ \ \ \ \mbox{\hyperlink{structTaskFunctions_a7e908f07732c7d2c77e52d59debef4e1}{read\_texture}}\ \ \ \ \ \ \ \ \ \ \ \ \ =\ \textcolor{keyword}{nullptr};\ }
+\DoxyCodeLine{00038\ \ \ Read\_TextureClamp\ \mbox{\hyperlink{structTaskFunctions_a5f4850e953423df2db6e519d586dc343}{read\_textureClamp}}\ \ \ \ \ \ \ \ =\ \textcolor{keyword}{nullptr};\ }
+\DoxyCodeLine{00039\ \ \ TexelFetch\ \ \ \ \ \ \ \ \mbox{\hyperlink{structTaskFunctions_ae3bb6f1e74f997cc21a5a3c01e51e8af}{texelFetch}}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ =\ \textcolor{keyword}{nullptr};\ }
+\DoxyCodeLine{00040\ \ \ GPU\_Run\ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structTaskFunctions_a8e126ca9f16b1374ab89964cb501db64}{breakable\_gpu\_run}}\ \ \ \ \ \ \ \ =\ \textcolor{keyword}{nullptr};\ }
+\DoxyCodeLine{00041\ \ \ \textcolor{keywordtype}{size\_t}*\ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structTaskFunctions_a2f2ead8b7fa4de3980646ded15437b31}{idToBreak}}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ =\ \textcolor{keyword}{nullptr};\ }
+\DoxyCodeLine{00042\ \ \ \textcolor{keywordtype}{size\_t}*\ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structTaskFunctions_a010deb78a5c32135484cc4c4fe13cb5e}{lineToBreak}}\ \ \ \ \ \ \ \ \ \ \ \ \ \ =\ \textcolor{keyword}{nullptr};\ }
+\DoxyCodeLine{00043\ \};}
+\DoxyCodeLine{00044\ }
+
+\end{DoxyCode}

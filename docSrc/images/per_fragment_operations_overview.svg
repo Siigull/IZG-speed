@@ -1,0 +1,366 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="534.77203mm"
+   height="191.29134mm"
+   viewBox="0 0 534.77203 191.29134"
+   version="1.1"
+   id="svg1"
+   inkscape:version="1.4.1 (1:1.4.1+202503302257+93de688d07)"
+   sodipodi:docname="per_fragment_operations_overview.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="mm"
+     inkscape:zoom="0.40845609"
+     inkscape:cx="851.98877"
+     inkscape:cy="473.73513"
+     inkscape:window-width="1920"
+     inkscape:window-height="1164"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs1">
+    <marker
+       style="overflow:visible"
+       id="Triangle-4-6-9-0-8-9"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       inkscape:stockid="Triangle arrow"
+       markerWidth="1"
+       markerHeight="1"
+       viewBox="0 0 1 1"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         transform="scale(0.5)"
+         style="fill:context-stroke;fill-rule:evenodd;stroke:context-stroke;stroke-width:1pt"
+         d="M 5.77,0 -2.88,5 V -5 Z"
+         id="path135-6-5-1-5-7-5" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="Triangle-4-6-9-0-3-4"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       inkscape:stockid="Triangle arrow"
+       markerWidth="1"
+       markerHeight="1"
+       viewBox="0 0 1 1"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         transform="scale(0.5)"
+         style="fill:context-stroke;fill-rule:evenodd;stroke:context-stroke;stroke-width:1pt"
+         d="M 5.77,0 -2.88,5 V -5 Z"
+         id="path135-6-5-1-5-1-4" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="Triangle-4-6-9-0-3-4-6"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       inkscape:stockid="Triangle arrow"
+       markerWidth="1"
+       markerHeight="1"
+       viewBox="0 0 1 1"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         transform="scale(0.5)"
+         style="fill:context-stroke;fill-rule:evenodd;stroke:context-stroke;stroke-width:1pt"
+         d="M 5.77,0 -2.88,5 V -5 Z"
+         id="path135-6-5-1-5-1-4-2" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="Triangle-4-6-9-0-3-4-3"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       inkscape:stockid="Triangle arrow"
+       markerWidth="1"
+       markerHeight="1"
+       viewBox="0 0 1 1"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         transform="scale(0.5)"
+         style="fill:context-stroke;fill-rule:evenodd;stroke:context-stroke;stroke-width:1pt"
+         d="M 5.77,0 -2.88,5 V -5 Z"
+         id="path135-6-5-1-5-1-4-3" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="Triangle-4-6-9-0-8-9-4"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       inkscape:stockid="Triangle arrow"
+       markerWidth="1"
+       markerHeight="1"
+       viewBox="0 0 1 1"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         transform="scale(0.5)"
+         style="fill:context-stroke;fill-rule:evenodd;stroke:context-stroke;stroke-width:1pt"
+         d="M 5.77,0 -2.88,5 V -5 Z"
+         id="path135-6-5-1-5-7-5-4" />
+    </marker>
+  </defs>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(126.90565,164.22247)">
+    <rect
+       style="fill:#999999;stroke:none;stroke-width:4.5177"
+       id="rect1-4-4"
+       width="534.77203"
+       height="191.29134"
+       x="-126.90565"
+       y="-164.22247"
+       ry="0" />
+    <g
+       id="g32"
+       transform="translate(-36.261889,-536.89745)">
+      <rect
+         style="fill:#aa0000;stroke:#000000;stroke-width:4;stroke-dasharray:none"
+         id="rect1"
+         width="59.270451"
+         height="30.768814"
+         x="163.95609"
+         y="455.09235"
+         ry="10.364231" />
+      <text
+         xml:space="preserve"
+         style="font-size:10.6419px;text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:#ffffff;stroke:none;stroke-width:1.88536"
+         x="193.19225"
+         y="467.5715"
+         id="text1"><tspan
+           sodipodi:role="line"
+           id="tspan1"
+           style="text-align:center;text-anchor:middle;fill:#ffffff;stroke:none;stroke-width:1.88537"
+           x="193.19225"
+           y="467.5715">Fragment</tspan><tspan
+           sodipodi:role="line"
+           style="text-align:center;text-anchor:middle;fill:#ffffff;stroke:none;stroke-width:1.88537"
+           x="193.19225"
+           y="480.87387"
+           id="tspan2">Shader</tspan></text>
+    </g>
+    <text
+       xml:space="preserve"
+       style="font-size:6.32733px;text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:#ffffff;stroke:none;stroke-width:1.12097"
+       x="107.44928"
+       y="-102.23563"
+       id="text1-59-3-6-9"
+       transform="rotate(-90)"><tspan
+         sodipodi:role="line"
+         style="text-align:center;text-anchor:middle;fill:#ffffff;stroke:none;stroke-width:1.12098"
+         x="107.44928"
+         y="-102.23563"
+         id="tspan10-9-7">InFragment</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:25.2412px;text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:#ffffff;stroke:none;stroke-width:4.47186"
+       x="70.94146"
+       y="-137.31853"
+       id="text1-59-3-1"><tspan
+         sodipodi:role="line"
+         style="text-align:center;text-anchor:middle;fill:#ffffff;stroke:none;stroke-width:4.47187"
+         x="70.941467"
+         y="-137.31853"
+         id="tspan10-4">Per Fragment Operations (PFO)</tspan></text>
+    <path
+       style="fill:#800080;stroke:#ffffff;stroke-width:2;stroke-dasharray:none;marker-end:url(#Triangle-4-6-9-0-3-4)"
+       d="m -114.0354,-66.4207 h 16.260367"
+       id="path15-3-3-08-9-8-3"
+       sodipodi:nodetypes="cc" />
+    <path
+       style="fill:#800080;stroke:#ffffff;stroke-width:2;stroke-dasharray:none;marker-end:url(#Triangle-4-6-9-0-3-4-6)"
+       d="M 56.620837,-66.4207 H 115.21454"
+       id="path15-3-3-08-9-8-3-6"
+       sodipodi:nodetypes="cc" />
+    <path
+       style="fill:#800080;stroke:#ffffff;stroke-width:2;stroke-dasharray:none;marker-end:url(#Triangle-4-6-9-0-3-4-3)"
+       d="m 191.82292,-66.4207 h 58.5937"
+       id="path15-3-3-08-9-8-3-2"
+       sodipodi:nodetypes="cc" />
+    <g
+       id="g17-1-2-1-1"
+       transform="translate(-102.55516,-490.15843)">
+      <rect
+         style="fill:#000000;stroke:none;stroke-width:0.499999"
+         id="rect1-6-5-7-7-8-5"
+         width="31.689909"
+         height="18.477545"
+         x="70.290863"
+         y="488.04175"
+         ry="0" />
+      <text
+         xml:space="preserve"
+         style="font-size:10.6419px;text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:#ffffff;stroke:none;stroke-width:1.88536"
+         x="85.944267"
+         y="501.07968"
+         id="text1-0-0-5-2-0-9"><tspan
+           sodipodi:role="line"
+           style="text-align:center;text-anchor:middle;fill:#ffffff;stroke:none;stroke-width:1.88537"
+           x="85.944267"
+           y="501.07968"
+           id="tspan2-6-8-6-1-1-9">END</tspan></text>
+    </g>
+    <path
+       style="fill:#800080;stroke:#ffffff;stroke-width:2;stroke-dasharray:none;marker-end:url(#Triangle-4-6-9-0-8-9)"
+       d="M -16.419341,-26.537521 V -10.27715"
+       id="path15-3-3-08-9-0-1"
+       sodipodi:nodetypes="cc" />
+    <g
+       id="g17-1-2-1-1-7"
+       transform="translate(244.3003,-493.17045)">
+      <rect
+         style="fill:#000000;stroke:none;stroke-width:0.499999"
+         id="rect1-6-5-7-7-8-5-4"
+         width="31.689909"
+         height="18.477545"
+         x="70.290863"
+         y="488.04175"
+         ry="0" />
+      <text
+         xml:space="preserve"
+         style="font-size:10.6419px;text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:#ffffff;stroke:none;stroke-width:1.88536"
+         x="85.944267"
+         y="501.07968"
+         id="text1-0-0-5-2-0-9-3"><tspan
+           sodipodi:role="line"
+           style="text-align:center;text-anchor:middle;fill:#ffffff;stroke:none;stroke-width:1.88537"
+           x="85.944267"
+           y="501.07968"
+           id="tspan2-6-8-6-1-1-9-7">END</tspan></text>
+    </g>
+    <path
+       style="fill:#800080;stroke:#ffffff;stroke-width:2;stroke-dasharray:none;marker-end:url(#Triangle-4-6-9-0-8-9-4)"
+       d="m 330.43612,-29.549553 v 16.260371"
+       id="path15-3-3-08-9-0-1-9"
+       sodipodi:nodetypes="cc" />
+    <rect
+       style="fill:#333333;stroke:none;stroke-width:2;stroke-dasharray:none"
+       id="rect32"
+       width="10.10313"
+       height="10.10313"
+       x="-109.18555"
+       y="-87.516533" />
+    <g
+       id="g5"
+       transform="translate(-158.61829,-238.21628)">
+      <text
+         xml:space="preserve"
+         style="font-size:6.32733px;text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:#ffffff;stroke:none;stroke-width:1.12097"
+         x="252.61008"
+         y="159.50978"
+         id="text1-59-3-6-9-8"><tspan
+           sodipodi:role="line"
+           style="text-align:center;text-anchor:middle;fill:#ffffff;stroke:none;stroke-width:1.12098"
+           x="252.61008"
+           y="159.50978"
+           id="tspan10-9-7-0">InFragment</tspan></text>
+      <rect
+         style="fill:#333333;stroke:none;stroke-width:2;stroke-dasharray:none"
+         id="rect32-9"
+         width="10.10313"
+         height="10.10313"
+         x="152.55981"
+         y="-232.67734"
+         transform="rotate(90)" />
+    </g>
+    <g
+       id="g4"
+       transform="translate(117.83208,-238.64603)">
+      <text
+         xml:space="preserve"
+         style="font-size:6.32733px;text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:#ffffff;stroke:none;stroke-width:1.12097"
+         x="111.2636"
+         y="159.93953"
+         id="text1-59-3-6-9-7"><tspan
+           sodipodi:role="line"
+           style="text-align:center;text-anchor:middle;fill:#ffffff;stroke:none;stroke-width:1.12098"
+           x="111.2636"
+           y="159.93953"
+           id="tspan10-9-7-9">OutFragment</tspan></text>
+      <rect
+         style="fill:#ff0000;stroke:none;stroke-width:2;stroke-dasharray:none"
+         id="rect32-5"
+         width="10.10313"
+         height="10.10313"
+         x="152.98956"
+         y="-88.68499"
+         transform="rotate(90)" />
+    </g>
+    <g
+       id="g3"
+       transform="translate(-485.82334,38.749649)">
+      <rect
+         style="fill:#aad400;stroke:none;stroke-width:4"
+         id="rect2"
+         width="137.97383"
+         height="69.958557"
+         x="400.41708"
+         y="-140.14963" />
+      <text
+         xml:space="preserve"
+         style="font-size:25.2412px;text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:#ffffff;stroke:none;stroke-width:4.47186"
+         x="468.94968"
+         y="-98.607658"
+         id="text1-59-3-1-3"><tspan
+           sodipodi:role="line"
+           style="text-align:center;text-anchor:middle;fill:#ffffff;stroke:none;stroke-width:4.47187"
+           x="468.94968"
+           y="-98.607658"
+           id="tspan10-4-8">Early PFO</tspan></text>
+    </g>
+    <g
+       id="g2"
+       transform="translate(-351.7361,52.584885)">
+      <rect
+         style="fill:#80b3ff;stroke:none;stroke-width:4"
+         id="rect2-2"
+         width="137.97383"
+         height="69.958557"
+         x="613.1853"
+         y="-153.98486" />
+      <text
+         xml:space="preserve"
+         style="font-size:25.2412px;text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:#ffffff;stroke:none;stroke-width:4.47186"
+         x="681.7179"
+         y="-109.98186"
+         id="text1-59-3-1-3-6"><tspan
+           sodipodi:role="line"
+           style="text-align:center;text-anchor:middle;fill:#ffffff;stroke:none;stroke-width:4.47187"
+           x="681.7179"
+           y="-109.98186"
+           id="tspan10-4-8-4">Late PFO</tspan></text>
+    </g>
+  </g>
+</svg>

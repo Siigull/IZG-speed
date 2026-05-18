@@ -1,0 +1,968 @@
+\doxysection{solution\+Interface/src/solution\+Interface/gpu.hpp File Reference}
+\hypertarget{solutionInterface_2src_2solutionInterface_2gpu_8hpp}{}\label{solutionInterface_2src_2solutionInterface_2gpu_8hpp}\index{solutionInterface/src/solutionInterface/gpu.hpp@{solutionInterface/src/solutionInterface/gpu.hpp}}
+
+
+This file contains forward declarations, structures and constants.  
+
+
+{\ttfamily \#include $<$glm/glm.\+hpp$>$}\newline
+{\ttfamily \#include $<$cstdint$>$}\newline
+\doxysubsubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+struct \mbox{\hyperlink{structImage}{Image}}
+\begin{DoxyCompactList}\small\item\em This structure represents 2D memory of image. 2D images are used as textures and color or depth buffers of framebuffers. Pixel \mbox{[}x,y\mbox{]} starts at uint8\+\_\+t\texorpdfstring{$\ast$}{*}ptr = ((uint8\+\_\+t\texorpdfstring{$\ast$}{*})data) + y\texorpdfstring{$\ast$}{*}pitch + x\texorpdfstring{$\ast$}{*}bytes\+Per\+Pixel; channel\+Types is swizzling table for colors (RGB,BGR,...) for format == F32\+: bytes\+Per\+Pixel = sizeof(float) \texorpdfstring{$\ast$}{*} channels for format == U8\+: bytes\+Per\+Pixel = sizeof(uint8\+\_\+t) \texorpdfstring{$\ast$}{*} channels. \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{structTexture}{Texture}}
+\begin{DoxyCompactList}\small\item\em \mbox{[}\doxylink{structImage}{Image}\mbox{]} \end{DoxyCompactList}\item 
+union \mbox{\hyperlink{unionAttrib}{Attrib}}
+\begin{DoxyCompactList}\small\item\em \mbox{[}Attrib\+Type\mbox{]} \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{structInVertex}{In\+Vertex}}
+\begin{DoxyCompactList}\small\item\em \mbox{[}\doxylink{unionAttrib}{Attrib}\mbox{]} \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{structOutVertex}{Out\+Vertex}}
+\begin{DoxyCompactList}\small\item\em \mbox{[}\doxylink{structInVertex}{In\+Vertex}\mbox{]} \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{structInFragment}{In\+Fragment}}
+\begin{DoxyCompactList}\small\item\em \mbox{[}\doxylink{structOutVertex}{Out\+Vertex}\mbox{]} \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{structOutFragment}{Out\+Fragment}}
+\begin{DoxyCompactList}\small\item\em \mbox{[}\doxylink{structInFragment}{In\+Fragment}\mbox{]} \end{DoxyCompactList}\item 
+union \mbox{\hyperlink{unionUniform}{Uniform}}
+\begin{DoxyCompactList}\small\item\em \mbox{[}\doxylink{structOutFragment}{Out\+Fragment}\mbox{]} \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{structShaderInterface}{Shader\+Interface}}
+\begin{DoxyCompactList}\small\item\em \mbox{[}Index\+Type\mbox{]} \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{structVertexAttrib}{Vertex\+Attrib}}
+\begin{DoxyCompactList}\small\item\em \mbox{[}Fragment\+Shader\mbox{]} \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{structVertexArray}{Vertex\+Array}}
+\begin{DoxyCompactList}\small\item\em \mbox{[}\doxylink{structVertexAttrib}{Vertex\+Attrib}\mbox{]} \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{structProgram}{Program}}
+\begin{DoxyCompactList}\small\item\em \mbox{[}\doxylink{structVertexArray}{Vertex\+Array}\mbox{]} \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{structFramebuffer}{Framebuffer}}
+\begin{DoxyCompactList}\small\item\em This structure represent a framebuffer A framebuffer is used as an output of rendering. \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{structBuffer}{Buffer}}
+\begin{DoxyCompactList}\small\item\em \mbox{[}\doxylink{structFramebuffer}{Framebuffer}\mbox{]} \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{structStencilOps}{Stencil\+Ops}}
+\begin{DoxyCompactList}\small\item\em \mbox{[}Stencil\+Op\mbox{]} \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{structStencilSettings}{Stencil\+Settings}}
+\begin{DoxyCompactList}\small\item\em \mbox{[}\doxylink{structStencilOps}{Stencil\+Ops}\mbox{]} \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{structBlendingSettings}{Blending\+Settings}}
+\begin{DoxyCompactList}\small\item\em \mbox{[}Blend\+Equation\mbox{]} \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{structBlockWrites}{Block\+Writes}}
+\begin{DoxyCompactList}\small\item\em \mbox{[}\doxylink{structBlendingSettings}{Blending\+Settings}\mbox{]} \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{structBackfaceCulling}{Backface\+Culling}}
+\begin{DoxyCompactList}\small\item\em \mbox{[}\doxylink{structBlockWrites}{Block\+Writes}\mbox{]} \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{structGPUMemory}{GPUMemory}}
+\begin{DoxyCompactList}\small\item\em \mbox{[}\doxylink{structBackfaceCulling}{Backface\+Culling}\mbox{]} \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{structClearColorCommand}{Clear\+Color\+Command}}
+\begin{DoxyCompactList}\small\item\em This structure represents clear color buffer command. The structure stores clear color value to which the color buffer should be cleared. In \href{https://registry.khronos.org/OpenGL-Refpages/gl4/html/glClear.xhtml}{\texttt{ Open\+GL}}, this command is similar to gl\+Clear(\+GL\+\_\+\+COLOR\+\_\+\+BUFFER\+\_\+\+BIT) function. \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{structClearDepthCommand}{Clear\+Depth\+Command}}
+\begin{DoxyCompactList}\small\item\em \mbox{[}\doxylink{structClearColorCommand}{Clear\+Color\+Command}\mbox{]} \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{structClearStencilCommand}{Clear\+Stencil\+Command}}
+\begin{DoxyCompactList}\small\item\em \mbox{[}\doxylink{structClearDepthCommand}{Clear\+Depth\+Command}\mbox{]} \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{structDrawCommand}{Draw\+Command}}
+\begin{DoxyCompactList}\small\item\em \mbox{[}\doxylink{structClearStencilCommand}{Clear\+Stencil\+Command}\mbox{]} \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{structSetDrawIdCommand}{Set\+Draw\+Id\+Command}}
+\begin{DoxyCompactList}\small\item\em \mbox{[}\doxylink{structDrawCommand}{Draw\+Command}\mbox{]} \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{structBindFramebufferCommand}{Bind\+Framebuffer\+Command}}
+\begin{DoxyCompactList}\small\item\em \mbox{[}\doxylink{structSetDrawIdCommand}{Set\+Draw\+Id\+Command}\mbox{]} \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{structBindProgramCommand}{Bind\+Program\+Command}}
+\begin{DoxyCompactList}\small\item\em \mbox{[}\doxylink{structBindFramebufferCommand}{Bind\+Framebuffer\+Command}\mbox{]} \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{structBindVertexArrayCommand}{Bind\+Vertex\+Array\+Command}}
+\begin{DoxyCompactList}\small\item\em \mbox{[}\doxylink{structBindProgramCommand}{Bind\+Program\+Command}\mbox{]} \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{structSubCommand}{Sub\+Command}}
+\begin{DoxyCompactList}\small\item\em \mbox{[}\doxylink{structBindVertexArrayCommand}{Bind\+Vertex\+Array\+Command}\mbox{]} \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{structSetStencilCommand}{Set\+Stencil\+Command}}
+\begin{DoxyCompactList}\small\item\em \mbox{[}\doxylink{structSubCommand}{Sub\+Command}\mbox{]} \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{structSetBlendingCommand}{Set\+Blending\+Command}}
+\begin{DoxyCompactList}\small\item\em \mbox{[}\doxylink{structSetStencilCommand}{Set\+Stencil\+Command}\mbox{]} \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{structBlockWritesCommand}{Block\+Writes\+Command}}
+\begin{DoxyCompactList}\small\item\em \mbox{[}\doxylink{structSetBlendingCommand}{Set\+Blending\+Command}\mbox{]} \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{structSetBackfaceCullingCommand}{Set\+Backface\+Culling\+Command}}
+\begin{DoxyCompactList}\small\item\em \mbox{[}\doxylink{structBlockWritesCommand}{Block\+Writes\+Command}\mbox{]} \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{structSetFrontFaceCommand}{Set\+Front\+Face\+Command}}
+\begin{DoxyCompactList}\small\item\em \mbox{[}\doxylink{structSetBackfaceCullingCommand}{Set\+Backface\+Culling\+Command}\mbox{]} \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{structUserCommand}{User\+Command}}
+\begin{DoxyCompactList}\small\item\em This structure represents user command. User command can execute any task. It is usually not present on GPU. The closest GPU command would be compute shader. When the GPU encounter this command, it will execute user callback and give the command user\+Data. If the callback is nullptr, the GPU ignores it. Student should implement correct behaviour of this command. \end{DoxyCompactList}\item 
+union \mbox{\hyperlink{unionCommandData}{Command\+Data}}
+\begin{DoxyCompactList}\small\item\em \mbox{[}Command\+Type\mbox{]} \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{structCommand}{Command}}
+\begin{DoxyCompactList}\small\item\em \mbox{[}\doxylink{unionCommandData}{Command\+Data}\mbox{]} \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{structCommandBuffer}{Command\+Buffer}}
+\begin{DoxyCompactList}\small\item\em \mbox{[}\doxylink{structCommand}{Command}\mbox{]} \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+using \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a61e7df3fcaa53829be20be29b197e3e6}{Vertex\+Shader}} = void(\texorpdfstring{$\ast$}{*})(\mbox{\hyperlink{structOutVertex}{Out\+Vertex}} \&out\+Vertex, \mbox{\hyperlink{structInVertex}{In\+Vertex}} const  \&in\+Vertex, \mbox{\hyperlink{structShaderInterface}{Shader\+Interface}} const  \&si)
+\begin{DoxyCompactList}\small\item\em \mbox{[}\doxylink{structShaderInterface}{Shader\+Interface}\mbox{]} \end{DoxyCompactList}\item 
+using \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_ac2dd95ee5e44978647da13fc95b9420e}{Fragment\+Shader}} = void(\texorpdfstring{$\ast$}{*})(\mbox{\hyperlink{structOutFragment}{Out\+Fragment}} \&out\+Fragment, \mbox{\hyperlink{structInFragment}{In\+Fragment}} const  \&in\+Fragment, \mbox{\hyperlink{structShaderInterface}{Shader\+Interface}} const  \&si)
+\begin{DoxyCompactList}\small\item\em \mbox{[}Vertex\+Shader\mbox{]} \end{DoxyCompactList}\item 
+using \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a71ccc6fa3730a87e50bbb36079c57885}{User\+Command\+Fce}} = void(\texorpdfstring{$\ast$}{*})(void \texorpdfstring{$\ast$}{*}data)
+\begin{DoxyCompactList}\small\item\em \mbox{[}\doxylink{structSetFrontFaceCommand}{Set\+Front\+Face\+Command}\mbox{]} \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Enumerations}
+\begin{DoxyCompactItemize}
+\item 
+enum class \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a8cc36b907e294f5e78e1b479cac369dd}{Attrib\+Type}} \+: uint8\+\_\+t \{ \newline
+\mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a8cc36b907e294f5e78e1b479cac369ddaba2b45bdc11e2a4a6e86aab2ac693cbb}{EMPTY}} = 0
+, \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a8cc36b907e294f5e78e1b479cac369ddae738c26bf4ce1037fa81b039a915cbf6}{FLOAT}} = 1
+, \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a8cc36b907e294f5e78e1b479cac369dda9bd71a29dd44a2e0252b56ce5c6d251a}{VEC2}} = 2
+, \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a8cc36b907e294f5e78e1b479cac369ddaa7c116def9f212182aa52ab1e936d77d}{VEC3}} = 3
+, \newline
+\mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a8cc36b907e294f5e78e1b479cac369ddaee190f7a0572504036effa0134dc5d88}{VEC4}} = 4
+, \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a8cc36b907e294f5e78e1b479cac369dda3351504090a741e69da641a42e00da80}{UINT}} = 8+1
+, \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a8cc36b907e294f5e78e1b479cac369dda5ca0c8351a842472da0c9e89a3714475}{UVEC2}} = 8+2
+, \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a8cc36b907e294f5e78e1b479cac369ddaa9767ed71ca4b7d192cdaec255e6d39b}{UVEC3}} = 8+3
+, \newline
+\mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a8cc36b907e294f5e78e1b479cac369ddaa569d1b1b651370ef8da7dd5c4eb67bf}{UVEC4}} = 8+4
+ \}
+\begin{DoxyCompactList}\small\item\em \mbox{[}\doxylink{structTexture}{Texture}\mbox{]} \end{DoxyCompactList}\item 
+enum class \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a862161defe984b09e24dfec9e0540a3e}{Index\+Type}} \+: uint8\+\_\+t \{ \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a862161defe984b09e24dfec9e0540a3ea6669348b484e3008dca2bfa8e85e40b5}{U8}} = 1
+, \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a862161defe984b09e24dfec9e0540a3eaef9ef3ebca4d2b64b6ec83808bafa5f2}{U16}} = 2
+, \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a862161defe984b09e24dfec9e0540a3eac8bd5bedff8ef192d39a962afc0e19ee}{U32}} = 4
+ \}
+\begin{DoxyCompactList}\small\item\em \mbox{[}\doxylink{unionUniform}{Uniform}\mbox{]} \end{DoxyCompactList}\item 
+enum class \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_ad3d7abe532ca7be55ba9e8e03916e2e0}{Stencil\+Func}} \{ \newline
+\mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_ad3d7abe532ca7be55ba9e8e03916e2e0a443475558f0168dff92ecde26b98ae5a}{NEVER}}
+, \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_ad3d7abe532ca7be55ba9e8e03916e2e0a1798e8c3621ca53d9e3a80d257306000}{LESS}}
+, \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_ad3d7abe532ca7be55ba9e8e03916e2e0a8a72211a539c4f44dcaa446209076da6}{LEQUAL}}
+, \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_ad3d7abe532ca7be55ba9e8e03916e2e0ae7e72355289e404b762d4cf88824d23b}{GREATER}}
+, \newline
+\mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_ad3d7abe532ca7be55ba9e8e03916e2e0a9e63a520a6e8fefd37a5fa966d96f3bc}{GEQUAL}}
+, \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_ad3d7abe532ca7be55ba9e8e03916e2e0a969f331a87d8c958473c32b4d0e61a44}{EQUAL}}
+, \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_ad3d7abe532ca7be55ba9e8e03916e2e0a94fbd04a26dff1689ee02634be6aaf1f}{NOTEQUAL}}
+, \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_ad3d7abe532ca7be55ba9e8e03916e2e0af3fc827ade4b968e50406496907ef962}{ALWAYS}}
+ \}
+\begin{DoxyCompactList}\small\item\em \mbox{[}\doxylink{structBuffer}{Buffer}\mbox{]} \end{DoxyCompactList}\item 
+enum class \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_af046868f9f300b11282490852e003566}{Stencil\+Op}} \{ \newline
+\mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_af046868f9f300b11282490852e003566a60cba2874369bd3790e14ea5f8a7bc58}{KEEP}}
+, \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_af046868f9f300b11282490852e003566a529e9e0beb5f85d1f132917c1a09860c}{ZERO}}
+, \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_af046868f9f300b11282490852e003566a560a2dd6f6744646473b3b19e1fe96d7}{REPLACE}}
+, \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_af046868f9f300b11282490852e003566afc67535e5273d466beba3c06c0dbd988}{INCR}}
+, \newline
+\mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_af046868f9f300b11282490852e003566a056f9acd45832946a8f02289a8516e7f}{INCR\+\_\+\+WRAP}}
+, \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_af046868f9f300b11282490852e003566ac121b991572aba8a5789d08d7e9cf76e}{DECR}}
+, \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_af046868f9f300b11282490852e003566a6501b4eff3345af27614635221cc6c59}{DECR\+\_\+\+WRAP}}
+, \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_af046868f9f300b11282490852e003566aa2727ae72447eea06d4cc0ef67187280}{INVERT}}
+ \}
+\begin{DoxyCompactList}\small\item\em \mbox{[}Stencil\+Func\mbox{]} \end{DoxyCompactList}\item 
+enum class \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a2e303f6844bc1be10709c24efb4ad36f}{Blend\+Func}} \{ \newline
+\mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a2e303f6844bc1be10709c24efb4ad36fa529e9e0beb5f85d1f132917c1a09860c}{ZERO}}
+, \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a2e303f6844bc1be10709c24efb4ad36fabc21e6484530fc9d0313cb816b733396}{ONE}}
+, \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a2e303f6844bc1be10709c24efb4ad36fa0d64e73cd04f53e815a849347285839e}{SRC\+\_\+\+COLOR}}
+, \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a2e303f6844bc1be10709c24efb4ad36faf883b721fe8288abb2c5f8fc7b100b54}{ONE\+\_\+\+MINUS\+\_\+\+SRC\+\_\+\+COLOR}}
+, \newline
+\mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a2e303f6844bc1be10709c24efb4ad36fa220e8b21c17d3d0f297244647d60df59}{DST\+\_\+\+COLOR}}
+, \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a2e303f6844bc1be10709c24efb4ad36face05af0f4690600250a4f0dce0029906}{ONE\+\_\+\+MINUS\+\_\+\+DST\+\_\+\+COLOR}}
+, \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a2e303f6844bc1be10709c24efb4ad36faa01be6519d4fb614f16261a59958bbb4}{SRC\+\_\+\+ALPHA}}
+, \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a2e303f6844bc1be10709c24efb4ad36fa92ba720a64bd436721e0d2aa50e170a9}{ONE\+\_\+\+MINUS\+\_\+\+SRC\+\_\+\+ALPHA}}
+, \newline
+\mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a2e303f6844bc1be10709c24efb4ad36fa59b7e4d8d77a6fc488bfad5dfb160ecc}{DST\+\_\+\+ALPHA}}
+, \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a2e303f6844bc1be10709c24efb4ad36fa9760c2ee1a1ebfbfefe5e406c00fed0b}{ONE\+\_\+\+MINUS\+\_\+\+DST\+\_\+\+ALPHA}}
+ \}
+\begin{DoxyCompactList}\small\item\em \mbox{[}\doxylink{structStencilSettings}{Stencil\+Settings}\mbox{]} \end{DoxyCompactList}\item 
+enum class \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a16ae0c0ba8012d51a5433cf8bff4d425}{Blend\+Equation}} \{ \newline
+\mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a16ae0c0ba8012d51a5433cf8bff4d425a9eeb52badb613229884838847294b90d}{ADD}}
+, \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a16ae0c0ba8012d51a5433cf8bff4d425a23ebcc4776b613af25dfbe7c8ce4813e}{SUBTRACT}}
+, \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a16ae0c0ba8012d51a5433cf8bff4d425a84501f117a8c5a3f3f9faaa21be26e8e}{REVERSE\+\_\+\+SUBTRACT}}
+, \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a16ae0c0ba8012d51a5433cf8bff4d425ace31e2a082d17e038fcc6e3006166653}{MIN}}
+, \newline
+\mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a16ae0c0ba8012d51a5433cf8bff4d425a26a4b44a837bf97b972628509912b4a5}{MAX}}
+ \}
+\begin{DoxyCompactList}\small\item\em \mbox{[}Blend\+Func\mbox{]} \end{DoxyCompactList}\item 
+enum class \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a21e038f5b8958e203d28bc4f18472352}{Command\+Type}} \{ \newline
+\mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a21e038f5b8958e203d28bc4f18472352aba2b45bdc11e2a4a6e86aab2ac693cbb}{EMPTY}}
+, \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a21e038f5b8958e203d28bc4f18472352ac9e3011a04cc978bf737d10d2b73f4b7}{BIND\+\_\+\+FRAMEBUFFER}}
+, \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a21e038f5b8958e203d28bc4f18472352ac539ee5fafd5847e0877fc545dde6093}{BIND\+\_\+\+PROGRAM}}
+, \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a21e038f5b8958e203d28bc4f18472352af579b0c380b4a2da14f78e233e2a44f6}{BIND\+\_\+\+VERTEXARRAY}}
+, \newline
+\mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a21e038f5b8958e203d28bc4f18472352a7b85cac19ab4b9ef7bba204881e9d5b5}{BLOCK\+\_\+\+WRITES\+\_\+\+COMMAND}}
+, \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a21e038f5b8958e203d28bc4f18472352a1f4cd069df1054daeb181570598e7c18}{SET\+\_\+\+BACKFACE\+\_\+\+CULLING\+\_\+\+COMMAND}}
+, \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a21e038f5b8958e203d28bc4f18472352af48b2479e7899d4aee86d7a5932cdef1}{SET\+\_\+\+FRONT\+\_\+\+FACE\+\_\+\+COMMAND}}
+, \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a21e038f5b8958e203d28bc4f18472352a2f6f92d9544694ff675b7c5a208b6a41}{SET\+\_\+\+STENCIL\+\_\+\+COMMAND}}
+, \newline
+\mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a21e038f5b8958e203d28bc4f18472352a667f5e2416b2403f9c1d8d43e7b8484a}{SET\+\_\+\+BLENDING\+\_\+\+COMMAND}}
+, \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a21e038f5b8958e203d28bc4f18472352af33727905f5b6f48cac50cb735ed9524}{SET\+\_\+\+DRAW\+\_\+\+ID}}
+, \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a21e038f5b8958e203d28bc4f18472352a7155d2bc39cdfe21800d06b3ee2820b1}{USER\+\_\+\+COMMAND}}
+, \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a21e038f5b8958e203d28bc4f18472352add0cc7d0802d17e157ea28b402e19bc5}{CLEAR\+\_\+\+COLOR}}
+, \newline
+\mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a21e038f5b8958e203d28bc4f18472352ad229fa8f19b4593ad0810603e60908e6}{CLEAR\+\_\+\+DEPTH}}
+, \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a21e038f5b8958e203d28bc4f18472352a936f2dfba2cd8a6afcab614dd4ee8481}{CLEAR\+\_\+\+STENCIL}}
+, \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a21e038f5b8958e203d28bc4f18472352a2b4807f24940ca2fe73284bc6e864d66}{DRAW}}
+, \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a21e038f5b8958e203d28bc4f18472352aadcc01dbaca0f0d3fb64ef8f45550ec3}{SUB\+\_\+\+COMMAND}}
+ \}
+\begin{DoxyCompactList}\small\item\em \mbox{[}\doxylink{structUserCommand}{User\+Command}\mbox{]} \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a6842746ca06d8003aba5565fe7a7d7d6}{get\+Pixel}} (\mbox{\hyperlink{structImage}{Image}} \&image, uint32\+\_\+t x, uint32\+\_\+t y)
+\begin{DoxyCompactList}\small\item\em \mbox{[}\doxylink{structProgram}{Program}\mbox{]} \end{DoxyCompactList}\item 
+void const \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a3c439a65c7b247304d4482c6f932234a}{get\+Pixel}} (\mbox{\hyperlink{structImage}{Image}} const \&image, uint32\+\_\+t x, uint32\+\_\+t y)
+\begin{DoxyCompactList}\small\item\em This function gets constant pointer to the start of the pixel in the image. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_ac92555f5be8a27d6c2538eb56e8e8dd6}{push\+Clear\+Color\+Command}} (\mbox{\hyperlink{structCommandBuffer}{Command\+Buffer}} \&cb, glm\+::vec4 const \&value=glm\+::vec4(0))
+\begin{DoxyCompactList}\small\item\em \mbox{[}\doxylink{structCommandBuffer}{Command\+Buffer}\mbox{]} \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_ab21e6fb22fc5a0695585d9b49d488419}{push\+Clear\+Depth\+Command}} (\mbox{\hyperlink{structCommandBuffer}{Command\+Buffer}} \&cb, float value=2)
+\begin{DoxyCompactList}\small\item\em This function can be used to insert clear depth command to command buffer. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a3c96a32fcba59c502dc2bbdb65c64c07}{push\+Clear\+Stencil\+Command}} (\mbox{\hyperlink{structCommandBuffer}{Command\+Buffer}} \&cb, uint8\+\_\+t value=0u)
+\begin{DoxyCompactList}\small\item\em This function can be used to insert clear stencil command to command buffer. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_ad08d6b1878961c799d005fa3e3778f40}{push\+Draw\+Command}} (\mbox{\hyperlink{structCommandBuffer}{Command\+Buffer}} \&cb, uint32\+\_\+t nof\+Vertices)
+\begin{DoxyCompactList}\small\item\em This function can be used to insert draw command into command buffer. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_aaf908caefd690c7d905eb3baa9e1a569}{push\+Bind\+Framebuffer\+Command}} (\mbox{\hyperlink{structCommandBuffer}{Command\+Buffer}} \&cb, uint32\+\_\+t id)
+\begin{DoxyCompactList}\small\item\em This function can be used to insert bind\+Framebuffer command into command buffer. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_ad35fa691c90051fd7b24f95fb6c4b55d}{push\+Bind\+Program\+Command}} (\mbox{\hyperlink{structCommandBuffer}{Command\+Buffer}} \&cb, uint32\+\_\+t id)
+\begin{DoxyCompactList}\small\item\em This function inserts bind\+Program command into command buffer. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a6a83b6ff420e4e17a9aef5a4a11a2499}{push\+Bind\+Vertex\+Array\+Command}} (\mbox{\hyperlink{structCommandBuffer}{Command\+Buffer}} \&cb, uint32\+\_\+t id)
+\begin{DoxyCompactList}\small\item\em This function inserts bind\+Vertex\+Array command into command buffer. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_aacb69634138ae054e54e64be83d9cf14}{push\+Set\+Draw\+Id\+Command}} (\mbox{\hyperlink{structCommandBuffer}{Command\+Buffer}} \&cb, uint32\+\_\+t id)
+\begin{DoxyCompactList}\small\item\em This function inserts set\+Draw\+Id command into command buffer. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_aa4d71f523e3610ab809ded2a09276d20}{push\+Sub\+Command}} (\mbox{\hyperlink{structCommandBuffer}{Command\+Buffer}} \&cb, \mbox{\hyperlink{structCommandBuffer}{Command\+Buffer}} \texorpdfstring{$\ast$}{*}sub)
+\begin{DoxyCompactList}\small\item\em This function inserts sub\+Command into command buffer. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a454269e32c2579ae16c31137ca3ba157}{push\+Set\+Stencil\+Command}} (\mbox{\hyperlink{structCommandBuffer}{Command\+Buffer}} \&cb, \mbox{\hyperlink{structStencilSettings}{Stencil\+Settings}} const \&settings)
+\begin{DoxyCompactList}\small\item\em This function inserts set\+Stencil command into command buffer. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a2b3f61c539fc808bdc6d807dc54e047e}{push\+Set\+Blending\+Command}} (\mbox{\hyperlink{structCommandBuffer}{Command\+Buffer}} \&cb, \mbox{\hyperlink{structBlendingSettings}{Blending\+Settings}} const \&settings)
+\begin{DoxyCompactList}\small\item\em This function inserts set\+Stencil command into command buffer. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a466bf47db3b0c7b2f8ca58df618e1ad3}{push\+Block\+Writes\+Command}} (\mbox{\hyperlink{structCommandBuffer}{Command\+Buffer}} \&cb, bool block\+Color=false, bool block\+Depth=false, bool block\+Stencil=false)
+\begin{DoxyCompactList}\small\item\em This function inserts block writes command into command buffer. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_ae554747746cac665859a730b3bbd113b}{push\+Set\+Backface\+Culling\+Command}} (\mbox{\hyperlink{structCommandBuffer}{Command\+Buffer}} \&cb, bool enabled=false)
+\begin{DoxyCompactList}\small\item\em This function inserts set backface culling command into command buffer. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a11e2c56a8fa3c85400beee134545c44e}{push\+Set\+Front\+Face\+Command}} (\mbox{\hyperlink{structCommandBuffer}{Command\+Buffer}} \&cb, bool front\+Face\+Is\+Counter\+Clock\+Wise=true)
+\begin{DoxyCompactList}\small\item\em This function inserts set front face command into command buffer. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a6e80e44d8f11ff4a57d778d9aac17add}{push\+User\+Command}} (\mbox{\hyperlink{structCommandBuffer}{Command\+Buffer}} \&cb, \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a71ccc6fa3730a87e50bbb36079c57885}{User\+Command\+Fce}} fce=nullptr, void \texorpdfstring{$\ast$}{*}data=nullptr)
+\begin{DoxyCompactList}\small\item\em This function inserts user command into command buffer. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a8938ad0ed0735df8ab181ffadae5f489}\label{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a8938ad0ed0735df8ab181ffadae5f489} 
+uint32\+\_\+t const {\bfseries max\+Attribs} = 4
+\begin{DoxyCompactList}\small\item\em maximum number of vertex/fragment attributes \end{DoxyCompactList}\item 
+\Hypertarget{solutionInterface_2src_2solutionInterface_2gpu_8hpp_ab6c0ff7dddc10b51612da25e48940f97}\label{solutionInterface_2src_2solutionInterface_2gpu_8hpp_ab6c0ff7dddc10b51612da25e48940f97} 
+uint32\+\_\+t const {\bfseries max\+Channels} = 4
+\begin{DoxyCompactList}\small\item\em maximal number of color channels \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+This file contains forward declarations, structures and constants. 
+
+\begin{DoxyAuthor}{Author}
+Tomáš Milet, \href{mailto:imilet@fit.vutbr.cz}{\texttt{ imilet@fit.\+vutbr.\+cz}} 
+\end{DoxyAuthor}
+
+
+\doxysubsection{Typedef Documentation}
+\Hypertarget{solutionInterface_2src_2solutionInterface_2gpu_8hpp_ac2dd95ee5e44978647da13fc95b9420e}\label{solutionInterface_2src_2solutionInterface_2gpu_8hpp_ac2dd95ee5e44978647da13fc95b9420e} 
+\index{gpu.hpp@{gpu.hpp}!FragmentShader@{FragmentShader}}
+\index{FragmentShader@{FragmentShader}!gpu.hpp@{gpu.hpp}}
+\doxysubsubsection{\texorpdfstring{FragmentShader}{FragmentShader}}
+{\footnotesize\ttfamily using \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_ac2dd95ee5e44978647da13fc95b9420e}{Fragment\+Shader}} =  void(\texorpdfstring{$\ast$}{*})( \mbox{\hyperlink{structOutFragment}{Out\+Fragment}} \&out\+Fragment, \mbox{\hyperlink{structInFragment}{In\+Fragment}} const\&in\+Fragment , \mbox{\hyperlink{structShaderInterface}{Shader\+Interface}} const\&si )}
+
+
+
+\mbox{[}Vertex\+Shader\mbox{]} 
+
+Function type for fragment shader
+
+
+\begin{DoxyParams}{Parameters}
+{\em out\+Fragment} & output fragment \\
+\hline
+{\em in\+Fragment} & input fragment \\
+\hline
+{\em uniforms} & uniform variables \mbox{[}Fragment\+Shader\mbox{]} \\
+\hline
+\end{DoxyParams}
+\Hypertarget{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a71ccc6fa3730a87e50bbb36079c57885}\label{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a71ccc6fa3730a87e50bbb36079c57885} 
+\index{gpu.hpp@{gpu.hpp}!UserCommandFce@{UserCommandFce}}
+\index{UserCommandFce@{UserCommandFce}!gpu.hpp@{gpu.hpp}}
+\doxysubsubsection{\texorpdfstring{UserCommandFce}{UserCommandFce}}
+{\footnotesize\ttfamily using \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a71ccc6fa3730a87e50bbb36079c57885}{User\+Command\+Fce}} =  void(\texorpdfstring{$\ast$}{*})(void\texorpdfstring{$\ast$}{*}data)}
+
+
+
+\mbox{[}\doxylink{structSetFrontFaceCommand}{Set\+Front\+Face\+Command}\mbox{]} 
+
+User function pointer type
+
+
+\begin{DoxyParams}{Parameters}
+{\em data} & user data \\
+\hline
+\end{DoxyParams}
+\Hypertarget{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a61e7df3fcaa53829be20be29b197e3e6}\label{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a61e7df3fcaa53829be20be29b197e3e6} 
+\index{gpu.hpp@{gpu.hpp}!VertexShader@{VertexShader}}
+\index{VertexShader@{VertexShader}!gpu.hpp@{gpu.hpp}}
+\doxysubsubsection{\texorpdfstring{VertexShader}{VertexShader}}
+{\footnotesize\ttfamily using \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a61e7df3fcaa53829be20be29b197e3e6}{Vertex\+Shader}} =  void(\texorpdfstring{$\ast$}{*})( \mbox{\hyperlink{structOutVertex}{Out\+Vertex}} \&out\+Vertex, \mbox{\hyperlink{structInVertex}{In\+Vertex}} const\&in\+Vertex , \mbox{\hyperlink{structShaderInterface}{Shader\+Interface}} const\&si )}
+
+
+
+\mbox{[}\doxylink{structShaderInterface}{Shader\+Interface}\mbox{]} 
+
+Function type for vertex shader
+
+
+\begin{DoxyParams}{Parameters}
+{\em out\+Vertex} & output vertex \\
+\hline
+{\em in\+Vertex} & input vertex \\
+\hline
+{\em uniforms} & uniform variables \mbox{[}Vertex\+Shader\mbox{]} \\
+\hline
+\end{DoxyParams}
+
+
+\doxysubsection{Enumeration Type Documentation}
+\Hypertarget{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a8cc36b907e294f5e78e1b479cac369dd}\label{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a8cc36b907e294f5e78e1b479cac369dd} 
+\index{gpu.hpp@{gpu.hpp}!AttribType@{AttribType}}
+\index{AttribType@{AttribType}!gpu.hpp@{gpu.hpp}}
+\doxysubsubsection{\texorpdfstring{AttribType}{AttribType}}
+{\footnotesize\ttfamily enum class \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a8cc36b907e294f5e78e1b479cac369dd}{Attrib\+Type}} \+: uint8\+\_\+t\hspace{0.3cm}{\ttfamily [strong]}}
+
+
+
+\mbox{[}\doxylink{structTexture}{Texture}\mbox{]} 
+
+This enum represents vertex/fragment attribute type. \mbox{[}Attrib\+Type\mbox{]} \begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{EMPTY@{EMPTY}!gpu.hpp@{gpu.hpp}}\index{gpu.hpp@{gpu.hpp}!EMPTY@{EMPTY}}}\Hypertarget{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a8cc36b907e294f5e78e1b479cac369ddaba2b45bdc11e2a4a6e86aab2ac693cbb}\label{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a8cc36b907e294f5e78e1b479cac369ddaba2b45bdc11e2a4a6e86aab2ac693cbb} 
+EMPTY&disabled attribute \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{FLOAT@{FLOAT}!gpu.hpp@{gpu.hpp}}\index{gpu.hpp@{gpu.hpp}!FLOAT@{FLOAT}}}\Hypertarget{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a8cc36b907e294f5e78e1b479cac369ddae738c26bf4ce1037fa81b039a915cbf6}\label{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a8cc36b907e294f5e78e1b479cac369ddae738c26bf4ce1037fa81b039a915cbf6} 
+FLOAT&1x 32-\/bit float \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{VEC2@{VEC2}!gpu.hpp@{gpu.hpp}}\index{gpu.hpp@{gpu.hpp}!VEC2@{VEC2}}}\Hypertarget{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a8cc36b907e294f5e78e1b479cac369dda9bd71a29dd44a2e0252b56ce5c6d251a}\label{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a8cc36b907e294f5e78e1b479cac369dda9bd71a29dd44a2e0252b56ce5c6d251a} 
+VEC2&2x 32-\/bit floats \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{VEC3@{VEC3}!gpu.hpp@{gpu.hpp}}\index{gpu.hpp@{gpu.hpp}!VEC3@{VEC3}}}\Hypertarget{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a8cc36b907e294f5e78e1b479cac369ddaa7c116def9f212182aa52ab1e936d77d}\label{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a8cc36b907e294f5e78e1b479cac369ddaa7c116def9f212182aa52ab1e936d77d} 
+VEC3&3x 32-\/bit floats \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{VEC4@{VEC4}!gpu.hpp@{gpu.hpp}}\index{gpu.hpp@{gpu.hpp}!VEC4@{VEC4}}}\Hypertarget{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a8cc36b907e294f5e78e1b479cac369ddaee190f7a0572504036effa0134dc5d88}\label{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a8cc36b907e294f5e78e1b479cac369ddaee190f7a0572504036effa0134dc5d88} 
+VEC4&4x 32-\/bit floats \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{UINT@{UINT}!gpu.hpp@{gpu.hpp}}\index{gpu.hpp@{gpu.hpp}!UINT@{UINT}}}\Hypertarget{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a8cc36b907e294f5e78e1b479cac369dda3351504090a741e69da641a42e00da80}\label{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a8cc36b907e294f5e78e1b479cac369dda3351504090a741e69da641a42e00da80} 
+UINT&1x 32-\/bit unsigned int \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{UVEC2@{UVEC2}!gpu.hpp@{gpu.hpp}}\index{gpu.hpp@{gpu.hpp}!UVEC2@{UVEC2}}}\Hypertarget{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a8cc36b907e294f5e78e1b479cac369dda5ca0c8351a842472da0c9e89a3714475}\label{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a8cc36b907e294f5e78e1b479cac369dda5ca0c8351a842472da0c9e89a3714475} 
+UVEC2&2x 32-\/bit unsigned int \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{UVEC3@{UVEC3}!gpu.hpp@{gpu.hpp}}\index{gpu.hpp@{gpu.hpp}!UVEC3@{UVEC3}}}\Hypertarget{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a8cc36b907e294f5e78e1b479cac369ddaa9767ed71ca4b7d192cdaec255e6d39b}\label{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a8cc36b907e294f5e78e1b479cac369ddaa9767ed71ca4b7d192cdaec255e6d39b} 
+UVEC3&3x 32-\/bit unsigned int \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{UVEC4@{UVEC4}!gpu.hpp@{gpu.hpp}}\index{gpu.hpp@{gpu.hpp}!UVEC4@{UVEC4}}}\Hypertarget{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a8cc36b907e294f5e78e1b479cac369ddaa569d1b1b651370ef8da7dd5c4eb67bf}\label{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a8cc36b907e294f5e78e1b479cac369ddaa569d1b1b651370ef8da7dd5c4eb67bf} 
+UVEC4&4x 32-\/bit unsigned int \\
+\hline
+
+\end{DoxyEnumFields}
+\Hypertarget{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a16ae0c0ba8012d51a5433cf8bff4d425}\label{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a16ae0c0ba8012d51a5433cf8bff4d425} 
+\index{gpu.hpp@{gpu.hpp}!BlendEquation@{BlendEquation}}
+\index{BlendEquation@{BlendEquation}!gpu.hpp@{gpu.hpp}}
+\doxysubsubsection{\texorpdfstring{BlendEquation}{BlendEquation}}
+{\footnotesize\ttfamily enum class \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a16ae0c0ba8012d51a5433cf8bff4d425}{Blend\+Equation}}\hspace{0.3cm}{\ttfamily [strong]}}
+
+
+
+\mbox{[}Blend\+Func\mbox{]} 
+
+This enum represents blending function
+
+Blending is a process that mixes newly computed color by fragment shader (source color) with already stored color in framebuffer (destination color).
+
+The resulting color is computed according to equation\+: $ ResultColor = eq(FragmentColor,FrameColor) $, where the function $ eq $ is selected using this enum.~\newline
+
+
+
+\begin{DoxyItemize}
+\item Source color, $ Frag=(Frag_r,Frag_g,Frag_b,Frag_a), $ is the color of fragment produced by fragment shader.
+\item Destination color, $ Frame=(Frame_r,Frame_g,Frame_b,Frame_a)$, is the color stored in framebuffer.
+\item Resulting color, $ Result=(Result_r,Result_g,Result_b,Result_a) $, is the new color that replaces destination color in framebuffer.
+\item Source factor, $ s=(s_r,s_g,s_b,s_a) $, is weighting vector of each source color component.
+\item Destination factor, $ d=(d_r,d_g,d_b,d_a) $, is weighring vector of each destination color component.
+\end{DoxyItemize}
+
+In \href{https://registry.khronos.org/OpenGL-Refpages/gl4/html/glBlendEquation.xhtml}{\texttt{ Open\+GL}} Frag is named Source Color, and Frame is named Destination color. \mbox{[}Blend\+Equation\mbox{]} \begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{ADD@{ADD}!gpu.hpp@{gpu.hpp}}\index{gpu.hpp@{gpu.hpp}!ADD@{ADD}}}\Hypertarget{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a16ae0c0ba8012d51a5433cf8bff4d425a9eeb52badb613229884838847294b90d}\label{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a16ae0c0ba8012d51a5433cf8bff4d425a9eeb52badb613229884838847294b90d} 
+ADD&$ Result_{rgba} = Frag _{rgba} \cdot s_{rgba} + Frame_{rgba} \cdot d_{rgba} $ \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{SUBTRACT@{SUBTRACT}!gpu.hpp@{gpu.hpp}}\index{gpu.hpp@{gpu.hpp}!SUBTRACT@{SUBTRACT}}}\Hypertarget{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a16ae0c0ba8012d51a5433cf8bff4d425a23ebcc4776b613af25dfbe7c8ce4813e}\label{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a16ae0c0ba8012d51a5433cf8bff4d425a23ebcc4776b613af25dfbe7c8ce4813e} 
+SUBTRACT&$ Result_{rgba} = Frag _{rgba} \cdot s_{rgba} - Frame_{rgba} \cdot d_{rgba} $ \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{REVERSE\_SUBTRACT@{REVERSE\_SUBTRACT}!gpu.hpp@{gpu.hpp}}\index{gpu.hpp@{gpu.hpp}!REVERSE\_SUBTRACT@{REVERSE\_SUBTRACT}}}\Hypertarget{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a16ae0c0ba8012d51a5433cf8bff4d425a84501f117a8c5a3f3f9faaa21be26e8e}\label{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a16ae0c0ba8012d51a5433cf8bff4d425a84501f117a8c5a3f3f9faaa21be26e8e} 
+REVERSE\+\_\+\+SUBTRACT&$ Result_{rgba} = Frame_{rgba} \cdot d_{rgba} - Frag _{rgba} \cdot s_{rgba} $ \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{MIN@{MIN}!gpu.hpp@{gpu.hpp}}\index{gpu.hpp@{gpu.hpp}!MIN@{MIN}}}\Hypertarget{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a16ae0c0ba8012d51a5433cf8bff4d425ace31e2a082d17e038fcc6e3006166653}\label{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a16ae0c0ba8012d51a5433cf8bff4d425ace31e2a082d17e038fcc6e3006166653} 
+MIN&$ Result_{rgba} = min(Frag_{rgba},Frame_{rgba}) $ \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{MAX@{MAX}!gpu.hpp@{gpu.hpp}}\index{gpu.hpp@{gpu.hpp}!MAX@{MAX}}}\Hypertarget{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a16ae0c0ba8012d51a5433cf8bff4d425a26a4b44a837bf97b972628509912b4a5}\label{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a16ae0c0ba8012d51a5433cf8bff4d425a26a4b44a837bf97b972628509912b4a5} 
+MAX&$ Result_{rgba} = max(Frag_{rgba},Frame_{rgba}) $ \\
+\hline
+
+\end{DoxyEnumFields}
+\Hypertarget{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a2e303f6844bc1be10709c24efb4ad36f}\label{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a2e303f6844bc1be10709c24efb4ad36f} 
+\index{gpu.hpp@{gpu.hpp}!BlendFunc@{BlendFunc}}
+\index{BlendFunc@{BlendFunc}!gpu.hpp@{gpu.hpp}}
+\doxysubsubsection{\texorpdfstring{BlendFunc}{BlendFunc}}
+{\footnotesize\ttfamily enum class \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a2e303f6844bc1be10709c24efb4ad36f}{Blend\+Func}}\hspace{0.3cm}{\ttfamily [strong]}}
+
+
+
+\mbox{[}\doxylink{structStencilSettings}{Stencil\+Settings}\mbox{]} 
+
+This enum represents blending factors
+
+Blending is a process that mixes newly computed color by fragment shader (source color) with already stored color in framebuffer (destination color).
+
+Source and destination colors are weighted using souce and destination factors.
+
+The resulting color is computed according to equation\+: $ ResultColor = eq(fragFactor \cdot FragmentColor, frameFactor \cdot FrameColor) $, where \texorpdfstring{$\ast$}{*}\+Factor is selected using this enum.~\newline
+
+
+Source color, $ Frag=(Frag_r,Frag_g,Frag_b,Frag_a), $ is the color of fragment produced by fragment shader. Destination color, $ Frame=(Frame_r,Frame_g,Frame_b,Frame_a)$, is the color stored in framebuffer. If the framebuffer has less channels, default values of each component is RGBA = (0,0,0,1).
+
+It follows the \href{https://registry.khronos.org/OpenGL-Refpages/gl4/html/glBlendFunc.xhtml}{\texttt{ Open\+GL}} specification. \mbox{[}Blend\+Func\mbox{]} \begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{ZERO@{ZERO}!gpu.hpp@{gpu.hpp}}\index{gpu.hpp@{gpu.hpp}!ZERO@{ZERO}}}\Hypertarget{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a2e303f6844bc1be10709c24efb4ad36fa529e9e0beb5f85d1f132917c1a09860c}\label{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a2e303f6844bc1be10709c24efb4ad36fa529e9e0beb5f85d1f132917c1a09860c} 
+ZERO&factor is $ (0,0,0,0) $ \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{ONE@{ONE}!gpu.hpp@{gpu.hpp}}\index{gpu.hpp@{gpu.hpp}!ONE@{ONE}}}\Hypertarget{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a2e303f6844bc1be10709c24efb4ad36fabc21e6484530fc9d0313cb816b733396}\label{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a2e303f6844bc1be10709c24efb4ad36fabc21e6484530fc9d0313cb816b733396} 
+ONE&factor is $ (1,1,1,1) $ \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{SRC\_COLOR@{SRC\_COLOR}!gpu.hpp@{gpu.hpp}}\index{gpu.hpp@{gpu.hpp}!SRC\_COLOR@{SRC\_COLOR}}}\Hypertarget{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a2e303f6844bc1be10709c24efb4ad36fa0d64e73cd04f53e815a849347285839e}\label{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a2e303f6844bc1be10709c24efb4ad36fa0d64e73cd04f53e815a849347285839e} 
+SRC\+\_\+\+COLOR&factor is $ (Frag_r,Frag_g,Frag_b,Frag_a) $ \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{ONE\_MINUS\_SRC\_COLOR@{ONE\_MINUS\_SRC\_COLOR}!gpu.hpp@{gpu.hpp}}\index{gpu.hpp@{gpu.hpp}!ONE\_MINUS\_SRC\_COLOR@{ONE\_MINUS\_SRC\_COLOR}}}\Hypertarget{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a2e303f6844bc1be10709c24efb4ad36faf883b721fe8288abb2c5f8fc7b100b54}\label{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a2e303f6844bc1be10709c24efb4ad36faf883b721fe8288abb2c5f8fc7b100b54} 
+ONE\+\_\+\+MINUS\+\_\+\+SRC\+\_\+\+COLOR&factor is $ (1,1,1,1) - (Frag_r,Frag_g,Frag_b,Frag_a) $ \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{DST\_COLOR@{DST\_COLOR}!gpu.hpp@{gpu.hpp}}\index{gpu.hpp@{gpu.hpp}!DST\_COLOR@{DST\_COLOR}}}\Hypertarget{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a2e303f6844bc1be10709c24efb4ad36fa220e8b21c17d3d0f297244647d60df59}\label{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a2e303f6844bc1be10709c24efb4ad36fa220e8b21c17d3d0f297244647d60df59} 
+DST\+\_\+\+COLOR&factor is $ (Frame_r,Frame_g,Frame_b,Frame_a)$, if frame has less than 4 channels, the default values of Frame is (0,0,0,1) \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{ONE\_MINUS\_DST\_COLOR@{ONE\_MINUS\_DST\_COLOR}!gpu.hpp@{gpu.hpp}}\index{gpu.hpp@{gpu.hpp}!ONE\_MINUS\_DST\_COLOR@{ONE\_MINUS\_DST\_COLOR}}}\Hypertarget{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a2e303f6844bc1be10709c24efb4ad36face05af0f4690600250a4f0dce0029906}\label{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a2e303f6844bc1be10709c24efb4ad36face05af0f4690600250a4f0dce0029906} 
+ONE\+\_\+\+MINUS\+\_\+\+DST\+\_\+\+COLOR&factor is $ (1,1,1,1) - (Frame_r,Frame_g,Frame_b,Frame_a)$, if frame has less than 4 channel, the default values of Frame is (0,0,0,1) \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{SRC\_ALPHA@{SRC\_ALPHA}!gpu.hpp@{gpu.hpp}}\index{gpu.hpp@{gpu.hpp}!SRC\_ALPHA@{SRC\_ALPHA}}}\Hypertarget{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a2e303f6844bc1be10709c24efb4ad36faa01be6519d4fb614f16261a59958bbb4}\label{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a2e303f6844bc1be10709c24efb4ad36faa01be6519d4fb614f16261a59958bbb4} 
+SRC\+\_\+\+ALPHA&factor is $ (Frag_a,Frag_a,Frag_a,Frag_a)$ \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{ONE\_MINUS\_SRC\_ALPHA@{ONE\_MINUS\_SRC\_ALPHA}!gpu.hpp@{gpu.hpp}}\index{gpu.hpp@{gpu.hpp}!ONE\_MINUS\_SRC\_ALPHA@{ONE\_MINUS\_SRC\_ALPHA}}}\Hypertarget{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a2e303f6844bc1be10709c24efb4ad36fa92ba720a64bd436721e0d2aa50e170a9}\label{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a2e303f6844bc1be10709c24efb4ad36fa92ba720a64bd436721e0d2aa50e170a9} 
+ONE\+\_\+\+MINUS\+\_\+\+SRC\+\_\+\+ALPHA&factor is $ (1,1,1,1) - (Frag_a,Frag_a,Frag_a,Frag_a)$ \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{DST\_ALPHA@{DST\_ALPHA}!gpu.hpp@{gpu.hpp}}\index{gpu.hpp@{gpu.hpp}!DST\_ALPHA@{DST\_ALPHA}}}\Hypertarget{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a2e303f6844bc1be10709c24efb4ad36fa59b7e4d8d77a6fc488bfad5dfb160ecc}\label{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a2e303f6844bc1be10709c24efb4ad36fa59b7e4d8d77a6fc488bfad5dfb160ecc} 
+DST\+\_\+\+ALPHA&factor is $ (Frame_a,Frame_a,Frame_a,Frame_a)$, if the frame does not have alpha channel, $Frame_a = 1$. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{ONE\_MINUS\_DST\_ALPHA@{ONE\_MINUS\_DST\_ALPHA}!gpu.hpp@{gpu.hpp}}\index{gpu.hpp@{gpu.hpp}!ONE\_MINUS\_DST\_ALPHA@{ONE\_MINUS\_DST\_ALPHA}}}\Hypertarget{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a2e303f6844bc1be10709c24efb4ad36fa9760c2ee1a1ebfbfefe5e406c00fed0b}\label{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a2e303f6844bc1be10709c24efb4ad36fa9760c2ee1a1ebfbfefe5e406c00fed0b} 
+ONE\+\_\+\+MINUS\+\_\+\+DST\+\_\+\+ALPHA&factor is $ (1,1,1,1) - (Frame_a,Frame_a,Frame_a,Frame_a)$, if the frame does not have alpha channel, $Frame_a = 1$ \\
+\hline
+
+\end{DoxyEnumFields}
+\Hypertarget{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a21e038f5b8958e203d28bc4f18472352}\label{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a21e038f5b8958e203d28bc4f18472352} 
+\index{gpu.hpp@{gpu.hpp}!CommandType@{CommandType}}
+\index{CommandType@{CommandType}!gpu.hpp@{gpu.hpp}}
+\doxysubsubsection{\texorpdfstring{CommandType}{CommandType}}
+{\footnotesize\ttfamily enum class \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a21e038f5b8958e203d28bc4f18472352}{Command\+Type}}\hspace{0.3cm}{\ttfamily [strong]}}
+
+
+
+\mbox{[}\doxylink{structUserCommand}{User\+Command}\mbox{]} 
+
+This enum represents type of command. A GPU accept commands and execute them. Each command has a type. A virtual GPU in this project should be able to execute several command types. \mbox{[}Command\+Type\mbox{]} \begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{EMPTY@{EMPTY}!gpu.hpp@{gpu.hpp}}\index{gpu.hpp@{gpu.hpp}!EMPTY@{EMPTY}}}\Hypertarget{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a21e038f5b8958e203d28bc4f18472352aba2b45bdc11e2a4a6e86aab2ac693cbb}\label{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a21e038f5b8958e203d28bc4f18472352aba2b45bdc11e2a4a6e86aab2ac693cbb} 
+EMPTY&empty command \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{BIND\_FRAMEBUFFER@{BIND\_FRAMEBUFFER}!gpu.hpp@{gpu.hpp}}\index{gpu.hpp@{gpu.hpp}!BIND\_FRAMEBUFFER@{BIND\_FRAMEBUFFER}}}\Hypertarget{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a21e038f5b8958e203d28bc4f18472352ac9e3011a04cc978bf737d10d2b73f4b7}\label{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a21e038f5b8958e203d28bc4f18472352ac9e3011a04cc978bf737d10d2b73f4b7} 
+BIND\+\_\+\+FRAMEBUFFER&bind framebuffer command \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{BIND\_PROGRAM@{BIND\_PROGRAM}!gpu.hpp@{gpu.hpp}}\index{gpu.hpp@{gpu.hpp}!BIND\_PROGRAM@{BIND\_PROGRAM}}}\Hypertarget{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a21e038f5b8958e203d28bc4f18472352ac539ee5fafd5847e0877fc545dde6093}\label{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a21e038f5b8958e203d28bc4f18472352ac539ee5fafd5847e0877fc545dde6093} 
+BIND\+\_\+\+PROGRAM&bind program command \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{BIND\_VERTEXARRAY@{BIND\_VERTEXARRAY}!gpu.hpp@{gpu.hpp}}\index{gpu.hpp@{gpu.hpp}!BIND\_VERTEXARRAY@{BIND\_VERTEXARRAY}}}\Hypertarget{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a21e038f5b8958e203d28bc4f18472352af579b0c380b4a2da14f78e233e2a44f6}\label{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a21e038f5b8958e203d28bc4f18472352af579b0c380b4a2da14f78e233e2a44f6} 
+BIND\+\_\+\+VERTEXARRAY&bind vertex array command \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{BLOCK\_WRITES\_COMMAND@{BLOCK\_WRITES\_COMMAND}!gpu.hpp@{gpu.hpp}}\index{gpu.hpp@{gpu.hpp}!BLOCK\_WRITES\_COMMAND@{BLOCK\_WRITES\_COMMAND}}}\Hypertarget{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a21e038f5b8958e203d28bc4f18472352a7b85cac19ab4b9ef7bba204881e9d5b5}\label{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a21e038f5b8958e203d28bc4f18472352a7b85cac19ab4b9ef7bba204881e9d5b5} 
+BLOCK\+\_\+\+WRITES\+\_\+\+COMMAND&block writes commnads \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{SET\_BACKFACE\_CULLING\_COMMAND@{SET\_BACKFACE\_CULLING\_COMMAND}!gpu.hpp@{gpu.hpp}}\index{gpu.hpp@{gpu.hpp}!SET\_BACKFACE\_CULLING\_COMMAND@{SET\_BACKFACE\_CULLING\_COMMAND}}}\Hypertarget{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a21e038f5b8958e203d28bc4f18472352a1f4cd069df1054daeb181570598e7c18}\label{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a21e038f5b8958e203d28bc4f18472352a1f4cd069df1054daeb181570598e7c18} 
+SET\+\_\+\+BACKFACE\+\_\+\+CULLING\+\_\+\+COMMAND&set backface culling command \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{SET\_FRONT\_FACE\_COMMAND@{SET\_FRONT\_FACE\_COMMAND}!gpu.hpp@{gpu.hpp}}\index{gpu.hpp@{gpu.hpp}!SET\_FRONT\_FACE\_COMMAND@{SET\_FRONT\_FACE\_COMMAND}}}\Hypertarget{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a21e038f5b8958e203d28bc4f18472352af48b2479e7899d4aee86d7a5932cdef1}\label{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a21e038f5b8958e203d28bc4f18472352af48b2479e7899d4aee86d7a5932cdef1} 
+SET\+\_\+\+FRONT\+\_\+\+FACE\+\_\+\+COMMAND&command setting up, what is front face \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{SET\_STENCIL\_COMMAND@{SET\_STENCIL\_COMMAND}!gpu.hpp@{gpu.hpp}}\index{gpu.hpp@{gpu.hpp}!SET\_STENCIL\_COMMAND@{SET\_STENCIL\_COMMAND}}}\Hypertarget{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a21e038f5b8958e203d28bc4f18472352a2f6f92d9544694ff675b7c5a208b6a41}\label{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a21e038f5b8958e203d28bc4f18472352a2f6f92d9544694ff675b7c5a208b6a41} 
+SET\+\_\+\+STENCIL\+\_\+\+COMMAND&set stencil command \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{SET\_BLENDING\_COMMAND@{SET\_BLENDING\_COMMAND}!gpu.hpp@{gpu.hpp}}\index{gpu.hpp@{gpu.hpp}!SET\_BLENDING\_COMMAND@{SET\_BLENDING\_COMMAND}}}\Hypertarget{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a21e038f5b8958e203d28bc4f18472352a667f5e2416b2403f9c1d8d43e7b8484a}\label{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a21e038f5b8958e203d28bc4f18472352a667f5e2416b2403f9c1d8d43e7b8484a} 
+SET\+\_\+\+BLENDING\+\_\+\+COMMAND&set blending command \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{SET\_DRAW\_ID@{SET\_DRAW\_ID}!gpu.hpp@{gpu.hpp}}\index{gpu.hpp@{gpu.hpp}!SET\_DRAW\_ID@{SET\_DRAW\_ID}}}\Hypertarget{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a21e038f5b8958e203d28bc4f18472352af33727905f5b6f48cac50cb735ed9524}\label{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a21e038f5b8958e203d28bc4f18472352af33727905f5b6f48cac50cb735ed9524} 
+SET\+\_\+\+DRAW\+\_\+\+ID&set draw\+Id command \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{USER\_COMMAND@{USER\_COMMAND}!gpu.hpp@{gpu.hpp}}\index{gpu.hpp@{gpu.hpp}!USER\_COMMAND@{USER\_COMMAND}}}\Hypertarget{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a21e038f5b8958e203d28bc4f18472352a7155d2bc39cdfe21800d06b3ee2820b1}\label{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a21e038f5b8958e203d28bc4f18472352a7155d2bc39cdfe21800d06b3ee2820b1} 
+USER\+\_\+\+COMMAND&user command \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{CLEAR\_COLOR@{CLEAR\_COLOR}!gpu.hpp@{gpu.hpp}}\index{gpu.hpp@{gpu.hpp}!CLEAR\_COLOR@{CLEAR\_COLOR}}}\Hypertarget{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a21e038f5b8958e203d28bc4f18472352add0cc7d0802d17e157ea28b402e19bc5}\label{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a21e038f5b8958e203d28bc4f18472352add0cc7d0802d17e157ea28b402e19bc5} 
+CLEAR\+\_\+\+COLOR&clear color buffer command \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{CLEAR\_DEPTH@{CLEAR\_DEPTH}!gpu.hpp@{gpu.hpp}}\index{gpu.hpp@{gpu.hpp}!CLEAR\_DEPTH@{CLEAR\_DEPTH}}}\Hypertarget{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a21e038f5b8958e203d28bc4f18472352ad229fa8f19b4593ad0810603e60908e6}\label{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a21e038f5b8958e203d28bc4f18472352ad229fa8f19b4593ad0810603e60908e6} 
+CLEAR\+\_\+\+DEPTH&clear depth buffer command \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{CLEAR\_STENCIL@{CLEAR\_STENCIL}!gpu.hpp@{gpu.hpp}}\index{gpu.hpp@{gpu.hpp}!CLEAR\_STENCIL@{CLEAR\_STENCIL}}}\Hypertarget{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a21e038f5b8958e203d28bc4f18472352a936f2dfba2cd8a6afcab614dd4ee8481}\label{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a21e038f5b8958e203d28bc4f18472352a936f2dfba2cd8a6afcab614dd4ee8481} 
+CLEAR\+\_\+\+STENCIL&clear stencil buffer command ~\newline
+ \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{DRAW@{DRAW}!gpu.hpp@{gpu.hpp}}\index{gpu.hpp@{gpu.hpp}!DRAW@{DRAW}}}\Hypertarget{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a21e038f5b8958e203d28bc4f18472352a2b4807f24940ca2fe73284bc6e864d66}\label{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a21e038f5b8958e203d28bc4f18472352a2b4807f24940ca2fe73284bc6e864d66} 
+DRAW&draw command \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{SUB\_COMMAND@{SUB\_COMMAND}!gpu.hpp@{gpu.hpp}}\index{gpu.hpp@{gpu.hpp}!SUB\_COMMAND@{SUB\_COMMAND}}}\Hypertarget{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a21e038f5b8958e203d28bc4f18472352aadcc01dbaca0f0d3fb64ef8f45550ec3}\label{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a21e038f5b8958e203d28bc4f18472352aadcc01dbaca0f0d3fb64ef8f45550ec3} 
+SUB\+\_\+\+COMMAND&sub command \\
+\hline
+
+\end{DoxyEnumFields}
+\Hypertarget{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a862161defe984b09e24dfec9e0540a3e}\label{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a862161defe984b09e24dfec9e0540a3e} 
+\index{gpu.hpp@{gpu.hpp}!IndexType@{IndexType}}
+\index{IndexType@{IndexType}!gpu.hpp@{gpu.hpp}}
+\doxysubsubsection{\texorpdfstring{IndexType}{IndexType}}
+{\footnotesize\ttfamily enum class \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a862161defe984b09e24dfec9e0540a3e}{Index\+Type}} \+: uint8\+\_\+t\hspace{0.3cm}{\ttfamily [strong]}}
+
+
+
+\mbox{[}\doxylink{unionUniform}{Uniform}\mbox{]} 
+
+This enum represents index type \mbox{[}Index\+Type\mbox{]} \begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{U8@{U8}!gpu.hpp@{gpu.hpp}}\index{gpu.hpp@{gpu.hpp}!U8@{U8}}}\Hypertarget{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a862161defe984b09e24dfec9e0540a3ea6669348b484e3008dca2bfa8e85e40b5}\label{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a862161defe984b09e24dfec9e0540a3ea6669348b484e3008dca2bfa8e85e40b5} 
+U8&uin8\+\_\+t type \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{U16@{U16}!gpu.hpp@{gpu.hpp}}\index{gpu.hpp@{gpu.hpp}!U16@{U16}}}\Hypertarget{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a862161defe984b09e24dfec9e0540a3eaef9ef3ebca4d2b64b6ec83808bafa5f2}\label{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a862161defe984b09e24dfec9e0540a3eaef9ef3ebca4d2b64b6ec83808bafa5f2} 
+U16&uin16\+\_\+t type \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{U32@{U32}!gpu.hpp@{gpu.hpp}}\index{gpu.hpp@{gpu.hpp}!U32@{U32}}}\Hypertarget{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a862161defe984b09e24dfec9e0540a3eac8bd5bedff8ef192d39a962afc0e19ee}\label{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a862161defe984b09e24dfec9e0540a3eac8bd5bedff8ef192d39a962afc0e19ee} 
+U32&uint32\+\_\+t type \\
+\hline
+
+\end{DoxyEnumFields}
+\Hypertarget{solutionInterface_2src_2solutionInterface_2gpu_8hpp_ad3d7abe532ca7be55ba9e8e03916e2e0}\label{solutionInterface_2src_2solutionInterface_2gpu_8hpp_ad3d7abe532ca7be55ba9e8e03916e2e0} 
+\index{gpu.hpp@{gpu.hpp}!StencilFunc@{StencilFunc}}
+\index{StencilFunc@{StencilFunc}!gpu.hpp@{gpu.hpp}}
+\doxysubsubsection{\texorpdfstring{StencilFunc}{StencilFunc}}
+{\footnotesize\ttfamily enum class \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_ad3d7abe532ca7be55ba9e8e03916e2e0}{Stencil\+Func}}\hspace{0.3cm}{\ttfamily [strong]}}
+
+
+
+\mbox{[}\doxylink{structBuffer}{Buffer}\mbox{]} 
+
+This enum represents stencil function for stencil test. Stencil test test every pixel in framebuffer againts reference value. \mbox{[}Stencil\+Func\mbox{]} \begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{NEVER@{NEVER}!gpu.hpp@{gpu.hpp}}\index{gpu.hpp@{gpu.hpp}!NEVER@{NEVER}}}\Hypertarget{solutionInterface_2src_2solutionInterface_2gpu_8hpp_ad3d7abe532ca7be55ba9e8e03916e2e0a443475558f0168dff92ecde26b98ae5a}\label{solutionInterface_2src_2solutionInterface_2gpu_8hpp_ad3d7abe532ca7be55ba9e8e03916e2e0a443475558f0168dff92ecde26b98ae5a} 
+NEVER&Stencil test will never pass. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{LESS@{LESS}!gpu.hpp@{gpu.hpp}}\index{gpu.hpp@{gpu.hpp}!LESS@{LESS}}}\Hypertarget{solutionInterface_2src_2solutionInterface_2gpu_8hpp_ad3d7abe532ca7be55ba9e8e03916e2e0a1798e8c3621ca53d9e3a80d257306000}\label{solutionInterface_2src_2solutionInterface_2gpu_8hpp_ad3d7abe532ca7be55ba9e8e03916e2e0a1798e8c3621ca53d9e3a80d257306000} 
+LESS&Stencil test will pass if value in stencil buffer is \texorpdfstring{$<$}{<} than reference value. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{LEQUAL@{LEQUAL}!gpu.hpp@{gpu.hpp}}\index{gpu.hpp@{gpu.hpp}!LEQUAL@{LEQUAL}}}\Hypertarget{solutionInterface_2src_2solutionInterface_2gpu_8hpp_ad3d7abe532ca7be55ba9e8e03916e2e0a8a72211a539c4f44dcaa446209076da6}\label{solutionInterface_2src_2solutionInterface_2gpu_8hpp_ad3d7abe532ca7be55ba9e8e03916e2e0a8a72211a539c4f44dcaa446209076da6} 
+LEQUAL&Stencil tess will pass if value in stencil buffer is \texorpdfstring{$<$}{<}= than reference value. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{GREATER@{GREATER}!gpu.hpp@{gpu.hpp}}\index{gpu.hpp@{gpu.hpp}!GREATER@{GREATER}}}\Hypertarget{solutionInterface_2src_2solutionInterface_2gpu_8hpp_ad3d7abe532ca7be55ba9e8e03916e2e0ae7e72355289e404b762d4cf88824d23b}\label{solutionInterface_2src_2solutionInterface_2gpu_8hpp_ad3d7abe532ca7be55ba9e8e03916e2e0ae7e72355289e404b762d4cf88824d23b} 
+GREATER&Stencil test will pass if value in stencil buffer is \texorpdfstring{$>$}{>} than reference value. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{GEQUAL@{GEQUAL}!gpu.hpp@{gpu.hpp}}\index{gpu.hpp@{gpu.hpp}!GEQUAL@{GEQUAL}}}\Hypertarget{solutionInterface_2src_2solutionInterface_2gpu_8hpp_ad3d7abe532ca7be55ba9e8e03916e2e0a9e63a520a6e8fefd37a5fa966d96f3bc}\label{solutionInterface_2src_2solutionInterface_2gpu_8hpp_ad3d7abe532ca7be55ba9e8e03916e2e0a9e63a520a6e8fefd37a5fa966d96f3bc} 
+GEQUAL&Stencil test will pass if value in stencil buffer is \texorpdfstring{$>$}{>}= than reference value. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{EQUAL@{EQUAL}!gpu.hpp@{gpu.hpp}}\index{gpu.hpp@{gpu.hpp}!EQUAL@{EQUAL}}}\Hypertarget{solutionInterface_2src_2solutionInterface_2gpu_8hpp_ad3d7abe532ca7be55ba9e8e03916e2e0a969f331a87d8c958473c32b4d0e61a44}\label{solutionInterface_2src_2solutionInterface_2gpu_8hpp_ad3d7abe532ca7be55ba9e8e03916e2e0a969f331a87d8c958473c32b4d0e61a44} 
+EQUAL&Stencil test will pass if value in stencil buffer is == to reference value. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{NOTEQUAL@{NOTEQUAL}!gpu.hpp@{gpu.hpp}}\index{gpu.hpp@{gpu.hpp}!NOTEQUAL@{NOTEQUAL}}}\Hypertarget{solutionInterface_2src_2solutionInterface_2gpu_8hpp_ad3d7abe532ca7be55ba9e8e03916e2e0a94fbd04a26dff1689ee02634be6aaf1f}\label{solutionInterface_2src_2solutionInterface_2gpu_8hpp_ad3d7abe532ca7be55ba9e8e03916e2e0a94fbd04a26dff1689ee02634be6aaf1f} 
+NOTEQUAL&Stencil test will pass if value in stencil buffer is != to reference value. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{ALWAYS@{ALWAYS}!gpu.hpp@{gpu.hpp}}\index{gpu.hpp@{gpu.hpp}!ALWAYS@{ALWAYS}}}\Hypertarget{solutionInterface_2src_2solutionInterface_2gpu_8hpp_ad3d7abe532ca7be55ba9e8e03916e2e0af3fc827ade4b968e50406496907ef962}\label{solutionInterface_2src_2solutionInterface_2gpu_8hpp_ad3d7abe532ca7be55ba9e8e03916e2e0af3fc827ade4b968e50406496907ef962} 
+ALWAYS&Stencil test will always pass. \\
+\hline
+
+\end{DoxyEnumFields}
+\Hypertarget{solutionInterface_2src_2solutionInterface_2gpu_8hpp_af046868f9f300b11282490852e003566}\label{solutionInterface_2src_2solutionInterface_2gpu_8hpp_af046868f9f300b11282490852e003566} 
+\index{gpu.hpp@{gpu.hpp}!StencilOp@{StencilOp}}
+\index{StencilOp@{StencilOp}!gpu.hpp@{gpu.hpp}}
+\doxysubsubsection{\texorpdfstring{StencilOp}{StencilOp}}
+{\footnotesize\ttfamily enum class \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_af046868f9f300b11282490852e003566}{Stencil\+Op}}\hspace{0.3cm}{\ttfamily [strong]}}
+
+
+
+\mbox{[}Stencil\+Func\mbox{]} 
+
+This enum represents stencil operation. Stencil operatation changes stencil buffer in three occasions\+: 1.) stencil test fails 2.) depth test fails 3.) depth test passes \mbox{[}Stencil\+Op\mbox{]} \begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{KEEP@{KEEP}!gpu.hpp@{gpu.hpp}}\index{gpu.hpp@{gpu.hpp}!KEEP@{KEEP}}}\Hypertarget{solutionInterface_2src_2solutionInterface_2gpu_8hpp_af046868f9f300b11282490852e003566a60cba2874369bd3790e14ea5f8a7bc58}\label{solutionInterface_2src_2solutionInterface_2gpu_8hpp_af046868f9f300b11282490852e003566a60cba2874369bd3790e14ea5f8a7bc58} 
+KEEP&No change to the stencil buffer. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{ZERO@{ZERO}!gpu.hpp@{gpu.hpp}}\index{gpu.hpp@{gpu.hpp}!ZERO@{ZERO}}}\Hypertarget{solutionInterface_2src_2solutionInterface_2gpu_8hpp_af046868f9f300b11282490852e003566a529e9e0beb5f85d1f132917c1a09860c}\label{solutionInterface_2src_2solutionInterface_2gpu_8hpp_af046868f9f300b11282490852e003566a529e9e0beb5f85d1f132917c1a09860c} 
+ZERO&Stencil buffer value will be zeroed. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{REPLACE@{REPLACE}!gpu.hpp@{gpu.hpp}}\index{gpu.hpp@{gpu.hpp}!REPLACE@{REPLACE}}}\Hypertarget{solutionInterface_2src_2solutionInterface_2gpu_8hpp_af046868f9f300b11282490852e003566a560a2dd6f6744646473b3b19e1fe96d7}\label{solutionInterface_2src_2solutionInterface_2gpu_8hpp_af046868f9f300b11282490852e003566a560a2dd6f6744646473b3b19e1fe96d7} 
+REPLACE&Stencil buffer value will be replace by reference value. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{INCR@{INCR}!gpu.hpp@{gpu.hpp}}\index{gpu.hpp@{gpu.hpp}!INCR@{INCR}}}\Hypertarget{solutionInterface_2src_2solutionInterface_2gpu_8hpp_af046868f9f300b11282490852e003566afc67535e5273d466beba3c06c0dbd988}\label{solutionInterface_2src_2solutionInterface_2gpu_8hpp_af046868f9f300b11282490852e003566afc67535e5273d466beba3c06c0dbd988} 
+INCR&Stencil buffer value will be incremented with saturation (will not overflow) \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{INCR\_WRAP@{INCR\_WRAP}!gpu.hpp@{gpu.hpp}}\index{gpu.hpp@{gpu.hpp}!INCR\_WRAP@{INCR\_WRAP}}}\Hypertarget{solutionInterface_2src_2solutionInterface_2gpu_8hpp_af046868f9f300b11282490852e003566a056f9acd45832946a8f02289a8516e7f}\label{solutionInterface_2src_2solutionInterface_2gpu_8hpp_af046868f9f300b11282490852e003566a056f9acd45832946a8f02289a8516e7f} 
+INCR\+\_\+\+WRAP&Stencil buffer value will be incremented and return to zero on overflow. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{DECR@{DECR}!gpu.hpp@{gpu.hpp}}\index{gpu.hpp@{gpu.hpp}!DECR@{DECR}}}\Hypertarget{solutionInterface_2src_2solutionInterface_2gpu_8hpp_af046868f9f300b11282490852e003566ac121b991572aba8a5789d08d7e9cf76e}\label{solutionInterface_2src_2solutionInterface_2gpu_8hpp_af046868f9f300b11282490852e003566ac121b991572aba8a5789d08d7e9cf76e} 
+DECR&Stencil buffer value will be decremented with saturation (will not underflow) \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{DECR\_WRAP@{DECR\_WRAP}!gpu.hpp@{gpu.hpp}}\index{gpu.hpp@{gpu.hpp}!DECR\_WRAP@{DECR\_WRAP}}}\Hypertarget{solutionInterface_2src_2solutionInterface_2gpu_8hpp_af046868f9f300b11282490852e003566a6501b4eff3345af27614635221cc6c59}\label{solutionInterface_2src_2solutionInterface_2gpu_8hpp_af046868f9f300b11282490852e003566a6501b4eff3345af27614635221cc6c59} 
+DECR\+\_\+\+WRAP&Stencil buffer value will be decremented and go to 255 on underflow. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{INVERT@{INVERT}!gpu.hpp@{gpu.hpp}}\index{gpu.hpp@{gpu.hpp}!INVERT@{INVERT}}}\Hypertarget{solutionInterface_2src_2solutionInterface_2gpu_8hpp_af046868f9f300b11282490852e003566aa2727ae72447eea06d4cc0ef67187280}\label{solutionInterface_2src_2solutionInterface_2gpu_8hpp_af046868f9f300b11282490852e003566aa2727ae72447eea06d4cc0ef67187280} 
+INVERT&Stencil buffer value will be inteverted. \\
+\hline
+
+\end{DoxyEnumFields}
+
+
+\doxysubsection{Function Documentation}
+\Hypertarget{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a6842746ca06d8003aba5565fe7a7d7d6}\label{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a6842746ca06d8003aba5565fe7a7d7d6} 
+\index{gpu.hpp@{gpu.hpp}!getPixel@{getPixel}}
+\index{getPixel@{getPixel}!gpu.hpp@{gpu.hpp}}
+\doxysubsubsection{\texorpdfstring{getPixel()}{getPixel()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily void \texorpdfstring{$\ast$}{*} get\+Pixel (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structImage}{Image}} \&}]{image,  }\item[{uint32\+\_\+t}]{x,  }\item[{uint32\+\_\+t}]{y }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+\mbox{[}\doxylink{structProgram}{Program}\mbox{]} 
+
+This function gets pointer to the start of the pixel in the image
+
+
+\begin{DoxyParams}{Parameters}
+{\em image} & image \\
+\hline
+{\em x} & x coordinates \\
+\hline
+{\em y} & y coordinates\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+pointer to the start of the pixel 
+\end{DoxyReturn}
+\Hypertarget{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a3c439a65c7b247304d4482c6f932234a}\label{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a3c439a65c7b247304d4482c6f932234a} 
+\index{gpu.hpp@{gpu.hpp}!getPixel@{getPixel}}
+\index{getPixel@{getPixel}!gpu.hpp@{gpu.hpp}}
+\doxysubsubsection{\texorpdfstring{getPixel()}{getPixel()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily void const  \texorpdfstring{$\ast$}{*} get\+Pixel (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structImage}{Image}} const \&}]{image,  }\item[{uint32\+\_\+t}]{x,  }\item[{uint32\+\_\+t}]{y }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+This function gets constant pointer to the start of the pixel in the image. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em image} & image \\
+\hline
+{\em x} & x coordinates \\
+\hline
+{\em y} & y coordinates\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+constant pointer to the start of the pixel 
+\end{DoxyReturn}
+\Hypertarget{solutionInterface_2src_2solutionInterface_2gpu_8hpp_aaf908caefd690c7d905eb3baa9e1a569}\label{solutionInterface_2src_2solutionInterface_2gpu_8hpp_aaf908caefd690c7d905eb3baa9e1a569} 
+\index{gpu.hpp@{gpu.hpp}!pushBindFramebufferCommand@{pushBindFramebufferCommand}}
+\index{pushBindFramebufferCommand@{pushBindFramebufferCommand}!gpu.hpp@{gpu.hpp}}
+\doxysubsubsection{\texorpdfstring{pushBindFramebufferCommand()}{pushBindFramebufferCommand()}}
+{\footnotesize\ttfamily void push\+Bind\+Framebuffer\+Command (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structCommandBuffer}{Command\+Buffer}} \&}]{cb,  }\item[{uint32\+\_\+t}]{id }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+This function can be used to insert bind\+Framebuffer command into command buffer. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em cb} & command buffer \\
+\hline
+{\em id} & id of framebuffer to bind \\
+\hline
+\end{DoxyParams}
+\Hypertarget{solutionInterface_2src_2solutionInterface_2gpu_8hpp_ad35fa691c90051fd7b24f95fb6c4b55d}\label{solutionInterface_2src_2solutionInterface_2gpu_8hpp_ad35fa691c90051fd7b24f95fb6c4b55d} 
+\index{gpu.hpp@{gpu.hpp}!pushBindProgramCommand@{pushBindProgramCommand}}
+\index{pushBindProgramCommand@{pushBindProgramCommand}!gpu.hpp@{gpu.hpp}}
+\doxysubsubsection{\texorpdfstring{pushBindProgramCommand()}{pushBindProgramCommand()}}
+{\footnotesize\ttfamily void push\+Bind\+Program\+Command (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structCommandBuffer}{Command\+Buffer}} \&}]{cb,  }\item[{uint32\+\_\+t}]{id }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+This function inserts bind\+Program command into command buffer. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em cb} & command buffer \\
+\hline
+{\em id} & id of program \\
+\hline
+\end{DoxyParams}
+\Hypertarget{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a6a83b6ff420e4e17a9aef5a4a11a2499}\label{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a6a83b6ff420e4e17a9aef5a4a11a2499} 
+\index{gpu.hpp@{gpu.hpp}!pushBindVertexArrayCommand@{pushBindVertexArrayCommand}}
+\index{pushBindVertexArrayCommand@{pushBindVertexArrayCommand}!gpu.hpp@{gpu.hpp}}
+\doxysubsubsection{\texorpdfstring{pushBindVertexArrayCommand()}{pushBindVertexArrayCommand()}}
+{\footnotesize\ttfamily void push\+Bind\+Vertex\+Array\+Command (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structCommandBuffer}{Command\+Buffer}} \&}]{cb,  }\item[{uint32\+\_\+t}]{id }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+This function inserts bind\+Vertex\+Array command into command buffer. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em cb} & command buffer \\
+\hline
+{\em id} & id of vertex array \\
+\hline
+\end{DoxyParams}
+\Hypertarget{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a466bf47db3b0c7b2f8ca58df618e1ad3}\label{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a466bf47db3b0c7b2f8ca58df618e1ad3} 
+\index{gpu.hpp@{gpu.hpp}!pushBlockWritesCommand@{pushBlockWritesCommand}}
+\index{pushBlockWritesCommand@{pushBlockWritesCommand}!gpu.hpp@{gpu.hpp}}
+\doxysubsubsection{\texorpdfstring{pushBlockWritesCommand()}{pushBlockWritesCommand()}}
+{\footnotesize\ttfamily void push\+Block\+Writes\+Command (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structCommandBuffer}{Command\+Buffer}} \&}]{cb,  }\item[{bool}]{block\+Color = {\ttfamily false},  }\item[{bool}]{block\+Depth = {\ttfamily false},  }\item[{bool}]{block\+Stencil = {\ttfamily false} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+This function inserts block writes command into command buffer. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em cb} & command buffer \\
+\hline
+{\em block\+Color} & set blocking for color writes \\
+\hline
+{\em block\+Depth} & set blocking for depth writes \\
+\hline
+{\em block\+Stencil} & set blocking for stencil writes \\
+\hline
+\end{DoxyParams}
+\Hypertarget{solutionInterface_2src_2solutionInterface_2gpu_8hpp_ac92555f5be8a27d6c2538eb56e8e8dd6}\label{solutionInterface_2src_2solutionInterface_2gpu_8hpp_ac92555f5be8a27d6c2538eb56e8e8dd6} 
+\index{gpu.hpp@{gpu.hpp}!pushClearColorCommand@{pushClearColorCommand}}
+\index{pushClearColorCommand@{pushClearColorCommand}!gpu.hpp@{gpu.hpp}}
+\doxysubsubsection{\texorpdfstring{pushClearColorCommand()}{pushClearColorCommand()}}
+{\footnotesize\ttfamily void push\+Clear\+Color\+Command (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structCommandBuffer}{Command\+Buffer}} \&}]{cb,  }\item[{glm\+::vec4 const \&}]{value = {\ttfamily glm\+:\+:vec4(0)} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+\mbox{[}\doxylink{structCommandBuffer}{Command\+Buffer}\mbox{]} 
+
+This function can be used to insert clear color command to command buffer.
+
+
+\begin{DoxyParams}{Parameters}
+{\em cb} & command buffer \\
+\hline
+{\em value} & clear color value for cleaning \\
+\hline
+\end{DoxyParams}
+\Hypertarget{solutionInterface_2src_2solutionInterface_2gpu_8hpp_ab21e6fb22fc5a0695585d9b49d488419}\label{solutionInterface_2src_2solutionInterface_2gpu_8hpp_ab21e6fb22fc5a0695585d9b49d488419} 
+\index{gpu.hpp@{gpu.hpp}!pushClearDepthCommand@{pushClearDepthCommand}}
+\index{pushClearDepthCommand@{pushClearDepthCommand}!gpu.hpp@{gpu.hpp}}
+\doxysubsubsection{\texorpdfstring{pushClearDepthCommand()}{pushClearDepthCommand()}}
+{\footnotesize\ttfamily void push\+Clear\+Depth\+Command (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structCommandBuffer}{Command\+Buffer}} \&}]{cb,  }\item[{float}]{value = {\ttfamily 2} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+This function can be used to insert clear depth command to command buffer. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em cb} & command buffer \\
+\hline
+{\em value} & clear depth value for cleaning \\
+\hline
+\end{DoxyParams}
+\Hypertarget{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a3c96a32fcba59c502dc2bbdb65c64c07}\label{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a3c96a32fcba59c502dc2bbdb65c64c07} 
+\index{gpu.hpp@{gpu.hpp}!pushClearStencilCommand@{pushClearStencilCommand}}
+\index{pushClearStencilCommand@{pushClearStencilCommand}!gpu.hpp@{gpu.hpp}}
+\doxysubsubsection{\texorpdfstring{pushClearStencilCommand()}{pushClearStencilCommand()}}
+{\footnotesize\ttfamily void push\+Clear\+Stencil\+Command (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structCommandBuffer}{Command\+Buffer}} \&}]{cb,  }\item[{uint8\+\_\+t}]{value = {\ttfamily 0u} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+This function can be used to insert clear stencil command to command buffer. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em cb} & command buffer \\
+\hline
+{\em value} & clear stencil value for cleaning \\
+\hline
+\end{DoxyParams}
+\Hypertarget{solutionInterface_2src_2solutionInterface_2gpu_8hpp_ad08d6b1878961c799d005fa3e3778f40}\label{solutionInterface_2src_2solutionInterface_2gpu_8hpp_ad08d6b1878961c799d005fa3e3778f40} 
+\index{gpu.hpp@{gpu.hpp}!pushDrawCommand@{pushDrawCommand}}
+\index{pushDrawCommand@{pushDrawCommand}!gpu.hpp@{gpu.hpp}}
+\doxysubsubsection{\texorpdfstring{pushDrawCommand()}{pushDrawCommand()}}
+{\footnotesize\ttfamily void push\+Draw\+Command (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structCommandBuffer}{Command\+Buffer}} \&}]{cb,  }\item[{uint32\+\_\+t}]{nof\+Vertices }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+This function can be used to insert draw command into command buffer. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em cb} & command buffer \\
+\hline
+{\em nof\+Vertices} & number of vertices that should be rendered \\
+\hline
+\end{DoxyParams}
+\Hypertarget{solutionInterface_2src_2solutionInterface_2gpu_8hpp_ae554747746cac665859a730b3bbd113b}\label{solutionInterface_2src_2solutionInterface_2gpu_8hpp_ae554747746cac665859a730b3bbd113b} 
+\index{gpu.hpp@{gpu.hpp}!pushSetBackfaceCullingCommand@{pushSetBackfaceCullingCommand}}
+\index{pushSetBackfaceCullingCommand@{pushSetBackfaceCullingCommand}!gpu.hpp@{gpu.hpp}}
+\doxysubsubsection{\texorpdfstring{pushSetBackfaceCullingCommand()}{pushSetBackfaceCullingCommand()}}
+{\footnotesize\ttfamily void push\+Set\+Backface\+Culling\+Command (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structCommandBuffer}{Command\+Buffer}} \&}]{cb,  }\item[{bool}]{enabled = {\ttfamily false} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+This function inserts set backface culling command into command buffer. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em cb} & command buffer \\
+\hline
+{\em enabled} & is backface culling enabled? \\
+\hline
+\end{DoxyParams}
+\Hypertarget{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a2b3f61c539fc808bdc6d807dc54e047e}\label{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a2b3f61c539fc808bdc6d807dc54e047e} 
+\index{gpu.hpp@{gpu.hpp}!pushSetBlendingCommand@{pushSetBlendingCommand}}
+\index{pushSetBlendingCommand@{pushSetBlendingCommand}!gpu.hpp@{gpu.hpp}}
+\doxysubsubsection{\texorpdfstring{pushSetBlendingCommand()}{pushSetBlendingCommand()}}
+{\footnotesize\ttfamily void push\+Set\+Blending\+Command (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structCommandBuffer}{Command\+Buffer}} \&}]{cb,  }\item[{\mbox{\hyperlink{structBlendingSettings}{Blending\+Settings}} const \&}]{settings }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+This function inserts set\+Stencil command into command buffer. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em cb} & command buffer \\
+\hline
+{\em settings} & stencil settings \\
+\hline
+\end{DoxyParams}
+\Hypertarget{solutionInterface_2src_2solutionInterface_2gpu_8hpp_aacb69634138ae054e54e64be83d9cf14}\label{solutionInterface_2src_2solutionInterface_2gpu_8hpp_aacb69634138ae054e54e64be83d9cf14} 
+\index{gpu.hpp@{gpu.hpp}!pushSetDrawIdCommand@{pushSetDrawIdCommand}}
+\index{pushSetDrawIdCommand@{pushSetDrawIdCommand}!gpu.hpp@{gpu.hpp}}
+\doxysubsubsection{\texorpdfstring{pushSetDrawIdCommand()}{pushSetDrawIdCommand()}}
+{\footnotesize\ttfamily void push\+Set\+Draw\+Id\+Command (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structCommandBuffer}{Command\+Buffer}} \&}]{cb,  }\item[{uint32\+\_\+t}]{id }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+This function inserts set\+Draw\+Id command into command buffer. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em cb} & command buffer \\
+\hline
+{\em id} & gl\+\_\+\+Draw\+ID \\
+\hline
+\end{DoxyParams}
+\Hypertarget{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a11e2c56a8fa3c85400beee134545c44e}\label{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a11e2c56a8fa3c85400beee134545c44e} 
+\index{gpu.hpp@{gpu.hpp}!pushSetFrontFaceCommand@{pushSetFrontFaceCommand}}
+\index{pushSetFrontFaceCommand@{pushSetFrontFaceCommand}!gpu.hpp@{gpu.hpp}}
+\doxysubsubsection{\texorpdfstring{pushSetFrontFaceCommand()}{pushSetFrontFaceCommand()}}
+{\footnotesize\ttfamily void push\+Set\+Front\+Face\+Command (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structCommandBuffer}{Command\+Buffer}} \&}]{cb,  }\item[{bool}]{front\+Face\+Is\+Counter\+Clock\+Wise = {\ttfamily true} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+This function inserts set front face command into command buffer. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em cb} & command buffer \\
+\hline
+{\em front\+Face\+Is\+Counter\+Clock\+Wise} & is front face specified in counter clock wise order? \\
+\hline
+\end{DoxyParams}
+\Hypertarget{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a454269e32c2579ae16c31137ca3ba157}\label{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a454269e32c2579ae16c31137ca3ba157} 
+\index{gpu.hpp@{gpu.hpp}!pushSetStencilCommand@{pushSetStencilCommand}}
+\index{pushSetStencilCommand@{pushSetStencilCommand}!gpu.hpp@{gpu.hpp}}
+\doxysubsubsection{\texorpdfstring{pushSetStencilCommand()}{pushSetStencilCommand()}}
+{\footnotesize\ttfamily void push\+Set\+Stencil\+Command (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structCommandBuffer}{Command\+Buffer}} \&}]{cb,  }\item[{\mbox{\hyperlink{structStencilSettings}{Stencil\+Settings}} const \&}]{settings }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+This function inserts set\+Stencil command into command buffer. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em cb} & command buffer \\
+\hline
+{\em settings} & stencil settings \\
+\hline
+\end{DoxyParams}
+\Hypertarget{solutionInterface_2src_2solutionInterface_2gpu_8hpp_aa4d71f523e3610ab809ded2a09276d20}\label{solutionInterface_2src_2solutionInterface_2gpu_8hpp_aa4d71f523e3610ab809ded2a09276d20} 
+\index{gpu.hpp@{gpu.hpp}!pushSubCommand@{pushSubCommand}}
+\index{pushSubCommand@{pushSubCommand}!gpu.hpp@{gpu.hpp}}
+\doxysubsubsection{\texorpdfstring{pushSubCommand()}{pushSubCommand()}}
+{\footnotesize\ttfamily void push\+Sub\+Command (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structCommandBuffer}{Command\+Buffer}} \&}]{cb,  }\item[{\mbox{\hyperlink{structCommandBuffer}{Command\+Buffer}} \texorpdfstring{$\ast$}{*}}]{sub }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+This function inserts sub\+Command into command buffer. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em cb} & command buffer \\
+\hline
+{\em sub} & pointer to sub command \\
+\hline
+\end{DoxyParams}
+\Hypertarget{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a6e80e44d8f11ff4a57d778d9aac17add}\label{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a6e80e44d8f11ff4a57d778d9aac17add} 
+\index{gpu.hpp@{gpu.hpp}!pushUserCommand@{pushUserCommand}}
+\index{pushUserCommand@{pushUserCommand}!gpu.hpp@{gpu.hpp}}
+\doxysubsubsection{\texorpdfstring{pushUserCommand()}{pushUserCommand()}}
+{\footnotesize\ttfamily void push\+User\+Command (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structCommandBuffer}{Command\+Buffer}} \&}]{cb,  }\item[{\mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a71ccc6fa3730a87e50bbb36079c57885}{User\+Command\+Fce}}}]{fce = {\ttfamily nullptr},  }\item[{void \texorpdfstring{$\ast$}{*}}]{data = {\ttfamily nullptr} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+This function inserts user command into command buffer. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em cb} & command buffer \\
+\hline
+{\em fce} & user command \\
+\hline
+{\em data} & user data \\
+\hline
+\end{DoxyParams}

@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="159.12984mm"
+   height="103.23485mm"
+   viewBox="0 0 159.12984 103.23485"
+   version="1.1"
+   id="svg1"
+   inkscape:version="1.4.1 (1:1.4.1+202503302257+93de688d07)"
+   sodipodi:docname="pfo_discard.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="mm"
+     inkscape:zoom="0.9231878"
+     inkscape:cx="185.22775"
+     inkscape:cy="122.94357"
+     inkscape:window-width="1920"
+     inkscape:window-height="1164"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs1">
+    <marker
+       style="overflow:visible"
+       id="Triangle-9-5-8"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       inkscape:stockid="Triangle arrow"
+       markerWidth="1"
+       markerHeight="1"
+       viewBox="0 0 1 1"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         transform="scale(0.5)"
+         style="fill:context-stroke;fill-rule:evenodd;stroke:context-stroke;stroke-width:1pt"
+         d="M 5.77,0 -2.88,5 V -5 Z"
+         id="path135-1-3-52" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="Triangle-9-5-8-6"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       inkscape:stockid="Triangle arrow"
+       markerWidth="1"
+       markerHeight="1"
+       viewBox="0 0 1 1"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         transform="scale(0.5)"
+         style="fill:context-stroke;fill-rule:evenodd;stroke:context-stroke;stroke-width:1pt"
+         d="M 5.77,0 -2.88,5 V -5 Z"
+         id="path135-1-3-52-0" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="Triangle-9-5-8-6-5"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       inkscape:stockid="Triangle arrow"
+       markerWidth="1"
+       markerHeight="1"
+       viewBox="0 0 1 1"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         transform="scale(0.5)"
+         style="fill:context-stroke;fill-rule:evenodd;stroke:context-stroke;stroke-width:1pt"
+         d="M 5.77,0 -2.88,5 V -5 Z"
+         id="path135-1-3-52-0-8" />
+    </marker>
+  </defs>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(5.2916665,-15.081199)">
+    <rect
+       style="fill:#440055;stroke:none;stroke-width:0.97255"
+       id="rect1-4-4-8-3-7"
+       width="159.12984"
+       height="103.23485"
+       x="-5.2916665"
+       y="15.081199" />
+    <g
+       id="g15"
+       transform="translate(-115.42528,-1.387)">
+      <rect
+         style="fill:#800080;stroke:none;stroke-width:0.499999"
+         id="rect1-6"
+         width="60.88987"
+         height="20.080702"
+         x="159.91489"
+         y="53.03772"
+         ry="8.9067631" />
+      <text
+         xml:space="preserve"
+         style="font-size:10.6419px;text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:#ffffff;stroke:none;stroke-width:1.88536"
+         x="190.29597"
+         y="65.844955"
+         id="text1-0"><tspan
+           sodipodi:role="line"
+           style="text-align:center;text-anchor:middle;fill:#ffffff;stroke:none;stroke-width:1.88537"
+           x="190.29597"
+           y="65.844955"
+           id="tspan2-6">Discard?</tspan></text>
+    </g>
+    <g
+       id="g17"
+       transform="translate(-12.247271,-394.941)">
+      <rect
+         style="fill:#000000;stroke:none;stroke-width:0.499999"
+         id="rect1-6-5"
+         width="31.689909"
+         height="18.477545"
+         x="70.290863"
+         y="488.04175"
+         ry="0" />
+      <text
+         xml:space="preserve"
+         style="font-size:10.6419px;text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:#ffffff;stroke:none;stroke-width:1.88536"
+         x="85.944267"
+         y="501.07968"
+         id="text1-0-0"><tspan
+           sodipodi:role="line"
+           style="text-align:center;text-anchor:middle;fill:#ffffff;stroke:none;stroke-width:1.88537"
+           x="85.944267"
+           y="501.07968"
+           id="tspan2-6-8">END</tspan></text>
+    </g>
+    <text
+       xml:space="preserve"
+       style="font-size:10.6419px;text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:#ffffff;stroke:none;stroke-width:1.88536"
+       x="58.241714"
+       y="83.751732"
+       id="text1-59-3-6-9-0-5"><tspan
+         sodipodi:role="line"
+         style="text-align:center;text-anchor:middle;fill:#ffffff;stroke:none;stroke-width:1.88537"
+         x="58.241714"
+         y="83.751732"
+         id="tspan10-9-7-2-0">yes</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:10.6419px;text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:#ffffff;stroke:none;stroke-width:1.88536"
+       x="113.09921"
+       y="55.427147"
+       id="text1-59-3-6-9-0-5-1"><tspan
+         sodipodi:role="line"
+         style="text-align:center;text-anchor:middle;fill:#ffffff;stroke:none;stroke-width:1.88537"
+         x="113.09921"
+         y="55.427147"
+         id="tspan10-9-7-2-0-3">no</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:16.1372px;text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:#ffffff;stroke:none;stroke-width:2.85895"
+       x="76.362648"
+       y="35.228783"
+       id="text1-59-3-1-3-3-9-8"><tspan
+         sodipodi:role="line"
+         style="text-align:center;text-anchor:middle;fill:#ffffff;stroke:none;stroke-width:2.85896"
+         x="76.362648"
+         y="35.228783"
+         id="tspan10-4-1-9-6-6">Discarding</tspan></text>
+    <path
+       style="fill:#800080;stroke:#ffffff;stroke-width:2;stroke-dasharray:none;marker-end:url(#Triangle-9-5-8)"
+       d="M 74.93464,74.1643 V 85.7177"
+       id="path15-6-1-7"
+       sodipodi:nodetypes="cc" />
+    <path
+       style="fill:#800080;stroke:#ffffff;stroke-width:2;stroke-dasharray:none;marker-end:url(#Triangle-9-5-8-6)"
+       d="M -1.6826103,61.432648 H 36.329123"
+       id="path15-6-1-7-4"
+       sodipodi:nodetypes="cc" />
+    <path
+       style="fill:#800080;stroke:#ffffff;stroke-width:2;stroke-dasharray:none;marker-end:url(#Triangle-9-5-8-6-5)"
+       d="m 106.43781,61.691072 h 35.3659"
+       id="path15-6-1-7-4-9"
+       sodipodi:nodetypes="cc" />
+  </g>
+</svg>

@@ -1,0 +1,48 @@
+\doxysection{model\+Fwd.\+hpp}
+\hypertarget{modelFwd_8hpp_source}{}\label{modelFwd_8hpp_source}\index{solutionInterface/src/solutionInterface/modelFwd.hpp@{solutionInterface/src/solutionInterface/modelFwd.hpp}}
+\mbox{\hyperlink{modelFwd_8hpp}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ }
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#include\ <\mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp}{solutionInterface/gpu.hpp}}>}}
+\DoxyCodeLine{00011\ }
+\DoxyCodeLine{00015\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structNode}{Node}};}
+\DoxyCodeLine{00016\ }
+\DoxyCodeLine{00020\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structMesh}{Mesh}};}
+\DoxyCodeLine{00021\ }
+\DoxyCodeLine{00026\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structModel}{Model}}\{}
+\DoxyCodeLine{00027\ \ \ \mbox{\hyperlink{structNode}{Node}}*\ \ \ \mbox{\hyperlink{structModel_abe700d873065c063798de61304d3dc6f}{roots}}\ \ \ \ \ \ \ =\ \textcolor{keyword}{nullptr};}
+\DoxyCodeLine{00028\ \ \ \mbox{\hyperlink{structBuffer}{Buffer}}*\ \mbox{\hyperlink{structModel_ad634c4bc84af0a8a2476826b7830fdaa}{buffers}}\ \ \ \ \ =\ \textcolor{keyword}{nullptr};}
+\DoxyCodeLine{00029\ \ \ \mbox{\hyperlink{structMesh}{Mesh}}*\ \ \ \mbox{\hyperlink{structModel_a7f93cb54ea24bf7924d4f80108a08830}{meshes}}\ \ \ \ \ \ =\ \textcolor{keyword}{nullptr};}
+\DoxyCodeLine{00030\ \ \ \mbox{\hyperlink{structTexture}{Texture}}*\mbox{\hyperlink{structModel_abd92fc8cd2b8471c39becb81f7af99b3}{textures}}\ \ \ \ =\ \textcolor{keyword}{nullptr};}
+\DoxyCodeLine{00031\ \ \ \textcolor{keywordtype}{size\_t}\ \ \mbox{\hyperlink{structModel_a41a135cc6f72c29e282f2c4dcc299cb1}{nofRoots}}\ \ \ \ =\ 0\ \ \ \ \ \ ;}
+\DoxyCodeLine{00032\ \ \ \textcolor{keywordtype}{size\_t}\ \ \mbox{\hyperlink{structModel_a0b12753c02b4f28c0bd54be0a5bd8b10}{nofBuffers}}\ \ =\ 0\ \ \ \ \ \ ;}
+\DoxyCodeLine{00033\ \ \ \textcolor{keywordtype}{size\_t}\ \ \mbox{\hyperlink{structModel_a3ba7fb1915ee8e2e2b6052bc356c2618}{nofMeshes}}\ \ \ =\ 0\ \ \ \ \ \ ;}
+\DoxyCodeLine{00034\ \ \ \textcolor{keywordtype}{size\_t}\ \ \mbox{\hyperlink{structModel_ae6c95be3cb0d5759cb8f5233db7362ef}{nofTextures}}\ =\ 0\ \ \ \ \ \ ;}
+\DoxyCodeLine{00035\ \};}
+\DoxyCodeLine{00037\ }
+\DoxyCodeLine{00042\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structNode}{Node}}\{}
+\DoxyCodeLine{00043\ \ \ glm::mat4\ \mbox{\hyperlink{structNode_a825a38e1f0d49fcc1a0cdbad46473bf2}{modelMatrix}}\ =\ glm::mat4(1.f);}
+\DoxyCodeLine{00044\ \ \ int32\_t\ \ \ \mbox{\hyperlink{structNode_ad4e3fcf9fdbd325a83e87cfb7ab86554}{mesh}}\ \ \ \ \ \ \ \ =\ -\/1\ \ \ \ \ \ \ \ \ \ \ \ ;}
+\DoxyCodeLine{00045\ \ \ \mbox{\hyperlink{structNode}{Node}}*\ \ \ \ \ \mbox{\hyperlink{structNode_a240d352d8f3afe39579d1403e0c67343}{children}}\ \ \ \ =\ nullptr\ \ \ \ \ \ \ ;}
+\DoxyCodeLine{00046\ \ \ \textcolor{keywordtype}{size\_t}\ \ \ \ \mbox{\hyperlink{structNode_ad0ce456a3b928e29de17c1bc79278adb}{nofChildren}}\ =\ 0\ \ \ \ \ \ \ \ \ \ \ \ \ ;}
+\DoxyCodeLine{00047\ \};}
+\DoxyCodeLine{00049\ }
+\DoxyCodeLine{00055\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structMesh}{Mesh}}\{}
+\DoxyCodeLine{00056\ \ \ int32\_t\ \ \ \ \ \ \mbox{\hyperlink{structMesh_a6ee7d4182d7a50b63cafca5b0b66c715}{indexBufferID}}\ \ =\ -\/1\ \ \ \ \ \ \ \ \ \ \ \ ;}
+\DoxyCodeLine{00057\ \ \ \textcolor{keywordtype}{size\_t}\ \ \ \ \ \ \ \mbox{\hyperlink{structMesh_ae334cf0d47655e3daefe644b574468d5}{indexOffset}}\ \ \ \ =\ 0\ \ \ \ \ \ \ \ \ \ \ \ \ ;}
+\DoxyCodeLine{00058\ \ \ \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a862161defe984b09e24dfec9e0540a3e}{IndexType}}\ \ \ \ \mbox{\hyperlink{structMesh_a55de606f67f2aa169ef7b51042ade990}{indexType}}\ \ \ \ \ \ =\ \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a862161defe984b09e24dfec9e0540a3eac8bd5bedff8ef192d39a962afc0e19ee}{IndexType::U32}};}
+\DoxyCodeLine{00059\ \ \ \mbox{\hyperlink{structVertexAttrib}{VertexAttrib}}\ \mbox{\hyperlink{structMesh_a00f5a9d0221fc4e66dc165520a835460}{position}}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ;}
+\DoxyCodeLine{00060\ \ \ \mbox{\hyperlink{structVertexAttrib}{VertexAttrib}}\ \mbox{\hyperlink{structMesh_abc59ae5bf8f9b8d5b806e6e91ae5e1f5}{normal}}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ;}
+\DoxyCodeLine{00061\ \ \ \mbox{\hyperlink{structVertexAttrib}{VertexAttrib}}\ \mbox{\hyperlink{structMesh_a64c4b4488ba4d235f2b6e7c0e4d47cd7}{texCoord}}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ;}
+\DoxyCodeLine{00062\ \ \ uint32\_t\ \ \ \ \ \mbox{\hyperlink{structMesh_ad60502867a78d6e442172d1ea5b679d6}{nofIndices}}\ \ \ \ \ =\ 0\ \ \ \ \ \ \ \ \ \ \ \ \ ;}
+\DoxyCodeLine{00063\ \ \ glm::vec4\ \ \ \ \mbox{\hyperlink{structMesh_a12235d3eae977558b64d1f5ec3022db7}{diffuseColor}}\ \ \ =\ glm::vec4(1.f);}
+\DoxyCodeLine{00064\ \ \ \textcolor{keywordtype}{int}\ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structMesh_ad0ab81099a4d195182afafa8c03c8371}{diffuseTexture}}\ =\ -\/1\ \ \ \ \ \ \ \ \ \ \ \ ;}
+\DoxyCodeLine{00065\ \ \ \textcolor{keywordtype}{bool}\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structMesh_abc3edaf6225dd67400f33e59edc598c4}{doubleSided}}\ \ \ \ =\ false\ \ \ \ \ \ \ \ \ ;}
+\DoxyCodeLine{00066\ \};}
+\DoxyCodeLine{00068\ }
+\DoxyCodeLine{00069\ }
+\DoxyCodeLine{00070\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{modelFwd_8hpp_a7d738b5fa483c2e2abd6cb28e3ea07da}{free}}(\mbox{\hyperlink{structModel}{Model}}\&m);}
+
+\end{DoxyCode}

@@ -1,0 +1,67 @@
+\doxysection{uniform\+Locations.\+hpp}
+\hypertarget{uniformLocations_8hpp_source}{}\label{uniformLocations_8hpp_source}\index{solutionInterface/src/solutionInterface/uniformLocations.hpp@{solutionInterface/src/solutionInterface/uniformLocations.hpp}}
+\mbox{\hyperlink{uniformLocations_8hpp}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ }
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#include<cstdint>}}
+\DoxyCodeLine{00011\ }
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#define\ UNIFORM\_OFFSET\_STRIDE(stride,offset)\ (((stride)<<16u)\ +\ (offset))}}
+\DoxyCodeLine{00016\ }
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#define\ GET\_UNIFORM\_OFFSET(uniformName)\ ((uniformName)\&0xffffu)}}
+\DoxyCodeLine{00021\ }
+\DoxyCodeLine{00025\ \textcolor{preprocessor}{\#define\ GET\_UNIFORM\_STRIDE(uniformName)\ ((uniformName)>>16u)}}
+\DoxyCodeLine{00026\ }
+\DoxyCodeLine{00031\ \textcolor{keyword}{enum}\ \mbox{\hyperlink{uniformLocations_8hpp_af0f735d1cb5b0a22a7197515e369eab7}{SceneUniformsOffsets}}\{}
+\DoxyCodeLine{00032\ \ \ OFFSET\_PROJECTION\_VIEW\_MATRIX\ \ \ \ =\ 0\ \ ,}
+\DoxyCodeLine{00033\ \ \ OFFSET\_LIGHT\_POSITION\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ,}
+\DoxyCodeLine{00034\ \ \ OFFSET\_CAMERA\_POSITION\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ,}
+\DoxyCodeLine{00035\ \ \ OFFSET\_USE\_SHADOW\_MAP\_MATRIX\ \ \ \ \ \ \ \ \ \ ,}
+\DoxyCodeLine{00036\ \ \ OFFSET\_CREATE\_SHADOW\_MAP\_MATRIX\ \ \ \ \ \ \ ,}
+\DoxyCodeLine{00037\ \ \ OFFSET\_SHADOW\_MAP\_ID\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ,}
+\DoxyCodeLine{00038\ \ \ OFFSET\_AMBIENT\_LIGHT\_COLOR\ \ \ \ \ \ \ \ \ \ \ \ ,}
+\DoxyCodeLine{00039\ \ \ OFFSET\_LIGHT\_COLOR\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ,}
+\DoxyCodeLine{00040\ \ \ OFFSET\_FREE\_UNIFORMS\_START\ \ \ \ \ \ \ \ \ \ \ \ ,}
+\DoxyCodeLine{00041\ \ \ NOF\_SCENE\_UNIFORMS\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ =\ 100,}
+\DoxyCodeLine{00042\ \};}
+\DoxyCodeLine{00043\ }
+\DoxyCodeLine{00048\ \textcolor{keyword}{enum}\ \mbox{\hyperlink{uniformLocations_8hpp_a7913f6dc97ac0d88efe2babd30c1a78b}{DrawCallUniformsOffsets}}\{}
+\DoxyCodeLine{00049\ \ \ OFFSET\_MODEL\_MATRIX\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ =\ 0,}
+\DoxyCodeLine{00050\ \ \ OFFSET\_INVERSE\_TRANSPOSE\_MODEL\_MATRIX\ \ \ \ \ ,}
+\DoxyCodeLine{00051\ \ \ OFFSET\_DIFFUSE\_COLOR\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ,}
+\DoxyCodeLine{00052\ \ \ OFFSET\_TEXTURE\_ID\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ,}
+\DoxyCodeLine{00053\ \ \ OFFSET\_DOUBLE\_SIDED\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ,}
+\DoxyCodeLine{00054\ \ \ NOF\_DRAWCALL\_UNIFORMS\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ,}
+\DoxyCodeLine{00055\ \};}
+\DoxyCodeLine{00056\ }
+\DoxyCodeLine{00060\ \textcolor{keyword}{enum}\ \mbox{\hyperlink{uniformLocations_8hpp_aa40af636d3d9ffb7ec0b3ec458e5f4cd}{UniformNames}}\{}
+\DoxyCodeLine{00061\ \ \ PROJECTION\_VIEW\_MATRIX\ \ \ \ \ \ \ \ \ \ \ \ =\ \mbox{\hyperlink{uniformLocations_8hpp_a5a32d8454b03232ad98cf92621c69285}{UNIFORM\_OFFSET\_STRIDE}}(0\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ,\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ OFFSET\_PROJECTION\_VIEW\_MATRIX\ \ \ \ \ \ \ \ \ \ \ ),}
+\DoxyCodeLine{00062\ \ \ LIGHT\_POSITION\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ =\ \mbox{\hyperlink{uniformLocations_8hpp_a5a32d8454b03232ad98cf92621c69285}{UNIFORM\_OFFSET\_STRIDE}}(0\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ,\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ OFFSET\_LIGHT\_POSITION\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ),}
+\DoxyCodeLine{00063\ \ \ CAMERA\_POSITION\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ =\ \mbox{\hyperlink{uniformLocations_8hpp_a5a32d8454b03232ad98cf92621c69285}{UNIFORM\_OFFSET\_STRIDE}}(0\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ,\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ OFFSET\_CAMERA\_POSITION\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ),}
+\DoxyCodeLine{00064\ \ \ USE\_SHADOW\_MAP\_MATRIX\ \ \ \ \ \ \ \ \ \ \ \ \ =\ \mbox{\hyperlink{uniformLocations_8hpp_a5a32d8454b03232ad98cf92621c69285}{UNIFORM\_OFFSET\_STRIDE}}(0\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ,\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ OFFSET\_USE\_SHADOW\_MAP\_MATRIX\ \ \ \ \ \ \ \ \ \ \ \ ),}
+\DoxyCodeLine{00065\ \ \ CREATE\_SHADOW\_MAP\_MATRIX\ \ \ \ \ \ \ \ \ \ =\ \mbox{\hyperlink{uniformLocations_8hpp_a5a32d8454b03232ad98cf92621c69285}{UNIFORM\_OFFSET\_STRIDE}}(0\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ,\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ OFFSET\_CREATE\_SHADOW\_MAP\_MATRIX\ \ \ \ \ \ \ \ \ ),}
+\DoxyCodeLine{00066\ \ \ SHADOWMAP\_ID\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ =\ \mbox{\hyperlink{uniformLocations_8hpp_a5a32d8454b03232ad98cf92621c69285}{UNIFORM\_OFFSET\_STRIDE}}(0\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ,\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ OFFSET\_SHADOW\_MAP\_ID\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ),}
+\DoxyCodeLine{00067\ \ \ AMBIENT\_LIGHT\_COLOR\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ =\ \mbox{\hyperlink{uniformLocations_8hpp_a5a32d8454b03232ad98cf92621c69285}{UNIFORM\_OFFSET\_STRIDE}}(0\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ,\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ OFFSET\_AMBIENT\_LIGHT\_COLOR\ \ \ \ \ \ \ \ \ \ \ \ \ \ ),}
+\DoxyCodeLine{00068\ \ \ LIGHT\_COLOR\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ =\ \mbox{\hyperlink{uniformLocations_8hpp_a5a32d8454b03232ad98cf92621c69285}{UNIFORM\_OFFSET\_STRIDE}}(0\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ,\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ OFFSET\_LIGHT\_COLOR\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ),}
+\DoxyCodeLine{00069\ \ \ FREE\_UNIFORMS\_START\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ =\ \mbox{\hyperlink{uniformLocations_8hpp_a5a32d8454b03232ad98cf92621c69285}{UNIFORM\_OFFSET\_STRIDE}}(0\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ,\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ OFFSET\_FREE\_UNIFORMS\_START\ \ \ \ \ \ \ \ \ \ \ \ \ \ ),}
+\DoxyCodeLine{00070\ \ \ MODEL\_MATRIX\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ =\ \mbox{\hyperlink{uniformLocations_8hpp_a5a32d8454b03232ad98cf92621c69285}{UNIFORM\_OFFSET\_STRIDE}}(NOF\_DRAWCALL\_UNIFORMS,NOF\_SCENE\_UNIFORMS+OFFSET\_MODEL\_MATRIX\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ),}
+\DoxyCodeLine{00071\ \ \ INVERSE\_TRANSPOSE\_MODEL\_MATRIX\ \ \ \ =\ \mbox{\hyperlink{uniformLocations_8hpp_a5a32d8454b03232ad98cf92621c69285}{UNIFORM\_OFFSET\_STRIDE}}(NOF\_DRAWCALL\_UNIFORMS,NOF\_SCENE\_UNIFORMS+OFFSET\_INVERSE\_TRANSPOSE\_MODEL\_MATRIX\ \ \ ),}
+\DoxyCodeLine{00072\ \ \ DIFFUSE\_COLOR\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ =\ \mbox{\hyperlink{uniformLocations_8hpp_a5a32d8454b03232ad98cf92621c69285}{UNIFORM\_OFFSET\_STRIDE}}(NOF\_DRAWCALL\_UNIFORMS,NOF\_SCENE\_UNIFORMS+OFFSET\_DIFFUSE\_COLOR\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ),}
+\DoxyCodeLine{00073\ \ \ TEXTURE\_ID\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ =\ \mbox{\hyperlink{uniformLocations_8hpp_a5a32d8454b03232ad98cf92621c69285}{UNIFORM\_OFFSET\_STRIDE}}(NOF\_DRAWCALL\_UNIFORMS,NOF\_SCENE\_UNIFORMS+OFFSET\_TEXTURE\_ID\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ),}
+\DoxyCodeLine{00074\ \ \ DOUBLE\_SIDED\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ =\ \mbox{\hyperlink{uniformLocations_8hpp_a5a32d8454b03232ad98cf92621c69285}{UNIFORM\_OFFSET\_STRIDE}}(NOF\_DRAWCALL\_UNIFORMS,NOF\_SCENE\_UNIFORMS+OFFSET\_DOUBLE\_SIDED\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ),}
+\DoxyCodeLine{00075\ \};}
+\DoxyCodeLine{00076\ }
+\DoxyCodeLine{00077\ }
+\DoxyCodeLine{00086\ \textcolor{keyword}{inline}\ uint32\_t\ \mbox{\hyperlink{uniformLocations_8hpp_a241376a8739e67201690479ef6125052}{getUniformLocation}}(uint32\_t\ drawId,uint32\_t\ uniformName)\{}
+\DoxyCodeLine{00087\ \ \ \textcolor{keywordflow}{return}\ drawId\ *\ \mbox{\hyperlink{uniformLocations_8hpp_ac775d2b1e78fc297ddde4a9ddd4d529c}{GET\_UNIFORM\_STRIDE}}(uniformName)\ +\ \mbox{\hyperlink{uniformLocations_8hpp_ad9cb0213a5018de992771c422f295ba1}{GET\_UNIFORM\_OFFSET}}(uniformName);}
+\DoxyCodeLine{00088\ \}}
+\DoxyCodeLine{00089\ }
+\DoxyCodeLine{00097\ \textcolor{keyword}{inline}\ uint32\_t\ \mbox{\hyperlink{uniformLocations_8hpp_a04f2aa89e608963db92b281c04e297cb}{getUniformName}}(uint32\_t\ uniformLocation)\{}
+\DoxyCodeLine{00098\ \ \ \textcolor{comment}{//\ THIS\ WILL\ BREAK\ IF\ SCENE\ UNIFORMS\ HAVE\ STRIDE!!!}}
+\DoxyCodeLine{00099\ \ \ \textcolor{keywordflow}{if}(uniformLocation<NOF\_SCENE\_UNIFORMS)\textcolor{keywordflow}{return}\ \mbox{\hyperlink{uniformLocations_8hpp_a5a32d8454b03232ad98cf92621c69285}{UNIFORM\_OFFSET\_STRIDE}}(0,uniformLocation);}
+\DoxyCodeLine{00100\ \ \ uint32\_t\ offset\ =\ (uniformLocation\ -\/\ NOF\_SCENE\_UNIFORMS)\ \%\ NOF\_DRAWCALL\_UNIFORMS;}
+\DoxyCodeLine{00101\ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{uniformLocations_8hpp_a5a32d8454b03232ad98cf92621c69285}{UNIFORM\_OFFSET\_STRIDE}}(NOF\_DRAWCALL\_UNIFORMS,NOF\_SCENE\_UNIFORMS+offset);}
+\DoxyCodeLine{00102\ \}}
+
+\end{DoxyCode}

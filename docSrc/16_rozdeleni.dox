@@ -1,0 +1,53 @@
+/**
+\page p16_rozdeleni 16 Rozdělení souborů a složek
+
+Projekt je rozdělen do několika podsložek:
+
+<b>build/</b> Tady se čeká, že si budete sestavovat projekt, ale není to nutné, pokud víte, co děláte...
+
+<b>doc/</b> Tato složka obsahuje doxygen dokumentaci projektu.
+Můžete ji přegenerovat pomocí příkazu doxygen spuštěného v root adresáři
+projektu.
+
+<b>docSrc/</b> Tato složka obsahuje zdrojové kódy k dokumentaci.
+
+<b>examples/</b> Tato složka obsahuje přiložené příklady, které využívají vámi vytvořené zobrazovadlo.
+
+<b>framework/</b> Tato složka obsahuje interní záležitosti projektu.
+Všechny soubory jsou napsány v C++, abyste se mohli podívat, jak to funguje.
+
+<b>libs/</b> Tato složka obsahuje pomocné knihovny
+
+<b>resources/</b> Tato složka obsahuje modely a obrázky.
+
+<b>solutionInterface</b> Tato složka obsahuje rozhraní/interface řešení.
+Slouží jako interface pro studentské řešení a učitelské řešení.
+
+<b>src/</b> Tato složka obsahuje main
+
+<b>studentSolution/</b> Tato složka obsahuje soubory, které budete editovat při
+implementaci projektu.
+Složka obsahuje soubory, které budete odevzávat a podpůrné hlavičkové soubory (které nebudete odevzdávat.
+
+<b>teacherSolutionBinary</b> Tato složka obsahuje před kompilované učitelské řešení pro provádění testů.
+
+<b>tests/</b> Tato složka obsahuje akceptační a performanční testy projektu.
+Akceptační testy jsou napsány s využitím knihovny catch.
+Testy jsou rozděleny do testovacích případů (TEST_CASE). Daný TEST_CASE
+testuje jednu podčást projektu.
+
+
+
+
+Složka studentSolution/src/studentSolution/ obsahuje soubory, které se vás přímo týkají:
+
+\ref studentSolution/src/studentSolution/gpu.cpp obsahuje definici funkce představující funkcionalitu grafické karty \ref student_GPU_run -- tady odvedete nejvíce práce.
+
+\ref studentSolution/src/studentSolution/prepareModel.cpp obsahuje definici funkce pro zpracování modelu \ref student_prepareModel a vertex a fragment shaderu \ref student_drawModel_vertexShader \ref student_drawModel_fragmentShader -- toto máte taky naprogramovat.
+
+Složka solutionInterface/src/solutionInterface/ obsahuje podpůrné hlavičkové soubory, které se vás týkají:
+
+\ref solutionInterface/src/solutionInterface/gpu.hpp obsahuje definice typů a konstant pro grafickou kartu -- projděte si.
+\ref solutionInterface/src/solutionInterface/modelFwd.hpp obsahuje definice typů a konstant pro model -- projděte si.
+
+*/

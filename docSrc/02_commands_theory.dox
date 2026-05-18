@@ -1,0 +1,74 @@
+/**
+\page p02_gpuTheory 02 Grafická karta, paměť a příkazy
+
+
+\section theory Teorie
+
+První věc, na co se asi ptáte: "Jak vypadá počítač", "Jak vypadá grafická karta, jak se s ní komunikuje a co je její chování?"<br>
+Cílem této části je tvorba grafické karty. Chtěli jste si někdy vytvořit grafickou kartu? Ne?
+A chcete alespoň vědět, jak se vykreslují počítačové hry a jak funguje svět real-time počítačové grafiky?
+Nebo alespoň chcete vědět, jak nevyletět u státnic?
+Základem je počítač s procesorem a grafickou kartou:
+\image html docSrc/images/cpu_gpu.svg "Přehled toho, jak vypadá počítač. S grafickou kartou se komunikuje pomocí fronty příkazů, po které se posílají balíčky práce -- Command Buffery."  width=800
+Jak je vidět, tak s grafickou kartou se komunikuje pomocí fronty příkazů (v tomto projektu fronta není), po které se posílají balíčky práce.
+Balíček práce (\ref CommandBuffer) v sobě obsahuje mnoho úkolů, které má grafická karta provést.
+\image html docSrc/images/commandBuffer.svg "Balíček práce -- Command Buffer. Command buffer obsahuje příkazy pro grafickou kartu. Může jich být mnoho, třeba pro vykreslení celého modelu."  width=150
+Koncept command bufferu lze najít například ve Vulkánu: <a href="https://docs.vulkan.org/spec/latest/chapters/cmdbuffers.html">CommandBuffer</a>.
+Balíček práce se vždy provede nad pamětí grafické karty.
+Toto fungování grafické karty je zajištěno (bude, až to naprogramujete) funkcí \ref student_GPU_run.
+
+Funkce \ref student_GPU_run se nachází v souboru studentSolution/src/studentSolution/gpu.cpp.
+Je to funkce, která reprezentuje chování vaší grafické karty.
+Lze pomocí ní kreslit trojúhelníky, mazat framebuffer, nastavovat číslo vykreslovacího příkazu nebo nastavovat aktivní objekty a další.
+\snippet studentSolution/src/studentSolution/gpu.cpp student_GPU_run
+Vašim úkolem je ji postupně naprogramovat.
+Na jeden pokus ji nenaprogramujete, budete ji programovat postupně.
+Doporučuji si kousky funkce dávat do vlastních podfunkcí, ať máte kód přehledný.<br>
+<br>
+Funkce \ref student_GPU_run bere dva vstupní parametry:
+<ul>
+<li> paměť grafické karty \ref GPUMemory, nad kterou jsou vykonávány všechny operace,
+<li> \ref CommandBuffer -- seznam operací k provedení.
+</ul>
+
+Paměť grafické karty:
+\image html docSrc/images/GPUMemory.svg "Struktura paměti grafické karty je složena z několika objektů a čísel. Do framebufferů se kreslí, programy říkají, jak věci kreslit, vertex array říká, kde a jak jsou uložena data, buffery jsou data, textury jsou obrázky, uniformy jsou konstanty pro programy, gl_DrawID je číslo vykresovacího příkazu, a proměnné activated* slouží pro výběr objektů, které jsou v daný moment aktivní. blockWrites je nastavení blokování zápisu do framebufferu. backfaceCulling je nastavení ořezu odvrácených trojúhelníků. A stencilSettings je nastavení stencilu."  width=600
+Výpis \ref GPUMemory ze souboru solutionInterface/src/solutionInterface/gpu.hpp
+\snippet solutionInterface/src/solutionInterface/gpu.hpp GPUMemory
+Operace v command bufferu:
+\image html docSrc/images/commandTypes.svg "Příkazy jsou uloženy v CommandBufferu. Příkaz může být několika druhů. Čistící příkazy čistí aktivovaný framebuffer, kreslící příkaz kreslí s využitím aktivovaného programu a vertex array do aktivovaného framebufferu, setDrawID nastavuje číslo kreslícího příkazu, bind* příkazy volí aktivní objekty, user příkaz obsahuje uživatelských callback, setFrontFace nastavuje, která strana trojúhelníku je přivrácená ke kameře stranu, setBackfaceCulling zapíná ořez odvrácených trojúhelníků, blockWrites volí, jestli je zakázán zápis do framebufferu a subCommand obsahuje odkaz na další CommandBuffer."  width=600
+Výpis \ref CommandBuffer ze souboru solutionInterface/src/solutionInterface/gpu.hpp
+\snippet solutionInterface/src/solutionInterface/gpu.hpp CommandBuffer
+
+Jak můžete vidět, obsahuje tři položky: maximální počet příkazů, který může být uložen, počet uložených příkazů a samotné příkazy.<br>
+Vaše grafická karta by měla umožnit několik druhů práce:
+<ul>
+<li> navázání aktivního framebufferu,
+<li> navázání aktivního shader programu,
+<li> navázání aktivního vertex array objektu,
+<li> nastavení, jestli je zakázáno zapisovat do framebufferu,
+<li> nastavení, jestli se mají odvrácené trojúhelníky zahazovat,
+<li> nastavení, která strana trojúhelníku je přivrácená ke kameře,
+<li> nastavení stencilových operací a testu,
+<li> nastavení čísla kreslícího příkazu,
+<li> vyvolání uživatelské funkce,
+<li> čistění paměti barvy ve framebufferu,
+<li> čistění paměti hloubky ve framebufferu,
+<li> čistění paměti stencilu ve framebufferu,
+<li> kreslení do framebufferu,
+<li> sub command.
+</ul>
+Struktura samotného příkazu vypadá takto:
+\snippet solutionInterface/src/solutionInterface/gpu.hpp Command
+Je složena z typu a dat. Typ je enum:
+\snippet solutionInterface/src/solutionInterface/gpu.hpp CommandType
+A data je union:
+\snippet solutionInterface/src/solutionInterface/gpu.hpp CommandData
+Union je něco jako struktura až na to, že jeho velikost je daná největší komponentou.
+Data unionu jsou uložena přes sebe a je možné uložit jen jednu komponentu.
+Vzhledem k tomu, že jsem projekt psal v C++, je přítomen i konstruktor, ale toho si nemusíte všímat, jen udává, na co bude union inicializovaný -- na draw command.
+
+
+
+
+*/

@@ -1,0 +1,31 @@
+/**
+
+\page p10_per_fragment_operations 10 Per Fragment Operace
+
+\section per_fragment_operation Per Fragment Operace
+
+Per Fragment operace jsou operace, které se provádí nad fragmenty, které vyprodukovala rasterizace.
+Jsou rozděleny na tři části:
+- Brzké Per Fragment Operace
+- Fragment Shader
+- Pozdní Per Fragment Operace
+
+\image html docSrc/images/per_fragment_operations_overview.svg "Per fragment operace jsou rozděleny na dvě části, brzké a pozdní per fragment operace. Mezi nimi leží fragment shader. Brzké operace mohou ukončit vykonávání a zbytek už nemusí proběhnout." width=1200
+
+Brzké Per Fragment Operace jsou složeny z:
+- Stencil Testu
+- Depth Testu
+
+Pozdní Per Fragment Operace jsou složeny z:
+- Operace Discard
+- Zápisu stencilu
+- Zápisu hloubky
+- Zápisu barvy
+
+\image html docSrc/images/pfo_middle_view.svg "Vizualizace detailu brzkých a pozdních Per Fragment Operací." width=1200
+
+Obrázek všech Per Fragment Operací (zjednodušené o reality, která je mnohem, mnohem složitější):
+
+\image html docSrc/images/per_fragment_operations.svg "Vizualizace detailu všech Per Fragment Operací." width=1200
+
+*/

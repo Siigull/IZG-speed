@@ -1,0 +1,272 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="115.99057mm"
+   height="58.990726mm"
+   viewBox="0 0 115.99057 58.990726"
+   version="1.1"
+   id="svg1"
+   inkscape:version="1.4.1 (1:1.4.1+202503302257+93de688d07)"
+   sodipodi:docname="vertexAssemblyUnit.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="mm"
+     showguides="true"
+     inkscape:zoom="2.3105766"
+     inkscape:cx="336.06331"
+     inkscape:cy="159.9168"
+     inkscape:window-width="1919"
+     inkscape:window-height="1164"
+     inkscape:window-x="1"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs1">
+    <marker
+       style="overflow:visible"
+       id="TriangleStart-3-5_Fnone_S-000000"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       inkscape:stockid="TriangleStart"
+       markerWidth="5.3244081"
+       markerHeight="6.155385"
+       viewBox="0 0 5.3244081 6.1553851"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         transform="scale(0.5)"
+         style="fill:#000000;fill-rule:evenodd;stroke:#000000;stroke-width:1pt"
+         d="M 5.77,0 -2.88,5 V -5 Z"
+         id="path4" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="TriangleStart-3_Fnone_S-000000"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       inkscape:stockid="TriangleStart"
+       markerWidth="5.3244081"
+       markerHeight="6.155385"
+       viewBox="0 0 5.3244081 6.1553851"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         transform="scale(0.5)"
+         style="fill:#000000;fill-rule:evenodd;stroke:#000000;stroke-width:1pt"
+         d="M 5.77,0 -2.88,5 V -5 Z"
+         id="path3" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="TriangleStart_Fnone_S-000000"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       inkscape:stockid="TriangleStart"
+       markerWidth="5.3244081"
+       markerHeight="6.155385"
+       viewBox="0 0 5.3244081 6.1553851"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         transform="scale(0.5)"
+         style="fill:#000000;fill-rule:evenodd;stroke:#000000;stroke-width:1pt"
+         d="M 5.77,0 -2.88,5 V -5 Z"
+         id="path1" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="TriangleStart-3-5_Fnone_S-000000-8"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       inkscape:stockid="TriangleStart"
+       markerWidth="5.3244081"
+       markerHeight="6.155385"
+       viewBox="0 0 5.3244081 6.1553851"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         transform="scale(0.5)"
+         style="fill:#000000;fill-rule:evenodd;stroke:#000000;stroke-width:1pt"
+         d="M 5.77,0 -2.88,5 V -5 Z"
+         id="path4-7" />
+    </marker>
+  </defs>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-35.915633,-71.271027)">
+    <g
+       id="g4"
+       transform="translate(5.1579982,-7.7973736)">
+      <rect
+         ry="0.034068406"
+         y="122.35293"
+         x="71.527748"
+         height="15.706198"
+         width="46.68576"
+         id="rect3095"
+         style="color:#000000;display:inline;overflow:visible;visibility:visible;fill:#00aad4;fill-opacity:1;stroke:none;stroke-width:0.157273;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;enable-background:accumulate" />
+      <text
+         id="text3097"
+         y="128.94189"
+         x="94.925697"
+         style="font-style:normal;font-weight:normal;font-size:3.175px;line-height:0%;font-family:sans-serif;text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.264583"
+         xml:space="preserve"><tspan
+           y="128.94189"
+           x="94.925697"
+           id="tspan3099"
+           sodipodi:role="line"
+           style="font-size:5.01251px;line-height:1.25;font-family:sans-serif;text-align:center;text-anchor:middle;fill:#ffffff;stroke-width:0.264583">Vertex Assembly</tspan><tspan
+           y="135.20753"
+           x="94.925697"
+           sodipodi:role="line"
+           style="font-size:5.01251px;line-height:1.25;font-family:sans-serif;text-align:center;text-anchor:middle;fill:#ffffff;stroke-width:0.264583"
+           id="tspan32183">Unit</tspan></text>
+    </g>
+    <circle
+       style="fill:#80b3ff;stroke:none;stroke-width:2"
+       id="path32607"
+       cx="141.1041"
+       cy="122.40866"
+       r="5.2904997" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#TriangleStart-3_Fnone_S-000000)"
+       d="m 124.32698,122.40866 h 6.41616"
+       id="path32724-7"
+       sodipodi:nodetypes="cc" />
+    <text
+       xml:space="preserve"
+       style="font-size:5.29167px;line-height:1;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;stroke-width:0.264583"
+       x="131.10994"
+       y="115.04961"
+       id="text33772"><tspan
+         sodipodi:role="line"
+         id="tspan33770"
+         style="stroke-width:0.264583"
+         x="131.10994"
+         y="115.04961">InVertex</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:5.29167px;line-height:1;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#008000;stroke-width:0.264583"
+       x="35.624599"
+       y="123.78448"
+       id="text33772-5"><tspan
+         sodipodi:role="line"
+         id="tspan33770-3"
+         style="fill:#008000;stroke-width:0.264583"
+         x="35.624599"
+         y="123.78448">gl_VertexID</tspan></text>
+    <rect
+       style="color:#000000;display:inline;overflow:visible;visibility:visible;fill:#666666;fill-opacity:1;stroke:none;stroke-width:0.140941;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;enable-background:accumulate"
+       id="rect3700"
+       width="85.846458"
+       height="34.472733"
+       x="57.489677"
+       y="71.271027"
+       ry="0.035532858" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:6.03962px;line-height:0%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.503301"
+       x="63.936279"
+       y="80.530655"
+       id="text3702"><tspan
+         sodipodi:role="line"
+         id="tspan3704"
+         x="63.936279"
+         y="80.530655"
+         style="font-size:6.03962px;line-height:1.25;font-family:sans-serif;fill:#ffffff;stroke-width:0.503301">Paměť</tspan></text>
+    <g
+       id="g2"
+       transform="translate(-16.836442,7.4431278)">
+      <rect
+         style="color:#000000;display:inline;overflow:visible;visibility:visible;fill:#2a7fff;fill-opacity:1;stroke:none;stroke-width:0.0566647;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;enable-background:accumulate"
+         id="rect3700-6"
+         width="46.829288"
+         height="21.659739"
+         x="110.05717"
+         y="74.133766"
+         ry="0.018983703" />
+      <text
+         xml:space="preserve"
+         style="font-style:normal;font-weight:normal;font-size:5.51857px;line-height:0%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.45988"
+         x="115.00117"
+         y="82.963158"
+         id="text3702-8"><tspan
+           sodipodi:role="line"
+           id="tspan3704-7"
+           x="115.00117"
+           y="82.963158"
+           style="font-size:5.51857px;line-height:1.25;font-family:sans-serif;fill:#ffffff;stroke-width:0.45988">Vertex Buffery</tspan><tspan
+           sodipodi:role="line"
+           x="115.00117"
+           y="89.861374"
+           style="font-size:5.51857px;line-height:1.25;font-family:sans-serif;fill:#ffffff;stroke-width:0.45988"
+           id="tspan1">Index Buffer</tspan></text>
+    </g>
+    <g
+       id="g1"
+       transform="matrix(0.80018991,0,0,0.80018991,-8.3109542,-26.208914)">
+      <rect
+         style="color:#000000;display:inline;overflow:visible;visibility:visible;fill:#aa8800;fill-opacity:1;stroke:none;stroke-width:0.0464117;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;enable-background:accumulate"
+         id="rect3700-6-1"
+         width="37.104488"
+         height="18.338959"
+         x="86.447754"
+         y="139.33052"
+         ry="0.016073201" />
+      <text
+         xml:space="preserve"
+         style="font-size:5.29167px;line-height:1;font-family:sans-serif;text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#ffffff;stroke-width:0.264583"
+         x="105"
+         y="147.11623"
+         id="text33772-5-9"><tspan
+           sodipodi:role="line"
+           id="tspan33770-3-1"
+           style="text-align:center;text-anchor:middle;fill:#ffffff;stroke-width:0.264583"
+           x="105"
+           y="147.11623">VertexArray</tspan><tspan
+           sodipodi:role="line"
+           style="text-align:center;text-anchor:middle;fill:#ffffff;stroke-width:0.264583"
+           x="105"
+           y="152.4079"
+           id="tspan979">Setting</tspan></text>
+    </g>
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#TriangleStart-3-5_Fnone_S-000000)"
+       d="m 96.815673,104.17268 v 5.90883"
+       id="path32724-7-2"
+       sodipodi:nodetypes="cc" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#TriangleStart-3-5_Fnone_S-000000-8)"
+       d="m 66.400942,122.40866 h 5.90883"
+       id="path32724-7-2-6"
+       sodipodi:nodetypes="cc" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#TriangleStart_Fnone_S-000000)"
+       d="m 82.814645,100.66382 v 9.41769"
+       id="path32724"
+       sodipodi:nodetypes="cc" />
+  </g>
+</svg>

@@ -1,0 +1,127 @@
+\doxysection{solution\+Interface/src/solution\+Interface/uniform\+Locations.hpp File Reference}
+\hypertarget{uniformLocations_8hpp}{}\label{uniformLocations_8hpp}\index{solutionInterface/src/solutionInterface/uniformLocations.hpp@{solutionInterface/src/solutionInterface/uniformLocations.hpp}}
+
+
+This file contains declarations of uniform locations within draw model.  
+
+
+{\ttfamily \#include $<$cstdint$>$}\newline
+\doxysubsubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{uniformLocations_8hpp_a5a32d8454b03232ad98cf92621c69285}\label{uniformLocations_8hpp_a5a32d8454b03232ad98cf92621c69285} 
+\#define {\bfseries UNIFORM\+\_\+\+OFFSET\+\_\+\+STRIDE}(stride,  offset)~(((stride)$<$$<$16u) + (offset))
+\begin{DoxyCompactList}\small\item\em This macro packs uniform offset and stride into one number. \end{DoxyCompactList}\item 
+\Hypertarget{uniformLocations_8hpp_ad9cb0213a5018de992771c422f295ba1}\label{uniformLocations_8hpp_ad9cb0213a5018de992771c422f295ba1} 
+\#define {\bfseries GET\+\_\+\+UNIFORM\+\_\+\+OFFSET}(uniform\+Name)~((uniform\+Name)\&0xffffu)
+\begin{DoxyCompactList}\small\item\em This macro unpacks offset from packed stride+offset number. \end{DoxyCompactList}\item 
+\Hypertarget{uniformLocations_8hpp_ac775d2b1e78fc297ddde4a9ddd4d529c}\label{uniformLocations_8hpp_ac775d2b1e78fc297ddde4a9ddd4d529c} 
+\#define {\bfseries GET\+\_\+\+UNIFORM\+\_\+\+STRIDE}(uniform\+Name)~((uniform\+Name)$>$$>$16u)
+\begin{DoxyCompactList}\small\item\em This macro unpacks stride from packed stride+offset number. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Enumerations}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{uniformLocations_8hpp_af0f735d1cb5b0a22a7197515e369eab7}\label{uniformLocations_8hpp_af0f735d1cb5b0a22a7197515e369eab7} 
+enum \mbox{\hyperlink{uniformLocations_8hpp_af0f735d1cb5b0a22a7197515e369eab7}{Scene\+Uniforms\+Offsets}} \{ \newline
+{\bfseries OFFSET\+\_\+\+PROJECTION\+\_\+\+VIEW\+\_\+\+MATRIX} = 0
+, {\bfseries OFFSET\+\_\+\+LIGHT\+\_\+\+POSITION}
+, {\bfseries OFFSET\+\_\+\+CAMERA\+\_\+\+POSITION}
+, {\bfseries OFFSET\+\_\+\+USE\+\_\+\+SHADOW\+\_\+\+MAP\+\_\+\+MATRIX}
+, \newline
+{\bfseries OFFSET\+\_\+\+CREATE\+\_\+\+SHADOW\+\_\+\+MAP\+\_\+\+MATRIX}
+, {\bfseries OFFSET\+\_\+\+SHADOW\+\_\+\+MAP\+\_\+\+ID}
+, {\bfseries OFFSET\+\_\+\+AMBIENT\+\_\+\+LIGHT\+\_\+\+COLOR}
+, {\bfseries OFFSET\+\_\+\+LIGHT\+\_\+\+COLOR}
+, \newline
+{\bfseries OFFSET\+\_\+\+FREE\+\_\+\+UNIFORMS\+\_\+\+START}
+, {\bfseries NOF\+\_\+\+SCENE\+\_\+\+UNIFORMS} = 100
+ \}
+\begin{DoxyCompactList}\small\item\em This enum specifies offsets for scene uniforms. Scene uniforms are single uniform variables at the start of uniforms\textquotesingle{} table. \end{DoxyCompactList}\item 
+\Hypertarget{uniformLocations_8hpp_a7913f6dc97ac0d88efe2babd30c1a78b}\label{uniformLocations_8hpp_a7913f6dc97ac0d88efe2babd30c1a78b} 
+enum \mbox{\hyperlink{uniformLocations_8hpp_a7913f6dc97ac0d88efe2babd30c1a78b}{Draw\+Call\+Uniforms\+Offsets}} \{ \newline
+{\bfseries OFFSET\+\_\+\+MODEL\+\_\+\+MATRIX} = 0
+, {\bfseries OFFSET\+\_\+\+INVERSE\+\_\+\+TRANSPOSE\+\_\+\+MODEL\+\_\+\+MATRIX}
+, {\bfseries OFFSET\+\_\+\+DIFFUSE\+\_\+\+COLOR}
+, {\bfseries OFFSET\+\_\+\+TEXTURE\+\_\+\+ID}
+, \newline
+{\bfseries OFFSET\+\_\+\+DOUBLE\+\_\+\+SIDED}
+, {\bfseries NOF\+\_\+\+DRAWCALL\+\_\+\+UNIFORMS}
+ \}
+\begin{DoxyCompactList}\small\item\em This enum specifies offsets for draw call uniforms. Draw call uniforms are present for every draw call. \end{DoxyCompactList}\item 
+\Hypertarget{uniformLocations_8hpp_aa40af636d3d9ffb7ec0b3ec458e5f4cd}\label{uniformLocations_8hpp_aa40af636d3d9ffb7ec0b3ec458e5f4cd} 
+enum \mbox{\hyperlink{uniformLocations_8hpp_aa40af636d3d9ffb7ec0b3ec458e5f4cd}{Uniform\+Names}} \{ \newline
+{\bfseries PROJECTION\+\_\+\+VIEW\+\_\+\+MATRIX} = UNIFORM\+\_\+\+OFFSET\+\_\+\+STRIDE(0 , OFFSET\+\_\+\+PROJECTION\+\_\+\+VIEW\+\_\+\+MATRIX )
+, {\bfseries LIGHT\+\_\+\+POSITION} = UNIFORM\+\_\+\+OFFSET\+\_\+\+STRIDE(0 , OFFSET\+\_\+\+LIGHT\+\_\+\+POSITION )
+, {\bfseries CAMERA\+\_\+\+POSITION} = UNIFORM\+\_\+\+OFFSET\+\_\+\+STRIDE(0 , OFFSET\+\_\+\+CAMERA\+\_\+\+POSITION )
+, {\bfseries USE\+\_\+\+SHADOW\+\_\+\+MAP\+\_\+\+MATRIX} = UNIFORM\+\_\+\+OFFSET\+\_\+\+STRIDE(0 , OFFSET\+\_\+\+USE\+\_\+\+SHADOW\+\_\+\+MAP\+\_\+\+MATRIX )
+, \newline
+{\bfseries CREATE\+\_\+\+SHADOW\+\_\+\+MAP\+\_\+\+MATRIX} = UNIFORM\+\_\+\+OFFSET\+\_\+\+STRIDE(0 , OFFSET\+\_\+\+CREATE\+\_\+\+SHADOW\+\_\+\+MAP\+\_\+\+MATRIX )
+, {\bfseries SHADOWMAP\+\_\+\+ID} = UNIFORM\+\_\+\+OFFSET\+\_\+\+STRIDE(0 , OFFSET\+\_\+\+SHADOW\+\_\+\+MAP\+\_\+\+ID )
+, {\bfseries AMBIENT\+\_\+\+LIGHT\+\_\+\+COLOR} = UNIFORM\+\_\+\+OFFSET\+\_\+\+STRIDE(0 , OFFSET\+\_\+\+AMBIENT\+\_\+\+LIGHT\+\_\+\+COLOR )
+, {\bfseries LIGHT\+\_\+\+COLOR} = UNIFORM\+\_\+\+OFFSET\+\_\+\+STRIDE(0 , OFFSET\+\_\+\+LIGHT\+\_\+\+COLOR )
+, \newline
+{\bfseries FREE\+\_\+\+UNIFORMS\+\_\+\+START} = UNIFORM\+\_\+\+OFFSET\+\_\+\+STRIDE(0 , OFFSET\+\_\+\+FREE\+\_\+\+UNIFORMS\+\_\+\+START )
+, {\bfseries MODEL\+\_\+\+MATRIX} = UNIFORM\+\_\+\+OFFSET\+\_\+\+STRIDE(NOF\+\_\+\+DRAWCALL\+\_\+\+UNIFORMS,NOF\+\_\+\+SCENE\+\_\+\+UNIFORMS+\+OFFSET\+\_\+\+MODEL\+\_\+\+MATRIX )
+, {\bfseries INVERSE\+\_\+\+TRANSPOSE\+\_\+\+MODEL\+\_\+\+MATRIX} = UNIFORM\+\_\+\+OFFSET\+\_\+\+STRIDE(NOF\+\_\+\+DRAWCALL\+\_\+\+UNIFORMS,NOF\+\_\+\+SCENE\+\_\+\+UNIFORMS+\+OFFSET\+\_\+\+INVERSE\+\_\+\+TRANSPOSE\+\_\+\+MODEL\+\_\+\+MATRIX )
+, {\bfseries DIFFUSE\+\_\+\+COLOR} = UNIFORM\+\_\+\+OFFSET\+\_\+\+STRIDE(NOF\+\_\+\+DRAWCALL\+\_\+\+UNIFORMS,NOF\+\_\+\+SCENE\+\_\+\+UNIFORMS+\+OFFSET\+\_\+\+DIFFUSE\+\_\+\+COLOR )
+, \newline
+{\bfseries TEXTURE\+\_\+\+ID} = UNIFORM\+\_\+\+OFFSET\+\_\+\+STRIDE(NOF\+\_\+\+DRAWCALL\+\_\+\+UNIFORMS,NOF\+\_\+\+SCENE\+\_\+\+UNIFORMS+\+OFFSET\+\_\+\+TEXTURE\+\_\+\+ID )
+, {\bfseries DOUBLE\+\_\+\+SIDED} = UNIFORM\+\_\+\+OFFSET\+\_\+\+STRIDE(NOF\+\_\+\+DRAWCALL\+\_\+\+UNIFORMS,NOF\+\_\+\+SCENE\+\_\+\+UNIFORMS+\+OFFSET\+\_\+\+DOUBLE\+\_\+\+SIDED )
+ \}
+\begin{DoxyCompactList}\small\item\em This enum specifies uniform names for receiving uniform handle. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+uint32\+\_\+t \mbox{\hyperlink{uniformLocations_8hpp_a241376a8739e67201690479ef6125052}{get\+Uniform\+Location}} (uint32\+\_\+t draw\+Id, uint32\+\_\+t uniform\+Name)
+\begin{DoxyCompactList}\small\item\em This function gets uniform location according to uniform name and draw\+Id. \end{DoxyCompactList}\item 
+uint32\+\_\+t \mbox{\hyperlink{uniformLocations_8hpp_a04f2aa89e608963db92b281c04e297cb}{get\+Uniform\+Name}} (uint32\+\_\+t uniform\+Location)
+\begin{DoxyCompactList}\small\item\em This function gets uniform name from uniform location. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+This file contains declarations of uniform locations within draw model. 
+
+\begin{DoxyAuthor}{Author}
+Tomáš Milet, \href{mailto:imilet@fit.vutbr.cz}{\texttt{ imilet@fit.\+vutbr.\+cz}} 
+\end{DoxyAuthor}
+
+
+\doxysubsection{Function Documentation}
+\Hypertarget{uniformLocations_8hpp_a241376a8739e67201690479ef6125052}\label{uniformLocations_8hpp_a241376a8739e67201690479ef6125052} 
+\index{uniformLocations.hpp@{uniformLocations.hpp}!getUniformLocation@{getUniformLocation}}
+\index{getUniformLocation@{getUniformLocation}!uniformLocations.hpp@{uniformLocations.hpp}}
+\doxysubsubsection{\texorpdfstring{getUniformLocation()}{getUniformLocation()}}
+{\footnotesize\ttfamily uint32\+\_\+t get\+Uniform\+Location (\begin{DoxyParamCaption}\item[{uint32\+\_\+t}]{draw\+Id,  }\item[{uint32\+\_\+t}]{uniform\+Name }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+This function gets uniform location according to uniform name and draw\+Id. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em draw\+Id} & id of the drawcall \\
+\hline
+{\em uniform\+Name} & uniform name\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+uniform location 
+\end{DoxyReturn}
+\Hypertarget{uniformLocations_8hpp_a04f2aa89e608963db92b281c04e297cb}\label{uniformLocations_8hpp_a04f2aa89e608963db92b281c04e297cb} 
+\index{uniformLocations.hpp@{uniformLocations.hpp}!getUniformName@{getUniformName}}
+\index{getUniformName@{getUniformName}!uniformLocations.hpp@{uniformLocations.hpp}}
+\doxysubsubsection{\texorpdfstring{getUniformName()}{getUniformName()}}
+{\footnotesize\ttfamily uint32\+\_\+t get\+Uniform\+Name (\begin{DoxyParamCaption}\item[{uint32\+\_\+t}]{uniform\+Location }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+This function gets uniform name from uniform location. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em uniform\+Location} & uniform location\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+uniform name 
+\end{DoxyReturn}

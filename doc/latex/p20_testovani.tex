@@ -1,0 +1,27 @@
+\chapter{20 Testování}
+\hypertarget{p20_testovani}{}\label{p20_testovani}\index{20 Testování@{20 Testování}}
+Vaši implementaci si můžete ověřit sadou vestavěných akceptačních testů. Když aplikaci pustíte s parametrem "{}-\/c"{}, pustí se akceptační testy, které ověřují funkčnost vaší implementace. 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{./izgProject\ -\/c}
+
+\end{DoxyCode}
+ Pokud není nějaký test splněn, vypíše se k němu komentář s informacemi, co je špatně. Testy jsou seřazeny a měly by se plnit postupně. Pokud chcete pustit jeden konkrétní test (třeba 13.), pusťte aplikaci s parametry "{}-\/c -\/-\/test 13"{}. 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{./izgProject\ -\/c\ -\/-\/test\ 13}
+
+\end{DoxyCode}
+ Pokud chcete pustit všechny testy až po jeden konkrétní (třeba 5.), pusťte aplikaci s parametry "{}-\/c -\/-\/up-\/to-\/test -\/-\/test 5"{}. 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{./izgProject\ -\/c\ -\/-\/test\ 5\ -\/-\/up-\/to-\/test}
+
+\end{DoxyCode}
+ To je užitečné, když implementujete sekci, a chcete vědět, jestli jste něco zpětně nerozbili.~\newline
+ Na konci výpisu testů se vám vypíše bodové hodnocení.
+
+Testování probíhá proti učitelskému řešení, které je přiloženo jako binárka v souborech\+:
+\begin{DoxyItemize}
+\item teacher\+Solution\+Binary/windows/bin/libteacher\+Solution.\+dll
+\item teacher\+Solution\+Binary/linux/lib/libteacher\+Solution.\+so
+\end{DoxyItemize}
+
+Je to pouze pro operační systémy Linux a Windows. MAC není podporován, protože nevlastním žádné takové zařízení a cross compilace na MAC by projekt ještě protáhla... Kdyby se vám tato dynamická knihovna nepodařila načíst, pak může být problém s verzí systému, v takovém případě se obraťte na Tomáše Mileta. Projekt byl testován na Merlinovi, kde to fungovalo. 

@@ -1,0 +1,18 @@
+\chapter{22 Časté chyby, které nedělejte}
+\hypertarget{p22_caste_chyby}{}\label{p22_caste_chyby}\index{22 Časté chyby, které nedělejte@{22 Časté chyby, které nedělejte}}
+
+\begin{DoxyEnumerate}
+\item student se mě nezeptá pokud neví, jak něco vyřešit. Ptejte se. Odpovím, pokud budu vědět. 
+\item student neodevzdá korektně zabalené soubory. 
+\item student si inkluduje nějake soubory z windows, třeba windows.\+h -- to nedělejte, překlad musí fungovat na merlinovi. 
+\item student si přibalí nějaké náhodné soubory s MAC -- to nedělejte, překlad musí fungovat na merlinovi. 
+\item min, max funkce si berete odnikud -- vyzkoušejte, jestli vám jde překlad na merlinovi, nebo použijte glm\+::min, glm\+::max 
+\item špatně pojmenovaný archiv při odevzdávání 
+\item soubory navíc, nebo přejmenované soubory v odevzdaném archivu 
+\item memory corruption, přistupujete do paměti, kam nemáte (na to je valgrind) 
+\item student odevzdá soubory v nějakém exotickém archivu, rar, tar.\+gz, 7z, iso... 
+\item student zkouší projekt na systemu, který nebyl ověřen (ověřeno to bylo na Linuxu, Windows by měl běžet, ale ...). 
+\item Virtual\+Box s Ubuntu je +-\/ možný, ale může se narazit na SDL chybu no video device (asi je potřeba nainstalovat SDL\+: sudo apt install xorg-\/dev libx11-\/dev libgl1-\/mesa-\/glx). 
+\item Nějaký problém se CMake a zprovoznením překladu na Windows (většinou je problém s cestami, zkuste dát projekt někam do jednoduché složky C\+:). 
+\item Projekt máte příliš pomalý a tak jej automatické testy předčasně utnou. 
+\end{DoxyEnumerate}

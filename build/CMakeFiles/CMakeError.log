@@ -1,0 +1,680 @@
+Performing C SOURCE FILE Test HAVE_GCC_WDOCUMENTATION failed with the following output:
+Change Dir: /home/sigull/izgProject/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/ninja cmTC_d5ec7 && [1/2] Building C object CMakeFiles/cmTC_d5ec7.dir/src.c.o
+FAILED: CMakeFiles/cmTC_d5ec7.dir/src.c.o 
+/usr/bin/cc -DHAVE_GCC_WDOCUMENTATION  -D_GNU_SOURCE=1   -Wdocumentation -std=gnu99 -o CMakeFiles/cmTC_d5ec7.dir/src.c.o -c /home/sigull/izgProject/build/CMakeFiles/CMakeTmp/src.c
+cc: error: unrecognized command-line option '-Wdocumentation'
+ninja: build stopped: subcommand failed.
+
+
+Source file was:
+int main(void) { return 0; }
+Performing C SOURCE FILE Test HAVE_GCC_WDOCUMENTATION_UNKNOWN_COMMAND failed with the following output:
+Change Dir: /home/sigull/izgProject/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/ninja cmTC_1f048 && [1/2] Building C object CMakeFiles/cmTC_1f048.dir/src.c.o
+FAILED: CMakeFiles/cmTC_1f048.dir/src.c.o 
+/usr/bin/cc -DHAVE_GCC_WDOCUMENTATION_UNKNOWN_COMMAND  -D_GNU_SOURCE=1   -Wdocumentation-unknown-command -std=gnu99 -o CMakeFiles/cmTC_1f048.dir/src.c.o -c /home/sigull/izgProject/build/CMakeFiles/CMakeTmp/src.c
+cc: error: unrecognized command-line option '-Wdocumentation-unknown-command'
+ninja: build stopped: subcommand failed.
+
+
+Source file was:
+int main(void) { return 0; }
+Performing C SOURCE FILE Test HAVE_GCC_COMMENT_BLOCK_COMMANDS failed with the following output:
+Change Dir: /home/sigull/izgProject/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/ninja cmTC_ae9e4 && [1/2] Building C object CMakeFiles/cmTC_ae9e4.dir/src.c.o
+FAILED: CMakeFiles/cmTC_ae9e4.dir/src.c.o 
+/usr/bin/cc -DHAVE_GCC_COMMENT_BLOCK_COMMANDS  -D_GNU_SOURCE=1   -fcomment-block-commands=threadsafety -std=gnu99 -o CMakeFiles/cmTC_ae9e4.dir/src.c.o -c /home/sigull/izgProject/build/CMakeFiles/CMakeTmp/src.c
+cc: error: unrecognized command-line option '-fcomment-block-commands=threadsafety'
+ninja: build stopped: subcommand failed.
+
+
+Source file was:
+int main(void) { return 0; }
+Performing C SOURCE FILE Test HAVE_CLANG_COMMENT_BLOCK_COMMANDS failed with the following output:
+Change Dir: /home/sigull/izgProject/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/ninja cmTC_bc701 && [1/2] Building C object CMakeFiles/cmTC_bc701.dir/src.c.o
+FAILED: CMakeFiles/cmTC_bc701.dir/src.c.o 
+/usr/bin/cc -DHAVE_CLANG_COMMENT_BLOCK_COMMANDS  -D_GNU_SOURCE=1   /clang:-fcomment-block-commands=threadsafety -std=gnu99 -o CMakeFiles/cmTC_bc701.dir/src.c.o -c /home/sigull/izgProject/build/CMakeFiles/CMakeTmp/src.c
+cc: warning: /clang:-fcomment-block-commands=threadsafety: linker input file unused because linking not done
+cc: error: /clang:-fcomment-block-commands=threadsafety: linker input file not found: No such file or directory
+ninja: build stopped: subcommand failed.
+
+
+Source file was:
+int main(void) { return 0; }
+Determining if the _i64toa exist failed with the following output:
+Change Dir: /home/sigull/izgProject/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/ninja cmTC_ecb9e && [1/2] Building C object CMakeFiles/cmTC_ecb9e.dir/CheckSymbolExists.c.o
+FAILED: CMakeFiles/cmTC_ecb9e.dir/CheckSymbolExists.c.o 
+/usr/bin/cc   -D_GNU_SOURCE=1 -std=gnu99 -o CMakeFiles/cmTC_ecb9e.dir/CheckSymbolExists.c.o -c /home/sigull/izgProject/build/CMakeFiles/CMakeTmp/CheckSymbolExists.c
+/home/sigull/izgProject/build/CMakeFiles/CMakeTmp/CheckSymbolExists.c: In function ‘main’:
+/home/sigull/izgProject/build/CMakeFiles/CMakeTmp/CheckSymbolExists.c:26:19: error: ‘_i64toa’ undeclared (first use in this function)
+   26 |   return ((int*)(&_i64toa))[argc];
+      |                   ^~~~~~~
+/home/sigull/izgProject/build/CMakeFiles/CMakeTmp/CheckSymbolExists.c:26:19: note: each undeclared identifier is reported only once for each function it appears in
+ninja: build stopped: subcommand failed.
+
+
+File /home/sigull/izgProject/build/CMakeFiles/CMakeTmp/CheckSymbolExists.c:
+/* */
+#include <float.h>
+#include <iconv.h>
+#include <inttypes.h>
+#include <limits.h>
+#include <malloc.h>
+#include <math.h>
+#include <memory.h>
+#include <signal.h>
+#include <stdarg.h>
+#include <stdbool.h>
+#include <stddef.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <strings.h>
+#include <sys/types.h>
+#include <time.h>
+#include <wchar.h>
+
+int main(int argc, char** argv)
+{
+  (void)argv;
+#ifndef _i64toa
+  return ((int*)(&_i64toa))[argc];
+#else
+  (void)argc;
+  return 0;
+#endif
+}
+Determining if the itoa exist failed with the following output:
+Change Dir: /home/sigull/izgProject/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/ninja cmTC_408ca && [1/2] Building C object CMakeFiles/cmTC_408ca.dir/CheckSymbolExists.c.o
+FAILED: CMakeFiles/cmTC_408ca.dir/CheckSymbolExists.c.o 
+/usr/bin/cc   -D_GNU_SOURCE=1 -std=gnu99 -o CMakeFiles/cmTC_408ca.dir/CheckSymbolExists.c.o -c /home/sigull/izgProject/build/CMakeFiles/CMakeTmp/CheckSymbolExists.c
+/home/sigull/izgProject/build/CMakeFiles/CMakeTmp/CheckSymbolExists.c: In function ‘main’:
+/home/sigull/izgProject/build/CMakeFiles/CMakeTmp/CheckSymbolExists.c:26:19: error: ‘itoa’ undeclared (first use in this function)
+   26 |   return ((int*)(&itoa))[argc];
+      |                   ^~~~
+/home/sigull/izgProject/build/CMakeFiles/CMakeTmp/CheckSymbolExists.c:26:19: note: each undeclared identifier is reported only once for each function it appears in
+ninja: build stopped: subcommand failed.
+
+
+File /home/sigull/izgProject/build/CMakeFiles/CMakeTmp/CheckSymbolExists.c:
+/* */
+#include <float.h>
+#include <iconv.h>
+#include <inttypes.h>
+#include <limits.h>
+#include <malloc.h>
+#include <math.h>
+#include <memory.h>
+#include <signal.h>
+#include <stdarg.h>
+#include <stdbool.h>
+#include <stddef.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <strings.h>
+#include <sys/types.h>
+#include <time.h>
+#include <wchar.h>
+
+int main(int argc, char** argv)
+{
+  (void)argv;
+#ifndef itoa
+  return ((int*)(&itoa))[argc];
+#else
+  (void)argc;
+  return 0;
+#endif
+}
+Determining if the _ltoa exist failed with the following output:
+Change Dir: /home/sigull/izgProject/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/ninja cmTC_6bba6 && [1/2] Building C object CMakeFiles/cmTC_6bba6.dir/CheckSymbolExists.c.o
+FAILED: CMakeFiles/cmTC_6bba6.dir/CheckSymbolExists.c.o 
+/usr/bin/cc   -D_GNU_SOURCE=1 -std=gnu99 -o CMakeFiles/cmTC_6bba6.dir/CheckSymbolExists.c.o -c /home/sigull/izgProject/build/CMakeFiles/CMakeTmp/CheckSymbolExists.c
+/home/sigull/izgProject/build/CMakeFiles/CMakeTmp/CheckSymbolExists.c: In function ‘main’:
+/home/sigull/izgProject/build/CMakeFiles/CMakeTmp/CheckSymbolExists.c:26:19: error: ‘_ltoa’ undeclared (first use in this function)
+   26 |   return ((int*)(&_ltoa))[argc];
+      |                   ^~~~~
+/home/sigull/izgProject/build/CMakeFiles/CMakeTmp/CheckSymbolExists.c:26:19: note: each undeclared identifier is reported only once for each function it appears in
+ninja: build stopped: subcommand failed.
+
+
+File /home/sigull/izgProject/build/CMakeFiles/CMakeTmp/CheckSymbolExists.c:
+/* */
+#include <float.h>
+#include <iconv.h>
+#include <inttypes.h>
+#include <limits.h>
+#include <malloc.h>
+#include <math.h>
+#include <memory.h>
+#include <signal.h>
+#include <stdarg.h>
+#include <stdbool.h>
+#include <stddef.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <strings.h>
+#include <sys/types.h>
+#include <time.h>
+#include <wchar.h>
+
+int main(int argc, char** argv)
+{
+  (void)argv;
+#ifndef _ltoa
+  return ((int*)(&_ltoa))[argc];
+#else
+  (void)argc;
+  return 0;
+#endif
+}
+Determining if the sqr exist failed with the following output:
+Change Dir: /home/sigull/izgProject/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/ninja cmTC_ac6c0 && [1/2] Building C object CMakeFiles/cmTC_ac6c0.dir/CheckSymbolExists.c.o
+FAILED: CMakeFiles/cmTC_ac6c0.dir/CheckSymbolExists.c.o 
+/usr/bin/cc   -D_GNU_SOURCE=1 -std=gnu99 -o CMakeFiles/cmTC_ac6c0.dir/CheckSymbolExists.c.o -c /home/sigull/izgProject/build/CMakeFiles/CMakeTmp/CheckSymbolExists.c
+/home/sigull/izgProject/build/CMakeFiles/CMakeTmp/CheckSymbolExists.c: In function ‘main’:
+/home/sigull/izgProject/build/CMakeFiles/CMakeTmp/CheckSymbolExists.c:26:19: error: ‘sqr’ undeclared (first use in this function); did you mean ‘sqrt’?
+   26 |   return ((int*)(&sqr))[argc];
+      |                   ^~~
+      |                   sqrt
+/home/sigull/izgProject/build/CMakeFiles/CMakeTmp/CheckSymbolExists.c:26:19: note: each undeclared identifier is reported only once for each function it appears in
+ninja: build stopped: subcommand failed.
+
+
+File /home/sigull/izgProject/build/CMakeFiles/CMakeTmp/CheckSymbolExists.c:
+/* */
+#include <float.h>
+#include <iconv.h>
+#include <inttypes.h>
+#include <limits.h>
+#include <malloc.h>
+#include <math.h>
+#include <memory.h>
+#include <signal.h>
+#include <stdarg.h>
+#include <stdbool.h>
+#include <stddef.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <strings.h>
+#include <sys/types.h>
+#include <time.h>
+#include <wchar.h>
+
+int main(int argc, char** argv)
+{
+  (void)argv;
+#ifndef sqr
+  return ((int*)(&sqr))[argc];
+#else
+  (void)argc;
+  return 0;
+#endif
+}
+Determining if the strlcat exist failed with the following output:
+Change Dir: /home/sigull/izgProject/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/ninja cmTC_ec812 && [1/2] Building C object CMakeFiles/cmTC_ec812.dir/CheckSymbolExists.c.o
+FAILED: CMakeFiles/cmTC_ec812.dir/CheckSymbolExists.c.o 
+/usr/bin/cc   -D_GNU_SOURCE=1 -std=gnu99 -o CMakeFiles/cmTC_ec812.dir/CheckSymbolExists.c.o -c /home/sigull/izgProject/build/CMakeFiles/CMakeTmp/CheckSymbolExists.c
+/home/sigull/izgProject/build/CMakeFiles/CMakeTmp/CheckSymbolExists.c: In function ‘main’:
+/home/sigull/izgProject/build/CMakeFiles/CMakeTmp/CheckSymbolExists.c:26:19: error: ‘strlcat’ undeclared (first use in this function); did you mean ‘strncat’?
+   26 |   return ((int*)(&strlcat))[argc];
+      |                   ^~~~~~~
+      |                   strncat
+/home/sigull/izgProject/build/CMakeFiles/CMakeTmp/CheckSymbolExists.c:26:19: note: each undeclared identifier is reported only once for each function it appears in
+ninja: build stopped: subcommand failed.
+
+
+File /home/sigull/izgProject/build/CMakeFiles/CMakeTmp/CheckSymbolExists.c:
+/* */
+#include <float.h>
+#include <iconv.h>
+#include <inttypes.h>
+#include <limits.h>
+#include <malloc.h>
+#include <math.h>
+#include <memory.h>
+#include <signal.h>
+#include <stdarg.h>
+#include <stdbool.h>
+#include <stddef.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <strings.h>
+#include <sys/types.h>
+#include <time.h>
+#include <wchar.h>
+
+int main(int argc, char** argv)
+{
+  (void)argv;
+#ifndef strlcat
+  return ((int*)(&strlcat))[argc];
+#else
+  (void)argc;
+  return 0;
+#endif
+}
+Determining if the strlcpy exist failed with the following output:
+Change Dir: /home/sigull/izgProject/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/ninja cmTC_13fd2 && [1/2] Building C object CMakeFiles/cmTC_13fd2.dir/CheckSymbolExists.c.o
+FAILED: CMakeFiles/cmTC_13fd2.dir/CheckSymbolExists.c.o 
+/usr/bin/cc   -D_GNU_SOURCE=1 -std=gnu99 -o CMakeFiles/cmTC_13fd2.dir/CheckSymbolExists.c.o -c /home/sigull/izgProject/build/CMakeFiles/CMakeTmp/CheckSymbolExists.c
+/home/sigull/izgProject/build/CMakeFiles/CMakeTmp/CheckSymbolExists.c: In function ‘main’:
+/home/sigull/izgProject/build/CMakeFiles/CMakeTmp/CheckSymbolExists.c:26:19: error: ‘strlcpy’ undeclared (first use in this function); did you mean ‘strncpy’?
+   26 |   return ((int*)(&strlcpy))[argc];
+      |                   ^~~~~~~
+      |                   strncpy
+/home/sigull/izgProject/build/CMakeFiles/CMakeTmp/CheckSymbolExists.c:26:19: note: each undeclared identifier is reported only once for each function it appears in
+ninja: build stopped: subcommand failed.
+
+
+File /home/sigull/izgProject/build/CMakeFiles/CMakeTmp/CheckSymbolExists.c:
+/* */
+#include <float.h>
+#include <iconv.h>
+#include <inttypes.h>
+#include <limits.h>
+#include <malloc.h>
+#include <math.h>
+#include <memory.h>
+#include <signal.h>
+#include <stdarg.h>
+#include <stdbool.h>
+#include <stddef.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <strings.h>
+#include <sys/types.h>
+#include <time.h>
+#include <wchar.h>
+
+int main(int argc, char** argv)
+{
+  (void)argv;
+#ifndef strlcpy
+  return ((int*)(&strlcpy))[argc];
+#else
+  (void)argc;
+  return 0;
+#endif
+}
+Determining if the strnstr exist failed with the following output:
+Change Dir: /home/sigull/izgProject/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/ninja cmTC_dd6bd && [1/2] Building C object CMakeFiles/cmTC_dd6bd.dir/CheckSymbolExists.c.o
+FAILED: CMakeFiles/cmTC_dd6bd.dir/CheckSymbolExists.c.o 
+/usr/bin/cc   -D_GNU_SOURCE=1 -std=gnu99 -o CMakeFiles/cmTC_dd6bd.dir/CheckSymbolExists.c.o -c /home/sigull/izgProject/build/CMakeFiles/CMakeTmp/CheckSymbolExists.c
+/home/sigull/izgProject/build/CMakeFiles/CMakeTmp/CheckSymbolExists.c: In function ‘main’:
+/home/sigull/izgProject/build/CMakeFiles/CMakeTmp/CheckSymbolExists.c:26:19: error: ‘strnstr’ undeclared (first use in this function); did you mean ‘strstr’?
+   26 |   return ((int*)(&strnstr))[argc];
+      |                   ^~~~~~~
+      |                   strstr
+/home/sigull/izgProject/build/CMakeFiles/CMakeTmp/CheckSymbolExists.c:26:19: note: each undeclared identifier is reported only once for each function it appears in
+ninja: build stopped: subcommand failed.
+
+
+File /home/sigull/izgProject/build/CMakeFiles/CMakeTmp/CheckSymbolExists.c:
+/* */
+#include <float.h>
+#include <iconv.h>
+#include <inttypes.h>
+#include <limits.h>
+#include <malloc.h>
+#include <math.h>
+#include <memory.h>
+#include <signal.h>
+#include <stdarg.h>
+#include <stdbool.h>
+#include <stddef.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <strings.h>
+#include <sys/types.h>
+#include <time.h>
+#include <wchar.h>
+
+int main(int argc, char** argv)
+{
+  (void)argv;
+#ifndef strnstr
+  return ((int*)(&strnstr))[argc];
+#else
+  (void)argc;
+  return 0;
+#endif
+}
+Determining if the wcslcat exist failed with the following output:
+Change Dir: /home/sigull/izgProject/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/ninja cmTC_64007 && [1/2] Building C object CMakeFiles/cmTC_64007.dir/CheckSymbolExists.c.o
+FAILED: CMakeFiles/cmTC_64007.dir/CheckSymbolExists.c.o 
+/usr/bin/cc   -D_GNU_SOURCE=1 -std=gnu99 -o CMakeFiles/cmTC_64007.dir/CheckSymbolExists.c.o -c /home/sigull/izgProject/build/CMakeFiles/CMakeTmp/CheckSymbolExists.c
+/home/sigull/izgProject/build/CMakeFiles/CMakeTmp/CheckSymbolExists.c: In function ‘main’:
+/home/sigull/izgProject/build/CMakeFiles/CMakeTmp/CheckSymbolExists.c:26:19: error: ‘wcslcat’ undeclared (first use in this function); did you mean ‘wcsncat’?
+   26 |   return ((int*)(&wcslcat))[argc];
+      |                   ^~~~~~~
+      |                   wcsncat
+/home/sigull/izgProject/build/CMakeFiles/CMakeTmp/CheckSymbolExists.c:26:19: note: each undeclared identifier is reported only once for each function it appears in
+ninja: build stopped: subcommand failed.
+
+
+File /home/sigull/izgProject/build/CMakeFiles/CMakeTmp/CheckSymbolExists.c:
+/* */
+#include <float.h>
+#include <iconv.h>
+#include <inttypes.h>
+#include <limits.h>
+#include <malloc.h>
+#include <math.h>
+#include <memory.h>
+#include <signal.h>
+#include <stdarg.h>
+#include <stdbool.h>
+#include <stddef.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <strings.h>
+#include <sys/types.h>
+#include <time.h>
+#include <wchar.h>
+
+int main(int argc, char** argv)
+{
+  (void)argv;
+#ifndef wcslcat
+  return ((int*)(&wcslcat))[argc];
+#else
+  (void)argc;
+  return 0;
+#endif
+}
+Determining if the wcslcpy exist failed with the following output:
+Change Dir: /home/sigull/izgProject/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/ninja cmTC_19dce && [1/2] Building C object CMakeFiles/cmTC_19dce.dir/CheckSymbolExists.c.o
+FAILED: CMakeFiles/cmTC_19dce.dir/CheckSymbolExists.c.o 
+/usr/bin/cc   -D_GNU_SOURCE=1 -std=gnu99 -o CMakeFiles/cmTC_19dce.dir/CheckSymbolExists.c.o -c /home/sigull/izgProject/build/CMakeFiles/CMakeTmp/CheckSymbolExists.c
+/home/sigull/izgProject/build/CMakeFiles/CMakeTmp/CheckSymbolExists.c: In function ‘main’:
+/home/sigull/izgProject/build/CMakeFiles/CMakeTmp/CheckSymbolExists.c:26:19: error: ‘wcslcpy’ undeclared (first use in this function); did you mean ‘wcsncpy’?
+   26 |   return ((int*)(&wcslcpy))[argc];
+      |                   ^~~~~~~
+      |                   wcsncpy
+/home/sigull/izgProject/build/CMakeFiles/CMakeTmp/CheckSymbolExists.c:26:19: note: each undeclared identifier is reported only once for each function it appears in
+ninja: build stopped: subcommand failed.
+
+
+File /home/sigull/izgProject/build/CMakeFiles/CMakeTmp/CheckSymbolExists.c:
+/* */
+#include <float.h>
+#include <iconv.h>
+#include <inttypes.h>
+#include <limits.h>
+#include <malloc.h>
+#include <math.h>
+#include <memory.h>
+#include <signal.h>
+#include <stdarg.h>
+#include <stdbool.h>
+#include <stddef.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <strings.h>
+#include <sys/types.h>
+#include <time.h>
+#include <wchar.h>
+
+int main(int argc, char** argv)
+{
+  (void)argv;
+#ifndef wcslcpy
+  return ((int*)(&wcslcpy))[argc];
+#else
+  (void)argc;
+  return 0;
+#endif
+}
+Determining if the sysctlbyname exist failed with the following output:
+Change Dir: /home/sigull/izgProject/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/ninja cmTC_b0333 && [1/2] Building C object CMakeFiles/cmTC_b0333.dir/CheckSymbolExists.c.o
+FAILED: CMakeFiles/cmTC_b0333.dir/CheckSymbolExists.c.o 
+/usr/bin/cc   -D_GNU_SOURCE=1 -std=gnu99 -o CMakeFiles/cmTC_b0333.dir/CheckSymbolExists.c.o -c /home/sigull/izgProject/build/CMakeFiles/CMakeTmp/CheckSymbolExists.c
+/home/sigull/izgProject/build/CMakeFiles/CMakeTmp/CheckSymbolExists.c:3:10: fatal error: sys/sysctl.h: No such file or directory
+    3 | #include <sys/sysctl.h>
+      |          ^~~~~~~~~~~~~~
+compilation terminated.
+ninja: build stopped: subcommand failed.
+
+
+File /home/sigull/izgProject/build/CMakeFiles/CMakeTmp/CheckSymbolExists.c:
+/* */
+#include <sys/types.h>
+#include <sys/sysctl.h>
+
+int main(int argc, char** argv)
+{
+  (void)argv;
+#ifndef sysctlbyname
+  return ((int*)(&sysctlbyname))[argc];
+#else
+  (void)argc;
+  return 0;
+#endif
+}
+Determining if the elf_aux_info exist failed with the following output:
+Change Dir: /home/sigull/izgProject/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/ninja cmTC_fa387 && [1/2] Building C object CMakeFiles/cmTC_fa387.dir/CheckSymbolExists.c.o
+FAILED: CMakeFiles/cmTC_fa387.dir/CheckSymbolExists.c.o 
+/usr/bin/cc   -D_GNU_SOURCE=1 -std=gnu99 -o CMakeFiles/cmTC_fa387.dir/CheckSymbolExists.c.o -c /home/sigull/izgProject/build/CMakeFiles/CMakeTmp/CheckSymbolExists.c
+/home/sigull/izgProject/build/CMakeFiles/CMakeTmp/CheckSymbolExists.c: In function ‘main’:
+/home/sigull/izgProject/build/CMakeFiles/CMakeTmp/CheckSymbolExists.c:8:19: error: ‘elf_aux_info’ undeclared (first use in this function)
+    8 |   return ((int*)(&elf_aux_info))[argc];
+      |                   ^~~~~~~~~~~~
+/home/sigull/izgProject/build/CMakeFiles/CMakeTmp/CheckSymbolExists.c:8:19: note: each undeclared identifier is reported only once for each function it appears in
+ninja: build stopped: subcommand failed.
+
+
+File /home/sigull/izgProject/build/CMakeFiles/CMakeTmp/CheckSymbolExists.c:
+/* */
+#include <sys/auxv.h>
+
+int main(int argc, char** argv)
+{
+  (void)argv;
+#ifndef elf_aux_info
+  return ((int*)(&elf_aux_info))[argc];
+#else
+  (void)argc;
+  return 0;
+#endif
+}
+Determining if the posix_spawn_file_actions_addchdir exist failed with the following output:
+Change Dir: /home/sigull/izgProject/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/ninja cmTC_19c6b && [1/2] Building C object CMakeFiles/cmTC_19c6b.dir/CheckSymbolExists.c.o
+FAILED: CMakeFiles/cmTC_19c6b.dir/CheckSymbolExists.c.o 
+/usr/bin/cc   -D_GNU_SOURCE=1 -std=gnu99 -o CMakeFiles/cmTC_19c6b.dir/CheckSymbolExists.c.o -c /home/sigull/izgProject/build/CMakeFiles/CMakeTmp/CheckSymbolExists.c
+/home/sigull/izgProject/build/CMakeFiles/CMakeTmp/CheckSymbolExists.c: In function ‘main’:
+/home/sigull/izgProject/build/CMakeFiles/CMakeTmp/CheckSymbolExists.c:8:19: error: ‘posix_spawn_file_actions_addchdir’ undeclared (first use in this function); did you mean ‘posix_spawn_file_actions_addchdir_np’?
+    8 |   return ((int*)(&posix_spawn_file_actions_addchdir))[argc];
+      |                   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      |                   posix_spawn_file_actions_addchdir_np
+/home/sigull/izgProject/build/CMakeFiles/CMakeTmp/CheckSymbolExists.c:8:19: note: each undeclared identifier is reported only once for each function it appears in
+ninja: build stopped: subcommand failed.
+
+
+File /home/sigull/izgProject/build/CMakeFiles/CMakeTmp/CheckSymbolExists.c:
+/* */
+#include <spawn.h>
+
+int main(int argc, char** argv)
+{
+  (void)argv;
+#ifndef posix_spawn_file_actions_addchdir
+  return ((int*)(&posix_spawn_file_actions_addchdir))[argc];
+#else
+  (void)argc;
+  return 0;
+#endif
+}
+Performing C SOURCE FILE Test ICONV_IN_LIBICONV failed with the following output:
+Change Dir: /home/sigull/izgProject/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/ninja cmTC_837b6 && [1/2] Building C object CMakeFiles/cmTC_837b6.dir/src.c.o
+[2/2] Linking C executable cmTC_837b6
+FAILED: cmTC_837b6 
+: && /usr/bin/cc -D_GNU_SOURCE=1  CMakeFiles/cmTC_837b6.dir/src.c.o -o cmTC_837b6  -liconv && :
+/usr/bin/ld: cannot find -liconv: No such file or directory
+collect2: error: ld returned 1 exit status
+ninja: build stopped: subcommand failed.
+
+
+Source file was:
+
+        #include <stddef.h>
+        #include <iconv.h>
+        int main(int argc, char **argv) {
+            return !iconv_open(NULL,NULL);
+        }
+Performing C SOURCE FILE Test HAVE_OPENGLES_V1 failed with the following output:
+Change Dir: /home/sigull/izgProject/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/ninja cmTC_af158 && [1/2] Building C object CMakeFiles/cmTC_af158.dir/src.c.o
+FAILED: CMakeFiles/cmTC_af158.dir/src.c.o 
+/usr/bin/cc -DHAVE_OPENGLES_V1 -I/home/sigull/izgProject/libs/SDL-release-3.4.4/src/video/khronos -D_GNU_SOURCE=1 -std=gnu99 -o CMakeFiles/cmTC_af158.dir/src.c.o -c /home/sigull/izgProject/build/CMakeFiles/CMakeTmp/src.c
+/home/sigull/izgProject/build/CMakeFiles/CMakeTmp/src.c:2:18: fatal error: GLES/gl.h: No such file or directory
+    2 |         #include <GLES/gl.h>
+      |                  ^~~~~~~~~~~
+compilation terminated.
+ninja: build stopped: subcommand failed.
+
+
+Source file was:
+
+        #include <GLES/gl.h>
+        #include <GLES/glext.h>
+        int main (int argc, char** argv) { return 0; }
+Determining if the include file libudev.h exists failed with the following output:
+Change Dir: /home/sigull/izgProject/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/ninja cmTC_29f1c && [1/2] Building C object CMakeFiles/cmTC_29f1c.dir/CheckIncludeFile.c.o
+FAILED: CMakeFiles/cmTC_29f1c.dir/CheckIncludeFile.c.o 
+/usr/bin/cc   -D_GNU_SOURCE=1 -std=gnu99 -o CMakeFiles/cmTC_29f1c.dir/CheckIncludeFile.c.o -c /home/sigull/izgProject/build/CMakeFiles/CMakeTmp/CheckIncludeFile.c
+/home/sigull/izgProject/build/CMakeFiles/CMakeTmp/CheckIncludeFile.c:1:10: fatal error: libudev.h: No such file or directory
+    1 | #include <libudev.h>
+      |          ^~~~~~~~~~~
+compilation terminated.
+ninja: build stopped: subcommand failed.
+
+
+
+Performing C SOURCE FILE Test LIBC_HAS_WORKING_LIBUNWIND failed with the following output:
+Change Dir: /home/sigull/izgProject/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/ninja cmTC_7ca04 && [1/2] Building C object CMakeFiles/cmTC_7ca04.dir/src.c.o
+[2/2] Linking C executable cmTC_7ca04
+FAILED: cmTC_7ca04 
+: && /usr/bin/cc -D_GNU_SOURCE=1  CMakeFiles/cmTC_7ca04.dir/src.c.o -o cmTC_7ca04   && :
+/usr/bin/ld: CMakeFiles/cmTC_7ca04.dir/src.c.o: in function `main':
+src.c:(.text+0x36): undefined reference to `_Ux86_64_getcontext'
+/usr/bin/ld: src.c:(.text+0x45): undefined reference to `_Ux86_64_step'
+/usr/bin/ld: src.c:(.text+0x60): undefined reference to `_Ux86_64_get_reg'
+/usr/bin/ld: src.c:(.text+0x85): undefined reference to `_Ux86_64_get_proc_name'
+collect2: error: ld returned 1 exit status
+ninja: build stopped: subcommand failed.
+
+
+Source file was:
+      #include <libunwind.h>
+      int main(int argc, char *argv[]) {
+        (void)argc; (void)argv;
+        unw_context_t context;
+        unw_cursor_t cursor;
+        unw_word_t pc;
+        char sym[256];
+        unw_word_t offset;
+        unw_getcontext(&context);
+        unw_step(&cursor);
+        unw_get_reg(&cursor, UNW_REG_IP, &pc);
+        unw_get_proc_name(&cursor, sym, sizeof(sym), &offset);
+        return 0;
+      }
+Performing C SOURCE FILE Test LIBUNWIND_HAS_WORKINGLIBUNWIND failed with the following output:
+Change Dir: /home/sigull/izgProject/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/ninja cmTC_10e44 && [1/2] Building C object CMakeFiles/cmTC_10e44.dir/src.c.o
+[2/2] Linking C executable cmTC_10e44
+FAILED: cmTC_10e44 
+: && /usr/bin/cc -D_GNU_SOURCE=1  CMakeFiles/cmTC_10e44.dir/src.c.o -o cmTC_10e44  -lunwind && :
+/usr/bin/ld: CMakeFiles/cmTC_10e44.dir/src.c.o: in function `main':
+src.c:(.text+0x45): undefined reference to `_Ux86_64_step'
+/usr/bin/ld: src.c:(.text+0x60): undefined reference to `_Ux86_64_get_reg'
+/usr/bin/ld: src.c:(.text+0x85): undefined reference to `_Ux86_64_get_proc_name'
+collect2: error: ld returned 1 exit status
+ninja: build stopped: subcommand failed.
+
+
+Source file was:
+      #include <libunwind.h>
+      int main(int argc, char *argv[]) {
+        (void)argc; (void)argv;
+        unw_context_t context;
+        unw_cursor_t cursor;
+        unw_word_t pc;
+        char sym[256];
+        unw_word_t offset;
+        unw_getcontext(&context);
+        unw_step(&cursor);
+        unw_get_reg(&cursor, UNW_REG_IP, &pc);
+        unw_get_proc_name(&cursor, sym, sizeof(sym), &offset);
+        return 0;
+      }
+Determining if the include file pthread_np.h exists failed with the following output:
+Change Dir: /home/sigull/izgProject/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/ninja cmTC_f3d39 && [1/2] Building C object CMakeFiles/cmTC_f3d39.dir/CheckIncludeFile.c.o
+FAILED: CMakeFiles/cmTC_f3d39.dir/CheckIncludeFile.c.o 
+/usr/bin/cc   -D_GNU_SOURCE=1 -D_REENTRANT -pthread -std=gnu99 -o CMakeFiles/cmTC_f3d39.dir/CheckIncludeFile.c.o -c /home/sigull/izgProject/build/CMakeFiles/CMakeTmp/CheckIncludeFile.c
+/home/sigull/izgProject/build/CMakeFiles/CMakeTmp/CheckIncludeFile.c:1:10: fatal error: pthread_np.h: No such file or directory
+    1 | #include <pthread_np.h>
+      |          ^~~~~~~~~~~~~~
+compilation terminated.
+ninja: build stopped: subcommand failed.
+
+
+

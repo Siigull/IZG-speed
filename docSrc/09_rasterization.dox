@@ -1,0 +1,150 @@
+/**
+
+\page p09_rasterization_theory 09 Rasterizace
+
+V tomto úkolu je potřeba rozšířit funkcionalitu funkce student_GPU_run o schopnosti rasterizace.
+Cílem je naprogramovat části zobrazovacího řetězce, které jsou za vertex shaderem po rasterizaci a pouštění fragment shaderu (včetně).
+Vzhledem k tomu, že projekt nemůže automaticky testovat vektorovou část: část primitiv, jsou tyto testy odsunuty až k rasterizaci, kdy se jejich ověřování umožní.
+
+\section gpu_rasterization Rasterizace 
+
+Rasterizace produkuje raterizací primitiva stream fragmentů:
+
+\image html docSrc/images/rasterization_fragment_stream.svg "Vstupem rasterizace je primitivum. Rasterizace produkuje stream fragmentů." width=800
+
+Rasterizace rasterizuje primitiva v prostoru obrazovky (screen-space).
+Rasterizace produkuje fragmenty v případě, že <b>střed</b> pixelu leží uvnitř trojúhelníku.
+
+\image html docSrc/images/rasterization.svg "Rasterizace produkuje fragmenty. Pokud střed pixelu leží uvnitř trojúhelníka, vytvoří se fragment." width=800
+
+
+
+\section ss_rasterization_InFragment InFragment
+
+\ref InFragment(y) odpovídají vzorkům v pixelu. Nesou hodnoty důležité pro výpočet jejich barvy.
+
+\image html docSrc/images/InFragment.svg "InFragment je úlomek trojúhelníku (vzorek). Obsahuje pozici (gl_FragCoord) a volitelné uživatelské atributy, které odpovídají volitelným uživatelským atributům z OutVertex." width=400
+
+Pozice InFragmentu \ref InFragment::gl_FragCoord obsahuje 4 složky. Složka XY je souřadnice středu pixelu na obrazovce, Složka Z obsahuje hloubku. Poslední složka W není podstatná, ale obsahuje tím, čím se dělilo při perspektivním dělení.
+
+
+
+\section ss_rasterization_interpolation Interpolace atributů
+
+\image html docSrc/images/interpolation.svg "Rasterizace a interpolace vertex atributů. Vertex Atributy jsou interpolovány pomocí perspektivně korektních barycentrických souřadnic l0,l1,l2. Hloubka je interpolována pomocí 2D barycentrických souřadnic." width=800
+
+
+
+\section sss_rasterization_interpolation_2Dlambda Výpočet 2D Barycentrických souřadnic pro interpolaci hloubky
+
+Barycentrické souřadnice musíte spočítat podle obsahů:
+\image html docSrc/images/barycentric2D.svg "Barycentrické souřadnice ve 2D jsou spočítány jako poměry obsahů podtrojúhelníků." width=800
+Hlouba se interpoluje pomocí barycentrických souřadnic ve 2D:
+\f[\displaystyle fragment.gl\_FragCoord.z = vertex[0].gl\_Position.z\cdot \lambda_0^{2D} + vertex[1].gl\_Position.z\cdot \lambda_1^{2D} + vertex[2].gl\_Position.z\cdot \lambda_2^{2D}\f]
+
+Hloubka vrcholů vertex[].gl_Position.z vznikla při perspektivním dělení.
+
+
+
+\section sss_rasterization_interpolation_3Dlambda Výpočet perspektivně korektních Barycentrických souřadnic pro interpolaci uživatelských atribů
+
+Atributy je potřeba interpolovat pomocí perspektivně korektně upravených 2D barycentrických souřadnic.
+Perspektivně korektní interpolace:
+\f[\displaystyle \frac{\frac{A_0 \cdot \lambda_0^{2D}}{h_0} + \frac{A_1 \cdot \lambda_1^{2D}}{h_1} + \frac{A_2 \cdot \lambda_2^{2D}}{h_2}}{\frac{\lambda_0^{2D}}{h_0}+\frac{\lambda_1^{2D}}{h_1}+\frac{\lambda_2^{2D}}{h_2}}\f]
+Kde \f$\lambda_0^{2D},\lambda_1^{2D},\lambda_2^{2D}\f$ jsou barycentrické koordináty ve 2D, \f$h_0,h_1,h_2\f$ jsou homogenní složky vrcholů a \f$A_0,A_1,A_2\f$ jsou atribut vrcholu.<br>
+Homogenní složka vrcholů je čtvrtá složka -- tím čím se dělilo ve perspektivním dělení: h0 = vertex[0].gl_Position.w, h1 = vertex[1].gl_Position.w, ...
+<br>
+2D Barycentrické souřadnice je možné přepočítat na perspektivně koretní barycentrické souřadnice (je to jen přepsání zvorečku nahoře):
+\f[\displaystyle s = \frac{\lambda_0^{2D}}{h_0}+\frac{\lambda_1^{2D}}{h_1}+\frac{\lambda_2^{2D}}{h_2}\f]
+\f[\displaystyle \lambda_0 = \frac{\lambda_0^{2D}}{h_0\cdot s}\f]
+\f[\displaystyle \lambda_1 = \frac{\lambda_1^{2D}}{h_1\cdot s}\f]
+\f[\displaystyle \lambda_2 = \frac{\lambda_2^{2D}}{h_2\cdot s}\f]
+Ty je potom možné použít pro interpolaci atributů:
+\f[\displaystyle fragment.attribute = vertex[0].attribute\cdot \lambda_0 + vertex[1].attribute\cdot \lambda_1 + vertex[2].attribute\cdot \lambda_2\f]
+
+
+
+\section gpu_fragmentShader Fragment processor
+Fragment processor spouští fragment shader nad každým fragmentem.
+Data pro fragment shader jsou uložena ve struktuře \ref InFragment.
+Výstup fragment shaderu je výstupní fragment \ref OutFragment -- barva.
+Další (konstantní) vstup fragment shaderu jsou uniformní proměnné a textury.
+\image html images/FragmentShader.svg "Vizualizace vstupů a výstupů fragment shaderu. Fragment Shader se pouší nad každým vyrasterizovaným fragmentem." width=800
+
+
+
+
+\section Raster Úkol 4 -- naprogramovat Primitive Assembly jednotku, perspektivní dělení, zahazování odvrácených primitiv, rasterizaci a pouštění fragment shaderu
+
+Rasterizace rasterizuje primitiva.
+K tomu je potřeba korektně ty primitiva sestavit, provést perspektivní dělení a viewport transformaci.
+Jedná se o testy 22. -- 31.
+
+\subsection ss_raster_test Test 22 -- Ověření, že funguje základní rasterizace
+V tomto úkolu budete muset naprogramovat rasterizaci. Neobejdete se bez viewport transformace, rasterizace a zavolání fragment shaderu nad každným fragmentem.
+Tento test spočívá ve zkoušení vyrasterizování jednoho trojúhelníku a podívání se, zda jste korektně pustili fragment shader.<br>
+Test spustíte:
+\code{.sh}
+izgProject -c --test 22
+\endcode
+
+Pseudokód může po upravení vypadat nějak takto:
+\snippet docSrc/drawExample.cpp student_GPU_run_after_vs
+
+\subsection ss_raster_test_2 Test 23 -- Ověření, zda nerasterizujete mimo okno
+V tomto testu jsou trojúhelníky částečně nebo zce mimo okno
+\code{.sh}
+izgProject -c --test 23
+\endcode
+
+\subsection ss_raster_test_3 Test 24 -- Komprehenzivní testování rasterizace
+V tomto testu se testuje rasterizace mnoha trojúhelníků při mnoha nastaveních
+\code{.sh}
+izgProject -c --test 24
+\endcode
+
+\subsection ss_raster_test_4 Test 25 -- Ověření, zda počítáte perspektivní dělení.
+Tento test ověřuje, zda provádíte perspektivní dělení.
+\code{.sh}
+izgProject -c --test 25
+\endcode
+
+\subsection ss_raster_test_5 Test 26 -- Ověření, zda vám funguje backface culling.
+Tento test ověřuje, zda vám funguje backface culling.
+\code{.sh}
+izgProject -c --test 26
+\endcode
+
+\subsection ss_raster_test_6 Test 27 -- Ověření, zda se správně interpoluje hloubka fragmentů.
+Tento test ověřuje, zda vyrasterizované fragmenty mají správně interpolovanou hloubku.
+\code{.sh}
+izgProject -c --test 27
+\endcode
+Hloubka fragmentu je v komponentě "z" položky \ref InFragment::gl_FragCoord. Pro její interpolaci potřebujete hloubky vrcholů trojúhelníka a barycentrické souřadnice fragmentu ve 2D.<br>
+Hloubky vrcholů najdete ve "z" komponentě položky \ref OutVertex::gl_Position gl_Position.z
+\snippet solutionInterface/src/solutionInterface/gpu.hpp OutVertex
+Hloubku zapisujte do komponenty "z" položky \ref InFragment::gl_FragCoord gl_FragCoord.z
+\snippet solutionInterface/src/solutionInterface/gpu.hpp InFragment
+
+
+
+\subsection ss_raster_test_7 Testy 28-29 -- Ověření, zda se správně interpolují vertex attributy.
+Tyto dva testy ověřují, jestli se správně interpolují vertex atributy do fragment atributů.
+\code{.sh}
+izgProject -c --test 28
+izgProject -c --test 29
+\endcode
+Vertex Attributy jsou se struktuře OutVertex
+\snippet solutionInterface/src/solutionInterface/gpu.hpp OutVertex
+A ze tří těchto vrcholů by se měly interpolovat atributy InFragment.
+\snippet solutionInterface/src/solutionInterface/gpu.hpp InFragment
+Interpolujte pouze ty atributy, které jsou poznačené v položce \ref Program::vs2fs!
+A pouze ty, které nejsou typu integer!
+Integerové atributy neinterpolujte, ale pouze použijte hodnoty nultého vrcholu. Tomuto vrcholu se také říká provoking vertex.
+\snippet solutionInterface/src/solutionInterface/gpu.hpp Program
+
+
+
+
+
+*/

@@ -1,0 +1,15 @@
+/**
+\page p19_ovladani 19 Ovládání
+
+Aplikace se ovládá pomocí myši a klávesnice:
+- stisknuté levé tlačítko myši + pohyb myší -- rotace kamery
+- stisknuté pravé tlačítko myši + pohyb myší -- přiblížení kamery
+- stiknuté prostření tlačítko myši + pohyb myší -- posun kamery do boků
+- "n"      -- přepne na další scénu/metodu
+- "p"      -- přepne na předcházející scénu/metodu
+- "esc"    -- konec
+- "wsadqe" -- ovládání kamery
+- "F9"     -- přepnutí na studentské řešení
+- "F10"    -- přepnutí na učitelské řešení
+
+*/

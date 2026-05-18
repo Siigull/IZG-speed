@@ -1,0 +1,36 @@
+\doxysection{Command\+Buffer Struct Reference}
+\hypertarget{structCommandBuffer}{}\label{structCommandBuffer}\index{CommandBuffer@{CommandBuffer}}
+
+
+\mbox{[}\doxylink{structCommand}{Command}\mbox{]}  
+
+
+
+
+{\ttfamily \#include $<$gpu.\+hpp$>$}
+
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{structCommandBuffer_a5a4e731514b5998dad67189ca3612f3e}\label{structCommandBuffer_a5a4e731514b5998dad67189ca3612f3e} 
+uint32\+\_\+t {\bfseries nof\+Commands} = 0
+\begin{DoxyCompactList}\small\item\em number of used commands in command buffer \end{DoxyCompactList}\item 
+\Hypertarget{structCommandBuffer_addba1f7b3ffb5ad52a484d1b815436df}\label{structCommandBuffer_addba1f7b3ffb5ad52a484d1b815436df} 
+\mbox{\hyperlink{structCommand}{Command}} {\bfseries commands} \mbox{[}\mbox{\hyperlink{structCommandBuffer_a81ad6bbc0bfe06a036ad05abde3793dd}{max\+Commands}}\mbox{]}
+\begin{DoxyCompactList}\small\item\em array of commands \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Static Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{structCommandBuffer_a81ad6bbc0bfe06a036ad05abde3793dd}\label{structCommandBuffer_a81ad6bbc0bfe06a036ad05abde3793dd} 
+static uint32\+\_\+t const {\bfseries max\+Commands} = 10000
+\begin{DoxyCompactList}\small\item\em maximal number of commands \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\mbox{[}\doxylink{structCommand}{Command}\mbox{]} 
+
+This struct represents a command buffer. \doxylink{structCommand}{Command} buffer is used for CPU -\/\texorpdfstring{$>$}{>} GPU communication. Jobs are sent to GPU using this structure. \mbox{[}\doxylink{structCommandBuffer}{Command\+Buffer}\mbox{]} 
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+solution\+Interface/src/solution\+Interface/\mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp}{gpu.\+hpp}}\end{DoxyCompactItemize}

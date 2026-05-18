@@ -1,0 +1,26 @@
+var searchData=
+[
+  ['gequal_0',['GEQUAL',['../solutionInterface_2src_2solutionInterface_2gpu_8hpp.html#ad3d7abe532ca7be55ba9e8e03916e2e0a9e63a520a6e8fefd37a5fa966d96f3bc',1,'gpu.hpp']]],
+  ['get_5funiform_5foffset_1',['GET_UNIFORM_OFFSET',['../uniformLocations_8hpp.html#ad9cb0213a5018de992771c422f295ba1',1,'uniformLocations.hpp']]],
+  ['get_5funiform_5fstride_2',['GET_UNIFORM_STRIDE',['../uniformLocations_8hpp.html#ac775d2b1e78fc297ddde4a9ddd4d529c',1,'uniformLocations.hpp']]],
+  ['getpixel_3',['getpixel',['../solutionInterface_2src_2solutionInterface_2gpu_8hpp.html#a6842746ca06d8003aba5565fe7a7d7d6',1,'getPixel(Image &amp;image, uint32_t x, uint32_t y):&#160;gpu.hpp'],['../solutionInterface_2src_2solutionInterface_2gpu_8hpp.html#a3c439a65c7b247304d4482c6f932234a',1,'getPixel(Image const &amp;image, uint32_t x, uint32_t y):&#160;gpu.hpp']]],
+  ['getuniformlocation_4',['getUniformLocation',['../uniformLocations_8hpp.html#a241376a8739e67201690479ef6125052',1,'uniformLocations.hpp']]],
+  ['getuniformname_5',['getUniformName',['../uniformLocations_8hpp.html#a04f2aa89e608963db92b281c04e297cb',1,'uniformLocations.hpp']]],
+  ['gl_5fdrawid_6',['gl_drawid',['../structShaderInterface.html#acdb2c4b2df7bd9535ddde723b86eabc7',1,'ShaderInterface::gl_DrawID'],['../structGPUMemory.html#aa6541055bfd7af94a91f35bfe0cd9aad',1,'GPUMemory::gl_DrawID'],['../p05_commands_user_sub_draw_tasks.html#drawIDTest',1,'Test 12 &amp;ndash; DrawCommand a počítání gl_DrawID']]],
+  ['gl_5ffragcolor_7',['gl_FragColor',['../structOutFragment.html#a9670bf5a31a5c23fccdbeaad959cc3cf',1,'OutFragment']]],
+  ['gl_5ffragcoord_8',['gl_FragCoord',['../structInFragment.html#ae72e0b96e17181ea2cb2ef256e3f0a8f',1,'InFragment']]],
+  ['gl_5fposition_9',['gl_Position',['../structOutVertex.html#a9ca7de8eef8d688163497a7d34c76d7b',1,'OutVertex']]],
+  ['gl_5fvertexid_10',['gl_VertexID',['../structInVertex.html#aa4d31911053492bffe4b41dae12ee000',1,'InVertex']]],
+  ['gpu_11',['gpu',['../p07_pipeline_vector_part_tasks.html#vector_part_task',1,'Úkol 3: kreslící příkaz &amp;ndash; vertexová část GPU'],['../p06_pipeline_vector_part_theory.html',1,'06 Teorie o vektorové a rastrové části GPU']]],
+  ['gpu_20a_20zápisu_20nastavení_12',['Teorie: Nastavování aktivních objektů GPU a zápisu nastavení',['../p03_commandTasks.html#activateTheory',1,'']]],
+  ['gpu_2ecpp_13',['gpu.cpp',['../studentSolution_2src_2studentSolution_2gpu_8cpp.html',1,'']]],
+  ['gpu_2ehpp_14',['gpu.hpp',['../studentSolution_2src_2studentSolution_2gpu_8hpp.html',1,'(Global Namespace)'],['../solutionInterface_2src_2solutionInterface_2gpu_8hpp.html',1,'(Global Namespace)']]],
+  ['gpu_3a_20část_20přimitiv_15',['08 Vektorová část GPU: část přimitiv',['../p08_pipeline_primitive_part_theory.html',1,'']]],
+  ['gpu_3a_20část_20vertexů_16',['07 Vektorová čast GPU: část vertexů',['../p07_pipeline_vector_part_tasks.html',1,'']]],
+  ['gpu_5frun_17',['gpu_run',['../structTaskFunctions.html#a321461b07aa851bcd30cea1b2d72b7fa',1,'TaskFunctions']]],
+  ['gpumemory_18',['gpumemory',['../structGPUMemory.html#aa4029f03d462f74659188127d0db57b2',1,'GPUMemory::GPUMemory(GPUMemory const &amp;o)'],['../structGPUMemory.html#a9b333f6f69347068f349d05961c7bf39',1,'GPUMemory::GPUMemory()'],['../structGPUMemory.html',1,'GPUMemory']]],
+  ['grafická_20karta_19',['grafická karta',['../p06_pipeline_vector_part_theory.html#GPU',1,'Grafická karta'],['../p14_pipeline_clipping.html#finalGPU',1,'Hotová grafická karta']]],
+  ['grafická_20karta_20paměť_20a_20příkazy_20',['02 Grafická karta, paměť a příkazy',['../p02_gpuTheory.html',1,'']]],
+  ['greater_21',['GREATER',['../solutionInterface_2src_2solutionInterface_2gpu_8hpp.html#ad3d7abe532ca7be55ba9e8e03916e2e0ae7e72355289e404b762d4cf88824d23b',1,'gpu.hpp']]],
+  ['green_22',['GREEN',['../structImage.html#afe74defc826aae605cb2214cbf34c5ebae4313a97b6cfa1b72a92bd67916831b3',1,'Image']]]
+];

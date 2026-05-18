@@ -1,0 +1,27 @@
+\doxysection{Set\+Backface\+Culling\+Command Struct Reference}
+\hypertarget{structSetBackfaceCullingCommand}{}\label{structSetBackfaceCullingCommand}\index{SetBackfaceCullingCommand@{SetBackfaceCullingCommand}}
+
+
+\mbox{[}\doxylink{structBlockWritesCommand}{Block\+Writes\+Command}\mbox{]}  
+
+
+
+
+{\ttfamily \#include $<$gpu.\+hpp$>$}
+
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{structSetBackfaceCullingCommand_ac6edae6e6046a7e4a37eaca4e60bf097}\label{structSetBackfaceCullingCommand_ac6edae6e6046a7e4a37eaca4e60bf097} 
+bool {\bfseries enabled} = false
+\begin{DoxyCompactList}\small\item\em is backface culling enabled? \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\mbox{[}\doxylink{structBlockWritesCommand}{Block\+Writes\+Command}\mbox{]} 
+
+Set Backface Culling \doxylink{structCommand}{Command} can enable/disable backface culling. This command can enable/disable backface culling. Also, it can specify, what is backfacing face of a triangle. Backface culling disable rasterization of triangles that are backfacing a camera. The backfacingness is determined by the order of vertices -\/ clockwise or counter clockwise. Student should implement correct behaviour of this command. \mbox{[}\doxylink{structSetBackfaceCullingCommand}{Set\+Backface\+Culling\+Command}\mbox{]} 
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+solution\+Interface/src/solution\+Interface/\mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp}{gpu.\+hpp}}\end{DoxyCompactItemize}

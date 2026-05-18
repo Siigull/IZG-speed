@@ -1,0 +1,26 @@
+\chapter{17 Sestavení}
+\hypertarget{p17_sestaveni}{}\label{p17_sestaveni}\index{17 Sestavení@{17 Sestavení}}
+Projekt byl testován na Ubuntu 20.\+04 -- 24.\+04, Visual Studio 2017, 2019. Projekt vyžaduje 64 bitové sestavení. Projekt využívá build systém \href{https://cmake.org/}{\texttt{ CMAKE}}. CMake je program, který na základně konfiguračních souborů "{}\+CMake\+Lists.\+txt"{} vytvoří "{}makefile"{} v daném vývojovém prostředí. Dokáže generovat makefile pro Linux, mingw, solution file pro Microsoft Visual Studio, a další.~\newline
+ Postup Linux\+: 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\#\ stáhnout\ projekt}
+\DoxyCodeLine{unzip\ izgProject.zip\ -\/d\ izgProject}
+\DoxyCodeLine{cd\ izgProject/build}
+\DoxyCodeLine{cmake\ ..}
+\DoxyCodeLine{make\ -\/j8}
+\DoxyCodeLine{./izgProject}
+\DoxyCodeLine{./izgProject\ -\/h}
+
+\end{DoxyCode}
+ Posup na Windows\+:
+\begin{DoxyEnumerate}
+\item stáhnout projekt
+\item rozbalit projekt
+\item jděte do složky build/
+\item ve složce build pusťte cmake-\/gui ..
+\item pokud nevíte jak, tak pusťte cmake-\/gui a nastavte "{}\+Where is the source code\+:"{} na složku s projektem (obsahuje CMake\+Lists.\+txt)
+\item a "{}\+Where to build the binaries\+: "{} na složku build
+\item configure
+\item generate
+\item Otevřete vygenerovnou Microsoft Visual Studio Solution soubor. 
+\end{DoxyEnumerate}

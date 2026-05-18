@@ -1,0 +1,105 @@
+/**
+
+\page p04_commands_clear_tasks 04 Čistící příkazy
+
+\section ClearCommandTheory Teorie: Čistění framebufferu
+
+Framebuffer je složen ze tří bufferů: paměť barvy (color buffer), paměť hloubky (depth buffer) a paměť stencilu (stencil buffer):
+\image html docSrc/images/framebuffer.svg "Framebuffer -- tři buffery: color buffer, depth buffer a stencil buffer o stejném rozlišení. Framebuffer je plátno, kam se kreslí."  width=600
+Všechny mají stejné rozlišení.
+Barevný buffer má několik kanálů (až čtyři), každý má stejnou velikost a typ.
+Hlouboký buffer má hloubku uloženou ve floatech.
+Stencilový buffer má hodnotu uloženou v 8bitovém čísle.
+Framebuffer je koncipován tak, že pixel na souřadnicích [0,0] je v levém dolním rohu, osa X je doprava a oxy Y nahoru.
+Je možné jej přetočit vzhůru nohama pomocí příznaku \ref Framebuffer::yReversed.
+\image html docSrc/images/yReversed.svg "Framebuffer může být překlopený vzhůru nohama. Je to určeno komponentou yReversed. V taktovém případě je nultý pixel v levém horním rohu framebufferu."  width=400
+
+Všechny framebuffery se nachází v paměti grafické karty (\ref GPUMemory):
+\snippet solutionInterface/src/solutionInterface/gpu.hpp Framebuffer
+Framebuffer je poměrně složitá struktura. Je složena ze:
+<ul>
+<li> tři \ref Image -- barva, hloubka, stencil,
+<li> šířka,
+<li> výška,
+<li> yReversed -- v případě, že je framebuffer vzhůru nohama.
+</ul>
+\ref Image je struktura obsahující 2D data.
+Je využívána u framebufferů a textur.
+\snippet solutionInterface/src/solutionInterface/gpu.hpp Image
+Image je inspirovaný strukturami
+<a href="https://wiki.libsdl.org/SDL2/SDL_Surface">SDL_Surface</a> a
+<a href="https://wiki.libsdl.org/SDL2/SDL_PixelFormat">SDL_PixelFormat</a>.<br>
+Struktura obsahuje několik položek:
+<ul>
+<li> Image::data -- ukazatel na začátek,
+<li> Image::channels -- počet kanálů,
+<li> Image::format -- formát kanálů,
+<li> Image::pitch -- šířka řádku v bajtech,
+<li> Image::bytesPerPixel -- velikost jednoho pixelu v bajtech,
+<li> Image::channelTypes -- tabulka mapování čísla kanálu na typ kanálu.
+</ul>
+ Adresování dat může být poněkud komplikované...
+\code{.cpp}
+ // Pixel [x,y] začíná na adrese:
+ uint8_t* pixelStart = ((uint8_t*)data) + y*pitch + x*bytesPerPixel;
+
+ // Pokud jsou data typu float
+ if(format == Image::FLOAT32){
+   float*pixelf = (float*)pixelStart;
+
+   // Kanál 0 odpovídá barvě channelTypes[0]
+   // tzn. 0 nemusí být RED
+   pixelf[0] = 0.5f;
+ }
+ // Pokud jsou data typu uint8_t
+ if(format == Image::UINT8){
+   uint8_t*pixelu = (uint8_t*)pixelStart;
+   pixelu[0] = 127;
+ }
+\endcode
+
+Čistící příkazy (\ref ClearColorCommand, \ref ClearDepthCommand, \ref ClearStencilCommand) vypadají takto:
+\snippet solutionInterface/src/solutionInterface/gpu.hpp ClearColorCommand
+\snippet solutionInterface/src/solutionInterface/gpu.hpp ClearDepthCommand
+\snippet solutionInterface/src/solutionInterface/gpu.hpp ClearStencilCommand
+Čistící příkazy obsahují hodnotu, na kterou se mají vyčistit barevný, hloubkový nebo stencilový buffer.
+Všimněte si, že barva je uložena jako floatový vektor glm::vec4.
+V tomto vektoru je barva v rozsahu [0,1] typu float.
+Čistící barvu musíte z toho rozsahu převést na správný typ podle typu barevného bufferu.<br>
+
+
+
+\section ClearCommandTask Úkol 1: Čištění framebufferu
+Vašim úkolem bude naprogramovat obsluhu čistících příkazů.
+K tomuto úkolu se vážou testy:<br>
+\code{.sh}
+./izgProject -c --test 10 --up-to-test
+\endcode
+Takto vypadá pseudokód, jak můžete začít psát:
+\snippet docSrc/drawExample.cpp exp_clearCommands
+
+
+\subsection clear Test 8 -- čištění framebufferu
+\code{.sh}
+./izgProject -c --test 8
+\endcode
+Tento test zkouší vyčistit framebuffer.
+
+
+\subsection clearPartial Test 9 -- čištění částečného framebufferu
+\code{.sh}
+./izgProject -c --test 9
+\endcode
+Tento test zkouší vyčistit částečně specifikovaný framebuffer.
+Paměť barvy, paměť hloubky i stencil může být prázdná (nullptr), v takovém případě čištění neproběhne.
+
+
+\subsection clearMultipleFBO Test 10 -- zápis do vícero framebufferů
+\code{.sh}
+./izgProject -c --test 10
+\endcode
+Tento test zkouší čistit různé \ref Framebuffer(y), ne jen nultý.
+Čistící příkaz čistí aktivní framebuffer.
+ 
+
+*/

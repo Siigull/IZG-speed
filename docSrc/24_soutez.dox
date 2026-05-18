@@ -1,0 +1,21 @@
+/**
+\page p24_soutez 24 Soutěž
+
+Pokud váš projekt obdrží plný počet bodů, bude zařazen do soutěže o
+nejrychlejší implementaci zobrazovacího řetězce.
+Můžete přeimplementovat cokoliv v odevzdávaných souborech pokud to projde
+akceptačními testy a kompilací.<br>
+Spuštění měření výkonnosti:
+\code{.sh}
+./izgProject -p -f 10
+\endcode
+Nejrychlejší projekty budou na věčné časy zařazeny do <a href="https://www.fit.vut.cz/person/imilet/public/sinSlavy/">síně slávy</a>. A...<br>
+<b>Ceny za 1., 2. a třetí místo v roce 2023-2024 byly:</b> <br>
+\image html docSrc/images/ceny/1.png
+\image html docSrc/images/ceny/2.png
+\image html docSrc/images/ceny/3.png
+
+<b>Cena za nejrychlejší projekt v roce 2024-2025 bude:</b> <br>
+????
+
+*/

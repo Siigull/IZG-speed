@@ -1,0 +1,148 @@
+/**
+\page p03_commandTasks 03 Úkoly ohledně Command Bufferu
+
+V tomto projektu musíte naimplementovat vlastní grafickou kartu.
+Tu budete implementovat v souboru: studentSolution/src/studentSolution/gpu.cpp
+
+
+\section activateTheory Teorie: Nastavování aktivních objektů GPU a zápisu nastavení
+
+Grafická karta obsahuje mnoho objektů.
+Jsou to:
+<ul>
+<li> textury,
+<li> buffery,
+<li> programy,
+<li> framebuffery,
+<li> vertex array objekty,
+<li> uniformy a další.
+</ul>
+Některé z těchto objektů se přímo využívají při kreslení. Jsou to objekty:
+<ul>
+<li> framebuffery,
+<li> programy,
+<li> vertex array objekty.
+</ul>
+Je potřeba vědět, kam se kreslí (\ref Framebuffer), je potřeba vědět jak se kreslí (\ref Program a nastavení v objektech: \ref BlockWrites, \ref StencilSettings a \ref BackfaceCulling) a je potřeba vědět, odkud se berou data pro kreslení (\ref VertexArray).
+\image html docSrc/images/ctx_overview.svg "Přehled objektů, které se přímo účastní při vykresování. VertexArray je něco jako vstup pro vykreslování, jsou v něm 'zakódované' trojúhelníky. Framebuffer je výstupní obrázek, který se kreslí. A program popisuje, jak se věci kreslí. Nastavení obsahuje přídavné proměnné, které ovlivňují, jak se objekty vykreslují."  width=800
+Síla dnešních grafických karet spočívá v jejich programovatelnosti a široké nastavitelnosti.
+Dnes je možné kreslit to vícero framebufferů, využívat k tomu tisíce programů a mít k tomu milióny objektů.
+Proto je nutné grafické kartě říct, které objekty jsou v danou chvíli aktivní.
+V OpenGL se to provádí příkazy:
+<ul>
+<li> <a href="https://registry.khronos.org/OpenGL-Refpages/gl4/html/glBindFramebuffer.xhtml">glBindFramebuffer(...)</a>
+<li> <a href="https://registry.khronos.org/OpenGL-Refpages/gl4/html/glUseProgram.xhtml">glUseProgram(...)</a>
+<li> <a href="https://registry.khronos.org/OpenGL-Refpages/gl4/html/glBindVertexArray.xhtml">glBindVertexArray(...)</a>
+</ul>
+Těmto příkazům odpovídají v tomto projetku příkazy \ref BindFramebufferCommand, \ref BindProgramCommand, \ref BindVertexArrayCommand.<br>
+<br>
+Stejně tak je potřeba GPU říct, jaké je nastavení pro kreslení. Například se může zakázat zápis barvy, hloubky a stencilové hodnoty do framebuffer, nebo se může zapnout ořezávání odvrácených stran trojúhelníků, nebo se mohou nastavit stencilové operace. V OpenGL by to byly tyto příkazy:
+<ul>
+<li> Zakázání / Povolení zápisu do framebufferu (\ref BlockWritesCommand):
+- <a href="https://registry.khronos.org/OpenGL-Refpages/gl4/html/glColorMask.xhtml">glColorMask(...)</a>
+- <a href="https://registry.khronos.org/OpenGL-Refpages/gl4/html/glDepthMask.xhtml">glDepthMask(...)</a>
+- <a href="https://registry.khronos.org/OpenGL-Refpages/gl4/html/glStencilMask.xhtml">glStencilMask(...)</a>
+<li> Povolení / zakázání zahazování odvrácených stran trojúhelníků (\ref SetBackfaceCullingCommand):
+- <a href="https://registry.khronos.org/OpenGL-Refpages/gl4/html/glEnable.xhtml">glEnabled(GL_CULL_FACE)</a>
+- <a href="https://registry.khronos.org/OpenGL-Refpages/gl4/html/glDisable.xhtml">glDisable(GL_CULL_FACE)</a>
+<li> Určení, co je to přivrácená strana trojúhelníku (\ref SetFrontFaceCommand):
+- <a href="https://registry.khronos.org/OpenGL-Refpages/gl4/html/glFrontFace.xhtml">glFrontFace(GL_CW)</a>
+- <a href="https://registry.khronos.org/OpenGL-Refpages/gl4/html/glFrontFace.xhtml">glFrontFace(GL_CCW)</a>
+<li> Stencilové nastavení (\ref SetStencilCommand):
+- <a href="https://registry.khronos.org/OpenGL-Refpages/gl4/html/glStencilFunc.xhtml">glStencilFunc(...)</a>
+- <a href="https://registry.khronos.org/OpenGL-Refpages/gl4/html/glStencilOpSeparate.xhtml">glStencilOpSeparate(...)</a>
+- <a href="https://registry.khronos.org/OpenGL-Refpages/gl4/html/glEnable.xhtml">glEnabled(GL_STENCIL_TEST)</a>
+- <a href="https://registry.khronos.org/OpenGL-Refpages/gl4/html/glDisable.xhtml">glDisabled(GL_STENCIL_TEST)</a>
+</ul>
+Podobně je to ve Vulkánu, ale je to tam složitější.<br>
+Těmto nastavením odpovídají v tomto projektu příkazy \ref BlockWritesCommand, \ref SetBackfaceCullingCommand, \ref SetFrontFaceCommand a \ref SetStencilCommand.
+
+
+
+\section BindTask Úkol 0: Aktivování objektů a nastavení
+Vašim prvním úkolem bude správně vybírat aktivní objekty na grafické kartě a zápis nastavení GPU.
+Vážou se k tomu tyto testy:
+\code{.sh}
+./izgProject -c --test 7 --up-to-test
+\endcode
+Editujte funkci \ref student_GPU_run v souboru studentSolution/src/studentSolution/gpu.cpp.<br>
+
+
+
+
+
+\subsection bindFBO Test 0 -- bindFramebuffer
+\code{.sh}
+./izgProject -c --test 0
+\endcode
+Tento test zkouší, zda funguje command \ref BindFramebufferCommand
+\snippet solutionInterface/src/solutionInterface/gpu.hpp BindFramebufferCommand
+Pokud se v command bufferu objeví tento příkaz, je nutné nastavit aktivní framebuffer v paměti gpu: \ref GPUMemory::activatedFramebuffer.
+Pamatujte, je potřeba zpracovat \ref CommandBuffer a správně reagovat na příkazy, které jsou v něm uloženy.
+\snippet docSrc/drawExample.cpp exp_BindFramebufferCommand
+
+\subsection bindProgram Test 1 -- bindProgram
+\code{.sh}
+./izgProject -c --test 1
+\endcode
+Tento test zkouší, zda funguje command \ref BindProgramCommand
+\snippet solutionInterface/src/solutionInterface/gpu.hpp BindProgramCommand
+Pokud se v command bufferu objeví tento příkaz, je nutné nastavit aktivní program v paměti gpu: \ref GPUMemory::activatedProgram.
+
+\subsection bindVBO Test 2 -- bindVertexArray
+\code{.sh}
+./izgProject -c --test 2
+\endcode
+Tento test zkouší, zda funguje command \ref BindVertexArrayCommand
+\snippet solutionInterface/src/solutionInterface/gpu.hpp BindVertexArrayCommand
+Pokud se v command bufferu objeví tento příkaz, je nutné nastavit aktivní vertex array v paměti gpu: \ref GPUMemory::activatedVertexArray.
+
+\subsection blockWritesCMD Test 3 -- blockWrites
+\code{.sh}
+./izgProject -c --test 3
+\endcode
+Tento test zkouší, zda funguje command \ref BlockWritesCommand
+\snippet solutionInterface/src/solutionInterface/gpu.hpp BlockWritesCommand
+\snippet solutionInterface/src/solutionInterface/gpu.hpp BlockWrites
+Pokud se v \ref CommandBuffer(u) objeví tento příkaz, je nutné nastavit v paměti gpu: \ref GPUMemory::blockWrites.
+
+\subsection setBackfaceCullingCMD Test 4 -- setBackface
+\code{.sh}
+./izgProject -c --test 4
+\endcode
+Tento test zkouší, zda funguje command \ref SetBackfaceCullingCommand
+\snippet solutionInterface/src/solutionInterface/gpu.hpp SetBackfaceCullingCommand
+Pokud se v \ref CommandBuffer(u) objeví tento příkaz, je nutné nastavit v paměti gpu : \ref GPUMemory::backfaceCulling položku \ref BackfaceCulling::enabled.
+\snippet solutionInterface/src/solutionInterface/gpu.hpp BackfaceCulling
+
+\subsection setFrontFaceCMD Test 5 -- setFrontFace
+\code{.sh}
+./izgProject -c --test 5
+\endcode
+Tento test zkouší, zda funguje command \ref SetFrontFaceCommand
+\snippet solutionInterface/src/solutionInterface/gpu.hpp SetFrontFaceCommand
+Pokud se v \ref CommandBuffer(u) objeví tento příkaz, je nutné nastavit v paměti gpu : \ref GPUMemory::backfaceCulling položku \ref BackfaceCulling::frontFaceIsCounterClockWise
+\snippet solutionInterface/src/solutionInterface/gpu.hpp BackfaceCulling
+ 
+\subsection setStencilCMD Test 6 -- setStencil
+\code{.sh}
+./izgProject -c --test 6
+\endcode
+Tento test zkouší, zda funguje command \ref SetStencilCommand
+\snippet solutionInterface/src/solutionInterface/gpu.hpp SetStencilCommand
+\snippet solutionInterface/src/solutionInterface/gpu.hpp StencilSettings
+Pokud se v \ref CommandBuffer(u) objeví tento příkaz, je nutné nastavit v paměti gpu : \ref GPUMemory::stencilSettings.
+\snippet solutionInterface/src/solutionInterface/gpu.hpp StencilSettings
+\snippet solutionInterface/src/solutionInterface/gpu.hpp StencilOps
+\snippet solutionInterface/src/solutionInterface/gpu.hpp StencilOp
+\snippet solutionInterface/src/solutionInterface/gpu.hpp StencilFunc
+
+\subsection setDrawIDCMD Test 7 -- setDrawID
+\code{.sh}
+./izgProject -c --test 7
+\endcode
+Tento test zkouší, zda funguje command \ref SetDrawIdCommand
+\snippet solutionInterface/src/solutionInterface/gpu.hpp SetDrawIdCommand
+Pokud se v \ref CommandBuffer(u) objeví tento příkaz, je nutné nastavit v paměti gpu : \ref GPUMemory::gl_DrawID.
+
+*/

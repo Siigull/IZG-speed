@@ -1,0 +1,28 @@
+var structGPUMemory =
+[
+    [ "GPUMemory", "structGPUMemory.html#a9b333f6f69347068f349d05961c7bf39", null ],
+    [ "GPUMemory", "structGPUMemory.html#aa4029f03d462f74659188127d0db57b2", null ],
+    [ "~GPUMemory", "structGPUMemory.html#aba0548cad16f8557782a5b2a409685b0", null ],
+    [ "operator=", "structGPUMemory.html#a59c169462c028204dfca9b92f5cd9230", null ],
+    [ "activatedFramebuffer", "structGPUMemory.html#acd06344c1c43bef8df606d6664fee4b4", null ],
+    [ "activatedProgram", "structGPUMemory.html#a7b289e72424eb0cf9b7aa920386f7565", null ],
+    [ "activatedVertexArray", "structGPUMemory.html#af2f8e1efb9217022ced48eeb04b79810", null ],
+    [ "backfaceCulling", "structGPUMemory.html#a08ac73715dd9138f6dfc6b04b7ec3860", null ],
+    [ "blendingSettings", "structGPUMemory.html#a3ae3396312e75582f1645e5a30fd829b", null ],
+    [ "blockWrites", "structGPUMemory.html#ac8733e2ed174d07681ccb20407ac2933", null ],
+    [ "buffers", "structGPUMemory.html#a4755d327262c8020766718bb31f92d0b", null ],
+    [ "defaultFramebuffer", "structGPUMemory.html#a7f32178fb1950dde77a2133bb93bbe5b", null ],
+    [ "framebuffers", "structGPUMemory.html#abd0d80589104a936db46ae766bc7975e", null ],
+    [ "gl_DrawID", "structGPUMemory.html#aa6541055bfd7af94a91f35bfe0cd9aad", null ],
+    [ "maxBuffers", "structGPUMemory.html#a0be973077c6d15f40e31d0781b1ea8e6", null ],
+    [ "maxFramebuffers", "structGPUMemory.html#ad9cda42fea22fb0d5347a91f101d15d2", null ],
+    [ "maxPrograms", "structGPUMemory.html#aa8e57983bda33e4ef48e825d5bf261eb", null ],
+    [ "maxTextures", "structGPUMemory.html#a8fa73be85fde25818e8b63d71fd7dd60", null ],
+    [ "maxUniforms", "structGPUMemory.html#aa73d331b9be494e550928fad4ac6c23d", null ],
+    [ "maxVertexArrays", "structGPUMemory.html#a3798310241309de18f5561931d1d2665", null ],
+    [ "programs", "structGPUMemory.html#a50091de928f20fa9d84c6bd137dab3a6", null ],
+    [ "stencilSettings", "structGPUMemory.html#a00d576026cb037973a8cdb85ba6e5498", null ],
+    [ "textures", "structGPUMemory.html#ac07704dd918f18a48644abdabbdf6f0d", null ],
+    [ "uniforms", "structGPUMemory.html#a21eab797fb058f9cc8ceb26d5993f018", null ],
+    [ "vertexArrays", "structGPUMemory.html#acab4bb492d24e78131d39ea7997266cb", null ]
+];

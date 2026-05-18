@@ -1,0 +1,21 @@
+\chapter{06 Teorie o vektorové a rastrové části GPU}
+\hypertarget{p06_pipeline_vector_part_theory}{}\label{p06_pipeline_vector_part_theory}\index{06 Teorie o vektorové a rastrové části GPU@{06 Teorie o vektorové a rastrové části GPU}}
+\hypertarget{p06_pipeline_vector_part_theory_GPU_vector_intro}{}\doxysection{\texorpdfstring{Úvod}{Úvod}}\label{p06_pipeline_vector_part_theory_GPU_vector_intro}
+Grafická karta je navržena tak, aby se minimalizovaly přenosy CPU \texorpdfstring{$<$}{<}-\/\texorpdfstring{$>$}{>} GPU. Je to z toho důvodu, že PCIe sběrnice je oproti všem zůčastněným částem při kreslení nejpomalejší. Snažíme se o to, aby se používalo menší množství větších přenosů data mezi CPU \texorpdfstring{$<$}{<}-\/\texorpdfstring{$>$}{>} GPU. Velké množství malých přenosů je neefektivní a způsobuje čekání jak na straně CPU, tak na straně GPU. Další věcí, která způsobuje zpomalování kreslení je velké množství samostatných vykresovacích příkazů. Je lepší jedním příkazem vykreslit milión trojúhelníků než miliónem příkazů vykreslit stejný milión trojúhelníků po jednom. Z těchto důvodů vzniky command buffery a další techniky. Dnes je možné pomocí jednoho příkazu vykreslit celou scénu i s mnoha efekty. Příkladem nechť je funkce z Open\+GL \href{https://registry.khronos.org/OpenGL-Refpages/gl4/html/glDrawElementsIndirect.xhtml}{\texttt{ gl\+Draw\+Elements\+Indirect}}. Nastává však jeden problém. Pokud se vše vykreslí pomocí jednoho volání, jak se každému objektu nastaví správná barva, pozice a materiál?~\newline
+ V Open\+GL i ve Vulkánu se to řeší pomocí číslování vykreslovacích příkazů \href{https://www.khronos.org/opengl/wiki/Vertex_Shader/Defined_Inputs}{\texttt{ gl\+\_\+\+Draw\+ID}}. Pomocí tohoto čísla je možné typicky v shader programu vybrat správnou modelovou matici, materiál a jiné vlastnosti. Ale co je to vůbec shader program, kde se berou data a jak vůbec funguje vykresování? A co je to vykreslovací řetězec a jak funguje?~\newline
+~\newline
+ Cílem následujícího výkladu je přiblížit fungování grafické karty.~\newline
+\hypertarget{p06_pipeline_vector_part_theory_GPU}{}\doxysection{\texorpdfstring{Grafická karta}{Grafická karta}}\label{p06_pipeline_vector_part_theory_GPU}
+Hlavním účelem grafické karty je převod vektorové grafiky na rastrovou.  Data se čtou z paměti, pak se zpracují zobrazovacím řetězcem (ve kterém běží programy) a výsledek se opět zapíše do paměti. Zobravací řetězec je složitý, lze rozdělit na tři části\+: vektorová část, rasterizace a rastrová část. Akce/příkaz kreslení operuje nad pamětí\+:  Příkaz kreslení je prováděn stejně jako příkaz čistění v grafické kartě. Proces kreslení na grafické kartě probíhá v zobrazovacím řetězci.~\newline
+\hypertarget{p06_pipeline_vector_part_theory_Pipeline}{}\doxysection{\texorpdfstring{Zobrazovací řetězec}{Zobrazovací řetězec}}\label{p06_pipeline_vector_part_theory_Pipeline}
+Zobrazovací řetězec je složen ze tří částí\+: vektorová část, rasterizace, rastrová část.  Úkolem vektorové části je transformovat vektorovou grafiku, posouvat trojúhelníky a podobně. Úkolem raterizace je vektorové elementy převést na rastr. Úkolem frastrové části je obarvit vyrastrované vektory.~\newline
+ Část rasterizace a dál nás v tomto úkolu nezajímá, to až později. Tento test je zaměřený na vektorovou část a to jen na její vstup a vertex shader.\hypertarget{p06_pipeline_vector_part_theory_vector_part_theory}{}\doxysection{\texorpdfstring{Vektorová část zobrazovacího řetězce}{Vektorová část zobrazovacího řetězce}}\label{p06_pipeline_vector_part_theory_vector_part_theory}
+Vektorová část zobrazovacího řetězce se dá rozdělit přibližně na dvě části\+:
+\begin{DoxyItemize}
+\item Část Vertexů
+\item Část Primitiv
+\end{DoxyItemize}
+
+
+
+Následující výklad a testy projektu se budou týkat právě vektorové části zobrazovacího řetězce. 

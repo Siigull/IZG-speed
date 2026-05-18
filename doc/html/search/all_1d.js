@@ -1,0 +1,26 @@
+var searchData=
+[
+  ['uživatelský_20příkaz_20číslování_20a_20podcommand_20buffer_0',['05 Uživatelský příkaz, číslování a podcommand buffer',['../p05_commands_user_sub_draw_tasks.html',1,'']]],
+  ['uživatelský_20příkaz_20a_20číslování_1',['Úkol 2: &amp;ndash; Uživatelský příkaz a číslování',['../p05_commands_user_sub_draw_tasks.html#userCommand',1,'']]],
+  ['uživatelských_20atribů_2',['Výpočet perspektivně korektních Barycentrických souřadnic pro interpolaci uživatelských atribů',['../p09_rasterization_theory.html#sss_rasterization_interpolation_3Dlambda',1,'']]],
+  ['u1_3',['u1',['../unionAttrib.html#ae0e1021f00fb48b7455a5dce14e9e043',1,'Attrib::u1'],['../unionUniform.html#a73406de5d9cca9d87b3d7d1bef01ad42',1,'Uniform::u1']]],
+  ['u16_4',['U16',['../solutionInterface_2src_2solutionInterface_2gpu_8hpp.html#a862161defe984b09e24dfec9e0540a3eaef9ef3ebca4d2b64b6ec83808bafa5f2',1,'gpu.hpp']]],
+  ['u2_5',['u2',['../unionAttrib.html#ae52385fd24c40ddf0e739b02805ee223',1,'Attrib::u2'],['../unionUniform.html#ae4c2874284586475226c80658629139d',1,'Uniform::u2']]],
+  ['u3_6',['u3',['../unionUniform.html#acc74f69b2c6f94cf2f4cce1d693d0838',1,'Uniform::u3'],['../unionAttrib.html#a5cdee2c35b06a7cea44de8fd65a1a025',1,'Attrib::u3']]],
+  ['u32_7',['U32',['../solutionInterface_2src_2solutionInterface_2gpu_8hpp.html#a862161defe984b09e24dfec9e0540a3eac8bd5bedff8ef192d39a962afc0e19ee',1,'gpu.hpp']]],
+  ['u4_8',['u4',['../unionAttrib.html#a5940b2a6c6d819a502e1e0921c061974',1,'Attrib::u4'],['../unionUniform.html#a62762d7d11a36f9c0d59243c03f72720',1,'Uniform::u4']]],
+  ['u8_9',['u8',['../structImage.html#a1d53cd4fd9e5b67d38d49bc2c5ebd0dba5af181535c9a211a617303e8efe43554',1,'Image::U8'],['../solutionInterface_2src_2solutionInterface_2gpu_8hpp.html#a862161defe984b09e24dfec9e0540a3ea6669348b484e3008dca2bfa8e85e40b5',1,'U8:&#160;gpu.hpp']]],
+  ['uint_10',['UINT',['../solutionInterface_2src_2solutionInterface_2gpu_8hpp.html#a8cc36b907e294f5e78e1b479cac369dda3351504090a741e69da641a42e00da80',1,'gpu.hpp']]],
+  ['uint8_5ft_11',['Příklad zápisu barvy do barevného bufferu typu uint8_t',['../p13_per_fragment_operations.html#pfo_late_color_write_example',1,'']]],
+  ['uniform_12',['Uniform',['../unionUniform.html',1,'']]],
+  ['uniform_5foffset_5fstride_13',['UNIFORM_OFFSET_STRIDE',['../uniformLocations_8hpp.html#a5a32d8454b03232ad98cf92621c69285',1,'uniformLocations.hpp']]],
+  ['uniformlocations_2ehpp_14',['uniformLocations.hpp',['../uniformLocations_8hpp.html',1,'']]],
+  ['uniformnames_15',['UniformNames',['../uniformLocations_8hpp.html#aa40af636d3d9ffb7ec0b3ec458e5f4cd',1,'uniformLocations.hpp']]],
+  ['uniforms_16',['uniforms',['../structGPUMemory.html#a21eab797fb058f9cc8ceb26d5993f018',1,'GPUMemory::uniforms'],['../structShaderInterface.html#a03009720e763e8efe2bfa4d4607dcc10',1,'ShaderInterface::uniforms']]],
+  ['user_5fcommand_17',['USER_COMMAND',['../solutionInterface_2src_2solutionInterface_2gpu_8hpp.html#a21e038f5b8958e203d28bc4f18472352a7155d2bc39cdfe21800d06b3ee2820b1',1,'gpu.hpp']]],
+  ['usercommand_18',['usercommand',['../p05_commands_user_sub_draw_tasks.html#userCommandT',1,'Test 11 &amp;ndash; UserCommand'],['../unionCommandData.html#ae4c8ab62476d4e8cc83e024c3bd87b3d',1,'CommandData::userCommand'],['../structUserCommand.html',1,'UserCommand']]],
+  ['usercommandfce_19',['UserCommandFce',['../solutionInterface_2src_2solutionInterface_2gpu_8hpp.html#a71ccc6fa3730a87e50bbb36079c57885',1,'gpu.hpp']]],
+  ['uvec2_20',['UVEC2',['../solutionInterface_2src_2solutionInterface_2gpu_8hpp.html#a8cc36b907e294f5e78e1b479cac369dda5ca0c8351a842472da0c9e89a3714475',1,'gpu.hpp']]],
+  ['uvec3_21',['UVEC3',['../solutionInterface_2src_2solutionInterface_2gpu_8hpp.html#a8cc36b907e294f5e78e1b479cac369ddaa9767ed71ca4b7d192cdaec255e6d39b',1,'gpu.hpp']]],
+  ['uvec4_22',['UVEC4',['../solutionInterface_2src_2solutionInterface_2gpu_8hpp.html#a8cc36b907e294f5e78e1b479cac369ddaa569d1b1b651370ef8da7dd5c4eb67bf',1,'gpu.hpp']]]
+];

@@ -1,0 +1,203 @@
+\chapter{13 Pozdní Per Fragment Operace}
+\hypertarget{p13_per_fragment_operations}{}\label{p13_per_fragment_operations}\index{13 Pozdní Per Fragment Operace@{13 Pozdní Per Fragment Operace}}
+Pozdní Per Fragment Operace se nachází za fragment shaderem. Jsou složeny z\+:
+\begin{DoxyItemize}
+\item Zahazování fragmentů (operace discard)
+\item Možné modifikace stencilového bufferu (stencil operace dppass)
+\item Možné modifikace hloubkového bufferu (pokud je depth buffer přítomen)
+\item Možného zápisu barvy do barevného bufferu (pokud je barevný buffer přítomen)
+\end{DoxyItemize}
+
+\hypertarget{p13_per_fragment_operations_pfo_late_discrad}{}\doxysection{\texorpdfstring{Zahazování fragmentu (operace discard)}{Zahazování fragmentu (operace discard)}}\label{p13_per_fragment_operations_pfo_late_discrad}
+Zahazování fragmentů je určeno na základě \doxylink{structOutFragment_aa9b70f2f945e7b287321be9a1309f512}{Out\+Fragment\+::discard}. Pokud je nastavena na true, je fragment zahozen a jeho další zpracovávání je ukončeno.
+
+\hypertarget{p13_per_fragment_operations_pfo_late_stencil}{}\doxysection{\texorpdfstring{Modifikace stencilového bufferu}{Modifikace stencilového bufferu}}\label{p13_per_fragment_operations_pfo_late_stencil}
+Zápis do stencilového bufferu je umožněn ještě jednou, naposled. Pokud je zápis povolen a pokud je stencil buffer přítomen, provede se nad ním operace \doxylink{structStencilOps_ad94f25bfe86fb216c6bb3229cea969d3}{Stencil\+Ops\+::dppass}.
+
+\hypertarget{p13_per_fragment_operations_pfo_late_depth}{}\doxysection{\texorpdfstring{Modifikace hloubkového bufferu}{Modifikace hloubkového bufferu}}\label{p13_per_fragment_operations_pfo_late_depth}
+Zápis hloubky zajistí, že budoucí fragmenty nepřepíší barvu bližších objektů. Zápis je povolen v případě, že je přítomen hloubkový buffer.
+
+\hypertarget{p13_per_fragment_operations_pfo_late_color}{}\doxysection{\texorpdfstring{Modifikace barevného bufferu}{Modifikace barevného bufferu}}\label{p13_per_fragment_operations_pfo_late_color}
+Zápis barvy do barevného bufferu je umožněn, pokud je barevný buffer přítomen a není zakázán zápis.
+
+
+
+Jsou dvě možnosti, buď je barva rovnou zapsána, nebo je využit Blending pro modifikaci.
+
+
+
+Při zápisu barvy, nebo při Blendingu je nutné dát pozor na rozsahy a převody mezi typy a rozložením barevného bufferu. Barva fragmentu je uložena ve 4 komponentách typu float \doxylink{structOutFragment_a9670bf5a31a5c23fccdbeaad959cc3cf}{Out\+Fragment\+::gl\+\_\+\+Frag\+Color}. Barevný buffer je uložen ve struktuře \doxylink{structImage}{Image}.\hypertarget{p13_per_fragment_operations_pfo_late_color_write}{}\doxysubsection{\texorpdfstring{Zápis barvy bez Blendingu}{Zápis barvy bez Blendingu}}\label{p13_per_fragment_operations_pfo_late_color_write}
+Při obyčejném zápisu barvy fragmentu do barevného bufferu může dojít k pár komplikacím\+: 
+\begin{DoxyItemize}
+\item Je potřeba dbát na typ dat v barevném bufferu (může být float,uint8\+\_\+t), 
+\item Je potřeba dbát na swizzling kanálů v barevném bufferu (nultá komponenta v pixelu nemusí být červený kanál), 
+\item Je potřeba dbát na přetékání a podtékání hodnot. 
+\end{DoxyItemize}\hypertarget{p13_per_fragment_operations_pfo_late_color_write_example}{}\doxysubsubsection{\texorpdfstring{Příklad zápisu barvy do barevného bufferu typu uint8\+\_\+t}{Příklad zápisu barvy do barevného bufferu typu uint8\_t}}\label{p13_per_fragment_operations_pfo_late_color_write_example}
+V této sekci je uveden příklad zápisu barvy do uint8\+\_\+t barevného bufferu. Data jsou\+: 
+\begin{DoxyItemize}
+\item Souřadnice fragmentu jsou $ (134,23) $, 
+\item Barva fragmentu \doxylink{structOutFragment_a9670bf5a31a5c23fccdbeaad959cc3cf}{Out\+Fragment\+::gl\+\_\+\+Frag\+Color} je $ (0.3,-0.4,1.2,0.5) $, 
+\item Formát kanálů \doxylink{structImage_a1d53cd4fd9e5b67d38d49bc2c5ebd0db}{Image\+::\+Format} = U8, 
+\item Počet kanálů color bufferu\+: \doxylink{structImage_af20c22715fcc14fe41d929a5127ac897}{Image\+::channels} = 3, 
+\item Swizzling \doxylink{structImage_adf9e503c262a7996345bd03db4848758}{Image\+::channel\+Types}\mbox{[}4\mbox{]} = \{BLUE,GREEN,RED,ALPHA\}. 
+\end{DoxyItemize}
+
+Prvním krokem je potřeba spočítat ukazatel na pixel\+: 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{uint8\_t*pixel\ =\ (uint8\_t*)\mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a6842746ca06d8003aba5565fe7a7d7d6}{getPixel}}(frame-\/>color,134,23);}
+\DoxyCodeLine{\textcolor{keywordtype}{float}\ red\ \ \ =\ 0.3f;\ \textcolor{comment}{//ořez\ \ 0.3\ do\ rozsahu\ [0,1]}}
+\DoxyCodeLine{\textcolor{keywordtype}{float}\ green\ =\ 0.0f;\ \textcolor{comment}{//ořez\ -\/0.4\ do\ rozsahu\ [0,1]}}
+\DoxyCodeLine{\textcolor{keywordtype}{float}\ blue\ \ =\ 1.0f;\ \textcolor{comment}{//ořez\ \ 1.2\ do\ rozsahu\ [0,1]}}
+\DoxyCodeLine{}
+\DoxyCodeLine{pixel[0]\ =\ (uint8\_t)(blue\ \ *\ 255.f);\ \textcolor{comment}{//Image::Channel::BLUE}}
+\DoxyCodeLine{pixel[1]\ =\ (uint8\_t)(green\ *\ 255.f);\ \textcolor{comment}{//Image::Channel::GREEN}}
+\DoxyCodeLine{pixel[2]\ =\ (uint8\_t)(red\ \ \ *\ 255.f);\ \textcolor{comment}{//Image::Channel::RED}}
+
+\end{DoxyCode}
+\hypertarget{p13_per_fragment_operations_pfo_late_color_write_example2}{}\doxysubsubsection{\texorpdfstring{Příklad zápisu barvy do barevného bufferu typu float}{Příklad zápisu barvy do barevného bufferu typu float}}\label{p13_per_fragment_operations_pfo_late_color_write_example2}
+V této sekci je uveden příklad zápisu barvy do float barevného bufferu. Data jsou\+: 
+\begin{DoxyItemize}
+\item Souřadnice fragmentu jsou $ (14,230) $, 
+\item Barva fragmentu \doxylink{structOutFragment_a9670bf5a31a5c23fccdbeaad959cc3cf}{Out\+Fragment\+::gl\+\_\+\+Frag\+Color} je $ (3.3,-3.4,1.2,3.5) $, 
+\item Formát kanálů \doxylink{structImage_a1d53cd4fd9e5b67d38d49bc2c5ebd0db}{Image\+::\+Format} = F32, 
+\item Počet kanálů color bufferu\+: \doxylink{structImage_af20c22715fcc14fe41d929a5127ac897}{Image\+::channels} = 4, 
+\item Swizzling \doxylink{structImage_adf9e503c262a7996345bd03db4848758}{Image\+::channel\+Types}\mbox{[}4\mbox{]} = \{ALPHA,GREEN,RED,BLUE\}. 
+\end{DoxyItemize}
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keywordtype}{float}*pixel\ =\ (\textcolor{keywordtype}{float}*)\mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a6842746ca06d8003aba5565fe7a7d7d6}{getPixel}}(frame-\/>color,14,230);}
+\DoxyCodeLine{\textcolor{keywordtype}{float}\ red\ \ \ =\ \ 3.3f;\ \textcolor{comment}{//netřeba\ ořezávat}}
+\DoxyCodeLine{\textcolor{keywordtype}{float}\ green\ =\ -\/3.4f;\ \textcolor{comment}{//netřeba\ ořezávat}}
+\DoxyCodeLine{\textcolor{keywordtype}{float}\ blue\ \ =\ \ 1.2f;\ \textcolor{comment}{//netřeba\ ořezávat}}
+\DoxyCodeLine{\textcolor{keywordtype}{float}\ alpha\ =\ \ 3.5f;\ \textcolor{comment}{//netřeba\ ožezávat}}
+\DoxyCodeLine{}
+\DoxyCodeLine{pixel[0]\ =\ alpha;\ \textcolor{comment}{//Image::Channel::ALPHA}}
+\DoxyCodeLine{pixel[1]\ =\ green;\ \textcolor{comment}{//Image::Channel::GREEN}}
+\DoxyCodeLine{pixel[2]\ =\ red\ \ ;\ \textcolor{comment}{//Image::Channel::RED}}
+\DoxyCodeLine{pixel[3]\ =\ blue\ ;\ \textcolor{comment}{//Image::Channel::BLUE}}
+
+\end{DoxyCode}
+
+
+Hodnoty barvy fragmentu, který se má uložit do barevného bufferu jsou typu float \doxylink{structOutFragment_a9670bf5a31a5c23fccdbeaad959cc3cf}{Out\+Fragment\+::gl\+\_\+\+Frag\+Color}.\hypertarget{p13_per_fragment_operations_pfo_late_blending}{}\doxysubsection{\texorpdfstring{Zápis barvy s Blendingem}{Zápis barvy s Blendingem}}\label{p13_per_fragment_operations_pfo_late_blending}
+Blending je operace, která vytváří novou barvu na základě barvy uložené v color bufferu a barvy fragmentu. Nová barva je následně zapsána do color bufferu.
+
+
+
+Nastavení Blendingu je vidět na následujícím snippetu\+:
+
+
+\begin{DoxyCodeInclude}{0}
+\DoxyCodeLine{\textcolor{keyword}{struct\ }\mbox{\hyperlink{structBlendingSettings}{BlendingSettings}}\{}
+\DoxyCodeLine{\ \ \textcolor{keywordtype}{bool}\ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structBlendingSettings_a8b957ccd77bed7b4dda3716d6b0e8bdc}{enabled}}\ \ =\ false\ \ \ \ \ \ \ \ \ \ \ \ \ ;\ }
+\DoxyCodeLine{\ \ \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a2e303f6844bc1be10709c24efb4ad36f}{BlendFunc}}\ \ \ \ \ \mbox{\hyperlink{structBlendingSettings_ac1e46253100fe01443d6b7621ce4489c}{sFactor}}\ \ =\ \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a2e303f6844bc1be10709c24efb4ad36fabc21e6484530fc9d0313cb816b733396}{BlendFunc::ONE}}\ \ \ \ ;\ }
+\DoxyCodeLine{\ \ \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a2e303f6844bc1be10709c24efb4ad36f}{BlendFunc}}\ \ \ \ \ \mbox{\hyperlink{structBlendingSettings_a0b9051485058f63d6194f5e189384691}{dFactor}}\ \ =\ \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a2e303f6844bc1be10709c24efb4ad36fa529e9e0beb5f85d1f132917c1a09860c}{BlendFunc::ZERO}}\ \ \ ;\ }
+\DoxyCodeLine{\ \ \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a16ae0c0ba8012d51a5433cf8bff4d425}{BlendEquation}}\ \mbox{\hyperlink{structBlendingSettings_a00d604615a667e190ae1b0646469066e}{equation}}\ =\ \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a16ae0c0ba8012d51a5433cf8bff4d425a9eeb52badb613229884838847294b90d}{BlendEquation::ADD}};\ }
+\DoxyCodeLine{\};}
+
+\end{DoxyCodeInclude}
+
+
+
+\begin{DoxyItemize}
+\item enabled -- Blending může být vypnutý nebo zapnutý, 
+\item s\+Factor -- source factor, faktor váhující zdrojovou barvu (barvu fragmentu), 
+\item d\+Factor -- destination factor, faktor váhující cílovou barvu (barva z color buffuer), 
+\item equation -- způsob, jak jsou barvy smíchány dohromady. 
+\end{DoxyItemize}
+
+Způsob míchání je vidět na následujícím snippetu\+: 
+\begin{DoxyCodeInclude}{0}
+\DoxyCodeLine{\textcolor{keyword}{enum\ class}\ \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a16ae0c0ba8012d51a5433cf8bff4d425}{BlendEquation}}\{}
+\DoxyCodeLine{\ \ \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a16ae0c0ba8012d51a5433cf8bff4d425a9eeb52badb613229884838847294b90d}{ADD}}\ \ \ \ \ \ \ \ \ \ \ \ \ ,\ }
+\DoxyCodeLine{\ \ \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a16ae0c0ba8012d51a5433cf8bff4d425a23ebcc4776b613af25dfbe7c8ce4813e}{SUBTRACT}}\ \ \ \ \ \ \ \ ,\ }
+\DoxyCodeLine{\ \ \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a16ae0c0ba8012d51a5433cf8bff4d425a84501f117a8c5a3f3f9faaa21be26e8e}{REVERSE\_SUBTRACT}},\ }
+\DoxyCodeLine{\ \ \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a16ae0c0ba8012d51a5433cf8bff4d425ace31e2a082d17e038fcc6e3006166653}{MIN}}\ \ \ \ \ \ \ \ \ \ \ \ \ ,\ }
+\DoxyCodeLine{\ \ \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a16ae0c0ba8012d51a5433cf8bff4d425a26a4b44a837bf97b972628509912b4a5}{MAX}}\ \ \ \ \ \ \ \ \ \ \ \ \ ,\ }
+\DoxyCodeLine{\};}
+
+\end{DoxyCodeInclude}
+ 
+\begin{DoxyItemize}
+\item ADD -- barvy jsou sečteny, 
+\item SUBTRACT -- barvy jsou odečteny, 
+\item REVERSE\+\_\+\+SUBTRACT -- barvy jsou odečteny v opačném pořadí, 
+\item MIN -- získá se minimální hodnota, 
+\item MAX -- získá se maximální hodnota. 
+\end{DoxyItemize}
+
+Faktory jsou uvedeny v následující ukázce\+: 
+\begin{DoxyCodeInclude}{0}
+\DoxyCodeLine{\textcolor{keyword}{enum\ class}\ \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a2e303f6844bc1be10709c24efb4ad36f}{BlendFunc}}\{}
+\DoxyCodeLine{\ \ \ \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_af046868f9f300b11282490852e003566a529e9e0beb5f85d1f132917c1a09860c}{ZERO}}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ,\ }
+\DoxyCodeLine{\ \ \ \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a2e303f6844bc1be10709c24efb4ad36fabc21e6484530fc9d0313cb816b733396}{ONE}}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ,\ }
+\DoxyCodeLine{\ \ \ \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a2e303f6844bc1be10709c24efb4ad36fa0d64e73cd04f53e815a849347285839e}{SRC\_COLOR}}\ \ \ \ \ \ \ \ \ \ ,\ }
+\DoxyCodeLine{\ \ \ \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a2e303f6844bc1be10709c24efb4ad36faf883b721fe8288abb2c5f8fc7b100b54}{ONE\_MINUS\_SRC\_COLOR}},\ }
+\DoxyCodeLine{\ \ \ \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a2e303f6844bc1be10709c24efb4ad36fa220e8b21c17d3d0f297244647d60df59}{DST\_COLOR}}\ \ \ \ \ \ \ \ \ \ ,\ }
+\DoxyCodeLine{\ \ \ \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a2e303f6844bc1be10709c24efb4ad36face05af0f4690600250a4f0dce0029906}{ONE\_MINUS\_DST\_COLOR}},\ }
+\DoxyCodeLine{\ \ \ \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a2e303f6844bc1be10709c24efb4ad36faa01be6519d4fb614f16261a59958bbb4}{SRC\_ALPHA}}\ \ \ \ \ \ \ \ \ \ ,\ }
+\DoxyCodeLine{\ \ \ \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a2e303f6844bc1be10709c24efb4ad36fa92ba720a64bd436721e0d2aa50e170a9}{ONE\_MINUS\_SRC\_ALPHA}},\ }
+\DoxyCodeLine{\ \ \ \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a2e303f6844bc1be10709c24efb4ad36fa59b7e4d8d77a6fc488bfad5dfb160ecc}{DST\_ALPHA}}\ \ \ \ \ \ \ \ \ \ ,\ }
+\DoxyCodeLine{\ \ \ \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a2e303f6844bc1be10709c24efb4ad36fa9760c2ee1a1ebfbfefe5e406c00fed0b}{ONE\_MINUS\_DST\_ALPHA}},\ }
+\DoxyCodeLine{\};}
+
+\end{DoxyCodeInclude}
+
+
+Detailní popis, co jednotlivé hodnoty znamenají je možné najít v dokumentaci \doxylink{structBlendingSettings}{Blending\+Settings}, \doxylink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a16ae0c0ba8012d51a5433cf8bff4d425}{Blend\+Equation} a \doxylink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a2e303f6844bc1be10709c24efb4ad36f}{Blend\+Func}.\hypertarget{p13_per_fragment_operations_pfo_late_blending_example}{}\doxysubsubsection{\texorpdfstring{Příklad práce Blendingu}{Příklad práce Blendingu}}\label{p13_per_fragment_operations_pfo_late_blending_example}
+V této sekci je uveden příklad, jakým způsobem je spočítána výsledná barva pomocí Blendingu. Do procesu Blendingu vstupuje\+: 
+\begin{DoxyItemize}
+\item Barva fragmentu $ Frag = (0.3,0.1,0.7,0.4) $, 
+\item Barva v color bufferu $ Frame = (0.8,0.4,0.2,0.1) $, 
+\item equation = \doxylink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a16ae0c0ba8012d51a5433cf8bff4d425a84501f117a8c5a3f3f9faaa21be26e8e}{Blend\+Equation\+::\+REVERSE\+\_\+\+SUBTRACT}, 
+\item s\+Factor = \doxylink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a2e303f6844bc1be10709c24efb4ad36fa9760c2ee1a1ebfbfefe5e406c00fed0b}{Blend\+Func\+::\+ONE\+\_\+\+MINUS\+\_\+\+DST\+\_\+\+ALPHA}, 
+\item d\+Factor = \doxylink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a2e303f6844bc1be10709c24efb4ad36fa0d64e73cd04f53e815a849347285839e}{Blend\+Func\+::\+SRC\+\_\+\+COLOR}. 
+\end{DoxyItemize}
+
+Hodnota equation nastavená na \doxylink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a16ae0c0ba8012d51a5433cf8bff4d425a84501f117a8c5a3f3f9faaa21be26e8e}{Blend\+Equation\+::\+REVERSE\+\_\+\+SUBTRACT} značí, že se od barvy v Frame odečítá barva Frag a to tímto způsobem\+:~\newline
+ $ Result_{rgba} = Frame_{rgba} \cdot d_{rgba} - Frag_{rgba} \cdot s_{rgba} $.
+
+Source factor s\+Factor nastavený na \doxylink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a2e303f6844bc1be10709c24efb4ad36fa9760c2ee1a1ebfbfefe5e406c00fed0b}{Blend\+Func\+::\+ONE\+\_\+\+MINUS\+\_\+\+DST\+\_\+\+ALPHA} značí, že hodnota source faktoru $ s_{rgba} $ je rovna\+:~\newline
+ $ s_{rgba} = (1,1,1,1) - (Frame_a,Frame_a,Frame_a,Frame_a) = (1,1,1,1) - (0.1,0.1,0.1,0.1) = (0.9,0.9,0.9,0.9)$.~\newline
+
+
+Destination factor d\+Factor nastavený na \doxylink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a2e303f6844bc1be10709c24efb4ad36fa0d64e73cd04f53e815a849347285839e}{Blend\+Func\+::\+SRC\+\_\+\+COLOR} značí, že hodnota destination faktoru $ d_{rgba} $ je rovna\+:~\newline
+ $ d_{rgba} = (Frag_r,Frag_g,Frag_b,Frag_a) = (0.3,0.1,0.7,0.4)$.
+
+Výsledná barva $ Result_{rgba} $ je rovna\+:~\newline
+ $ Result_{rgba} = Frame_{rgba} \cdot d_{rgba} - Frag_{rgba} \cdot s_{rgba} = (0.8,0.4,0.2,0.1) \cdot (0.3,0.1,0.7,0.4) - (0.3,0.1,0.7,0.4) \cdot (0.9,0.9,0.9,0.9) = (0.24,0.04,0.14,0.04) - (0.27,0.09,0.63,0.36) = (-0.03,-0.05,-0.49,-0.32)$.~\newline
+
+
+Výsledná barva $ (-0.03,-0.05,-0.49,-0.32)$ je negativní, to nevadí. Pokud by byl typ dat barevného bufferu float, uloží se hodnoty tak, jak byly spočítány. Pokud by byl typ dat barevného bufferu uint8\+\_\+t, uřežou se hodnoty do rozsahu 0-\/1 (v tomto případě všechny na 0) a převedou se na rozsah 0-\/255 a uloží se (uložily by se samé nuly).\hypertarget{p13_per_fragment_operations_pfo_late_tasks}{}\doxysection{\texorpdfstring{Úkol 6 – Naprogramovat pozdní Per Fragment Operace}{Úkol 6 – Naprogramovat pozdní Per Fragment Operace}}\label{p13_per_fragment_operations_pfo_late_tasks}
+\hypertarget{p13_per_fragment_operations_pfo_late_discard_tasks}{}\doxysubsection{\texorpdfstring{Test 34 – Discard}{Test 34 – Discard}}\label{p13_per_fragment_operations_pfo_late_discard_tasks}
+Tento test zkouší, zda funguje operace discard. 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{./izgProject\ -\/c\ -\/-\/test\ 34}
+
+\end{DoxyCode}
+\hypertarget{p13_per_fragment_operations_pfo_late_stencil_tasks}{}\doxysubsection{\texorpdfstring{Test 35 – Modifikace stencilového bufferu při dppass}{Test 35 – Modifikace stencilového bufferu při dppass}}\label{p13_per_fragment_operations_pfo_late_stencil_tasks}
+Tento test zkouší, zda funguje stencilová operace při dppass 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{./izgProject\ -\/c\ -\/-\/test\ 35}
+
+\end{DoxyCode}
+\hypertarget{p13_per_fragment_operations_pfo_late_depth_tasks}{}\doxysubsection{\texorpdfstring{Test 36 – Modifikace depth bufferu}{Test 36 – Modifikace depth bufferu}}\label{p13_per_fragment_operations_pfo_late_depth_tasks}
+Tento test zkouší, zda funguje zápis do hloubkového bufferu. 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{./izgProject\ -\/c\ -\/-\/test\ 36}
+
+\end{DoxyCode}
+\hypertarget{p13_per_fragment_operations_pfo_late_color_tasks}{}\doxysubsection{\texorpdfstring{Test 37 – Zápis barvy}{Test 37 – Zápis barvy}}\label{p13_per_fragment_operations_pfo_late_color_tasks}
+Tento test zkouší, zda funguje zápis do barevného bufferu. 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{./izgProject\ -\/c\ -\/-\/test\ 37}
+
+\end{DoxyCode}
+\hypertarget{p13_per_fragment_operations_pfo_late_blending_tasks}{}\doxysubsection{\texorpdfstring{Test 38 – Blending}{Test 38 – Blending}}\label{p13_per_fragment_operations_pfo_late_blending_tasks}
+Tento test zkouší, zda funguje blending a všechno jeho nastavení. 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{./izgProject\ -\/c\ -\/-\/test\ 38}
+
+\end{DoxyCode}
+ 

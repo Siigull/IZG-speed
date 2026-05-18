@@ -1,0 +1,14 @@
+/**
+\page p18_spousteni 18 Spouštění
+
+Projekt je možné po úspěšném přeložení pustit přes aplikaci
+<b>izgProject</b>.
+Projekt akceptuje několik argumentů příkazové řádky, pro jejich výpis použijte parametr <b> -h </b>
+- <b>-c</b> spustí akceptační testy.
+- <b>-p</b> spustí performanční test. (vhodné až pokud aplikaci zkompilujete v RELEASE)
+Vyzkoušejte si
+\code{.sh}
+./izgProject -h
+\endcode
+
+*/

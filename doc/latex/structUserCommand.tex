@@ -1,0 +1,30 @@
+\doxysection{User\+Command Struct Reference}
+\hypertarget{structUserCommand}{}\label{structUserCommand}\index{UserCommand@{UserCommand}}
+
+
+This structure represents user command. User command can execute any task. It is usually not present on GPU. The closest GPU command would be compute shader. When the GPU encounter this command, it will execute user callback and give the command user\+Data. If the callback is nullptr, the GPU ignores it. Student should implement correct behaviour of this command.  
+
+
+
+
+{\ttfamily \#include $<$gpu.\+hpp$>$}
+
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{structUserCommand_a864a70aee21a374b1797681e6ed24f33}\label{structUserCommand_a864a70aee21a374b1797681e6ed24f33} 
+\mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a71ccc6fa3730a87e50bbb36079c57885}{User\+Command\+Fce}} {\bfseries callback} = nullptr
+\begin{DoxyCompactList}\small\item\em user function \end{DoxyCompactList}\item 
+\Hypertarget{structUserCommand_a39db386e467c298eba0a5b5ab0f72f1e}\label{structUserCommand_a39db386e467c298eba0a5b5ab0f72f1e} 
+void \texorpdfstring{$\ast$}{*} {\bfseries data} = nullptr
+\begin{DoxyCompactList}\small\item\em user data for user function \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+This structure represents user command. User command can execute any task. It is usually not present on GPU. The closest GPU command would be compute shader. When the GPU encounter this command, it will execute user callback and give the command user\+Data. If the callback is nullptr, the GPU ignores it. Student should implement correct behaviour of this command. 
+
+\mbox{[}\doxylink{structUserCommand}{User\+Command}\mbox{]} 
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+solution\+Interface/src/solution\+Interface/\mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp}{gpu.\+hpp}}\end{DoxyCompactItemize}

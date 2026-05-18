@@ -1,0 +1,219 @@
+/**
+\page p07_pipeline_vector_part_tasks 07 Vektorová čast GPU: část vertexů
+
+
+
+\section vector_part_theory_pipeline Vertexová část zobrazovacího řetězce
+Cílem vektorové části je zpravovávat vektorovou grafiku: body, trojúhelníky.
+Většinou se tím myslí: čtení z paměti a sestavení vrcholů, vyvolání vertex shaderu nad každým vrcholem, sestavení trojúhelníků, ořez, perspektivní dělení a připravení pro rasterizaci (viewport transformace).
+Rasterizace rasterizuje připravené trojúhelníky a produkuje fragmenty (čtvercové úlomky trojúhelníku, které se nakonec zapíšou do framebufferu).
+Cílem rastrové části je obarvit tyto fragmenty pomocí fragment shaderu, odfiltrovat fragmenty, které jsou příliš daleko (depth test) a smíchat je s framebufferem (blending).<br>
+Ze začátku implementace kreslení se budete zabývat pouze vektorovou částí -- a to částí před vertex shaderem (včetně).
+\image html docSrc/images/pipeline_vertex_part.svg "Vektorová část je složena z vertex assembly jednotky, vertex processoru a části za vertex shaderem."  width=800
+Vertex assembly jednota se stará o sestavování vrcholů. Vertex processor tyto vrcholy "prožene" uživatelem specifikovaným vertex shaderem.
+Část za vertex shaderem se stará o sestavení trojúhelníku, jeho ořezu a ztransformování pro rasterizaci.<br>
+
+\subsection index_draw Neindexované a indexované kreslení
+Existují dva druhy vykreslování:
+- neindexované,
+- indexované.
+
+Indexované kreslení je způsob snížení redundance dat s využitím indexů na vrcholy.
+\image html images/drawElements.svg "Levá strana obrázku zobrazuje neindexované kreslení dvou trojúhelníků, pravá indexované. U neindexovaného kreslení je potřeba akorát vertexového bufferu, který obsahuje vertex. Avšak v takovém případě jsou některé vrcholy zduplikovány (V1=V4, V2=V3). U indexovaného kreslení je navíc potřeba indexačního bufferu, tím je zajištěna redukce dat. Vrcholy jsou číslovány (gl_VertexID). U neindexovaného kreslení je gl_VertexID rovno pořadovenému číslu, u indexovaného kreslení hodnotě z indexačního bufferu."
+
+Vrcholy jsou během kreslení číslovány pomocí čísla \ref InVertex::gl_VertexID. \ref InVertex::gl_VertexID je unikátní číslo vrcholu do paměti vertexů, na jehož základě pracuje Vertex Assembly jednotka.
+
+
+\subsection VertexAssembly Vertex Assembly jednotka
+Vertex Assembly (nebo taky Vertex Puller, Vertex Specification, ...) je zařízení na grafické kartě, které se stará o sestavení vrcholů.
+\image html docSrc/images/vertexAssemblyUnit.svg "Vertex Assembly jednotka sestavuje vrcholy z paměti (většinou). K tomu potřebuje tabulku nastavení (VertexArray) a číslo vrcholu." width=800
+
+Vertex není jen bod v prostoru.
+Vertex je uživatelem specifikovaná struktura.
+Uživatel může chtít do vrcholů uložit různá data, proto do nich může přidat vertex attributy.
+Kromě uživatelem specifikovaných atributů, obsahují i pevně vestavěné atributy (gl_VertexID a další).
+
+\image html docSrc/images/vertex.svg "Vrchol je struktura dat. Ve struktuře jsou vertex attributy. Ty mívají uživatelem specifikovaný význam (třeba pozice, normála, ...). Vertex Assembly sestavuje InVertex, který je poslán jako vstup do vertex shaderu." width=800
+
+Sestavené vcholy jsou posílány do vertex shaderu pro zpracování uživetelem definovaným kódem.
+Vertex shader transformuje vrcholy maticemi a vypočítává výstupní vrcholy.
+\image html docSrc/images/vertexInOut.svg "Jsou dva typy vrcholů. Ty, které sestavuje jednotka Vertex Assembly a vstupují do vertex shaderu. A ty, které jsou výstupem vertex shaderu." width=400
+Vrchol (\link InVertex \endlink) je složen z \link maxAttribs \endlink vertex attributů, každý může být různého typu (\link AttribType \endlink (float, vec2, vec3, vec4, ...) a čísla vrcholu \ref InVertex::gl_VertexID.<br>
+
+
+\subsection ss_vertexArray Tabulka nastavení Vertex Array
+Vertex Assembly jednotka se řídí podle nastavení ze struktury VertexArray.
+\image html images/pullerSettings.svg "Nastavení pro Vertex Assembly jednotku -- VertexArray. Je složena z nastavení pro indexovaní a nastavení pro jednotlivé uživatelem specifikované volitelné atributy. Indexování je složeno z čísla bufferu, typu indexů a offsetu v bajtech. Nastavení attributů je složeno z čísla Bufferu, offsetu v bajtech, kroku v bajtech a typu atributu." width=800
+
+
+
+Vertex Assembly jednotka je složena z \link maxAttribs \endlink čtecích hlav, které sestavují jednotlivé vertex attributy.
+\link InVertex \endlink je složen z \link maxAttribs \endlink atributů, každý odpovídá jedné čtecí hlavě z Vertex Assembly jednotky.
+Čtecí hlava obsahuje nastavení -- offset, stride, type a buffer.
+Pokud je čtecí hlava povolena (typ není empty), měla by zkopírovat data (o velikosti vertex atributu) z bufferu od daného offsetu, s krokem stride.
+Všechny velikosti jsou v bajtech.
+Krok se použije při čtení různých vrcholů: atributy by měly být čteny z adresy: buf_ptr + offset + stride*gl_VertexID
+<br>
+Na dalších dvou obrázcích je příklad stavu Vertex Assembly jednotky ve dvou (0. a 1.) invokaci vertex shaderu.
+\image html images/puller0.svg "příklad vertex pulleru při 0. invokací vertex shaderu. Vertex je složen z 3 vertex atributů (coord, normal, position). Čtecí hlavy začínají na daných offsetech a v daných bufferech."
+\image html images/puller1.svg "příklad vertex pulleru při 1. invokací vertex shaderu. Čtecí hlavy se posunuly o krok (stride)."
+
+
+
+\subsection vector_part_theory_vs Vertex Processor
+Úkolem vertex processoru je pouštět uživatelem specifikovaný vertex shader. Obvykle provádí transformace vrcholů pomocí transformačních matic.
+Vertex processor vykonává shader (kus programu), kterému se říká vertex shader.
+Vstupem vertex shaderu je vrchol \ref InVertex, výstupem je vrchol \ref OutVertex.
+Dalším (konstatním) vstupem vertex shaderu jsou uniformní proměnné a textury \ref ShaderInterface, které jsou uložené v rámci shader programu.
+Pokud se uživatel rozhodne vykreslit 5 trojúhelníků je vertex shader spuštěn \f$ 5 \cdot 3 = 15 \f$.
+Jednotlivé spuštění (invokace) vertex shaderu vyžadují nové vstupní vrcholy a produkují nové výstupní vrcholy.
+To ve výsledku znamená, že se pro každou invokaci vertex shaderu spustí Vertex Assembly jednotka, která sestaví vstupní vrchol.
+\image html images/vertexShader.svg "Vizualizace vstupů a výstupů vertex procesoru. Ve vertex procesoru běží vertex shader, který obdrží vstupní vrchol, vyprodukuje výstupní vrchol a obdrží vstupní konstanty (uniformní proměnné a textury a číslo vykreslovacího příkazu)." width=800
+
+
+
+
+\section vector_part_task Úkol 3: kreslící příkaz -- vertexová část GPU
+Cílem této sekce je obsloužit vertexovou část GPU.
+Do této části spadá: Vertex Array, Vertex Shader, Buffery, Indexy, gl_VertexID, gl_DrawID a čtení z bufferů.
+Vážou se k tomu tyto testy:
+\code{.sh}
+./izgProject -c --test 21 --up-to-test
+\endcode
+Opět editujete funkci \ref student_GPU_run v souboru studentSolution/src/studentSolution/gpu.cpp.<br>
+
+
+\subsection drawCmdPractice Test 14 -- spouštění vertex shaderu
+Úkol je zprovoznit spouštění vertex shaderu.
+K tomtu se váže test:<br>
+\code{.sh}
+./izgProject -c --test 14
+\endcode
+Při kreslení musíte zavolat vertex shader tolikrát, kolik je zadáno v kreslícím příkazu (\ref DrawCommand).
+Kreslící příkaz je struktura:
+\snippet solutionInterface/src/solutionInterface/gpu.hpp DrawCommand
+Struktura obsahuje počet vertexů pro vykreslení.
+Program, který by se pro kreslení měl využít se nachází v paměti grafické karty \ref GPUMemory.
+\snippet solutionInterface/src/solutionInterface/gpu.hpp GPUMemory
+Správný program je vybrán pomocí čísla aktivního programu \ref GPUMemory::activatedProgram.
+Program je opět struktura:
+\snippet solutionInterface/src/solutionInterface/gpu.hpp Program
+Struktura programu obsahuje vertex shader.
+Vertex shader je v ukazatel na funkci.
+Na normálním GPU se jedná o program (třeba v GLSL), který se kompiluje.
+V tomto projektu je to C/C++ funkce, která je uložena v ukazateli na funkci.
+Vertex shader bere 3 parametry
+\snippet solutionInterface/src/solutionInterface/gpu.hpp VertexShader
+
+V tomto testu byste měli správně nastavit InVertex::gl_VertexID.
+Obdobně jako číslování kreslících příkazů, existuje i číslování vrcholů.
+Zatím bude stačit pořadové číslo vrcholu.
+Vstupní vrchol se nachází ve struktuře InVertex
+\snippet solutionInterface/src/solutionInterface/gpu.hpp InVertex
+
+
+\subsection ShaderInterFace_gl_DrawID Test 15 -- test číslování vykreslovacích příkazů
+Úkol je zprovoznit proměnnou \ref ShaderInterface::gl_DrawID.
+Vertex shader obdrží mimo vstupního vertexu ještě \ref ShaderInterface.
+\ref ShaderInterface obsahuje konstanty.
+\snippet solutionInterface/src/solutionInterface/gpu.hpp ShaderInterface
+K tomtu se váže test:<br>
+\code{.sh}
+./izgProject -c --test 15
+\endcode
+Vertex shader by měl vědět, v rámci jakého vykreslovacího příkazu byl puštěn.
+
+\subsection ss_mixed_clear_draw Test 16 -- test proloženého kreslení a čistění
+Tento test zkouší do \ref CommandBuffer(u) uložit prokládané příkazy kreslení a čistění.
+K tomtu se váže test:<br>
+\code{.sh}
+./izgProject -c --test 16
+\endcode
+
+\subsection ss_shaderInterface Test 17 -- ověření ShaderInterface
+Tento test zkouší, zda vertex shader obdržel správnou strukturu \ref ShaderInterface.
+K tomtu se váže test:<br>
+\code{.sh}
+./izgProject -c --test 17
+\endcode
+ShaderInterface jsou konstantní vstupy do shaderu a vypadá následovně:
+\snippet solutionInterface/src/solutionInterface/gpu.hpp ShaderInterface
+Ukazatele \ref ShaderInterface::uniforms a \ref ShaderInterface::textures by měly obsahovat
+stejné ukazatele, které jsou uvedeny v paměti grafické karty \ref GPUMemory::uniforms, \ref GPUMemory::textures.
+
+
+
+\subsection gl_VertexIDIndex32 Test 18 -- číslování vrcholů s indexováním.
+Tento test zkouší využít indexační buffer pro číslování vrcholů \ref InVertex::gl_VertexID
+\code{.sh}
+./izgProject -c --test 18
+\endcode
+Musíte správně číslovat vstupní vrcholy, když je zapnuté indexování.<br>
+
+
+Indexování může být zapnuto nebo vypnuto -- o tom rozhoduje nastavení ve struktuře \ref VertexArray
+V paměti grafické karty je pole vertex array objektů \ref GPUMemory::vertexArrays.
+Každý vertex array je tabulka nastavení takzvané vertex assembly jednotky (jednotka sestavující vrcholy).
+Struktura VertexArray vypadá následnovně:
+\snippet solutionInterface/src/solutionInterface/gpu.hpp VertexArray
+V této struktuře jsou pro indexovaní podstatné položky \ref VertexArray::indexBufferID, \ref VertexArray::indexOffset a \ref VertexArray::indexType.
+indexBufferID je číslo bufferu nebo -1 pokud je indexing vypnutý.
+indexOffset je posun v bajtech od začátku bufferu, kde se nacházejí indexy.
+indexType je typ indexu.<br>
+Všechny buffery (stejně jako programy) se nachází v paměti grafické karty (\ref GPUMemory).
+\snippet solutionInterface/src/solutionInterface/gpu.hpp GPUMemory
+Buffer je lineární paměť, reprezentovano strukturou:
+\snippet solutionInterface/src/solutionInterface/gpu.hpp Buffer
+
+Indexační buffer může mít růzou velikost indexu -- 8bit, 16bit a 32bit:
+\snippet solutionInterface/src/solutionInterface/gpu.hpp IndexType
+Pokud je zapnuto indexování, pak je číslo vrcholu dáno položkou v indexačním bufferu, kde je 
+položka (index) v bufferu vybrána na základě čísla invokace vertex shaderu.
+Pseudokód:
+\snippet docSrc/drawExample.cpp index_buffer
+
+\subsection VertexPuller_Att Testy 19-21 -- Vertex Atributy, Vertex Assembly jednotka
+Tyto testy ověřují, zda vám správně jednotka Vertex Assembly sestavuje vrcholy z paměti:
+\code{.sh}
+./izgProject -c --test 19
+./izgProject -c --test 20
+./izgProject -c --test 21
+\endcode
+V tomto testu musíte naprogramovat funkcionalitu Vertex Assembly jednotky.
+
+\image html docSrc/images/vertexAssemblyTask.svg "Vertex Assembly jednotka sestavuje vrcholy z paměti (většinou). K tomu potřebuje tabulku nastavení (VertexArray) a číslo vrcholu." width=800
+
+Vertex Assembly jednotka sestavuje vstupní vrcholy (\ref InVertex) z paměti (\ref GPUMemory) pomocí nastavení z tabulky \ref VertexArray.
+
+\subsubsection sss_vertexAssembly_inputs Vstupy:
+
+Nastavení je uloženo ve struktuře \ref VertexArray 
+\snippet solutionInterface/src/solutionInterface/gpu.hpp VertexArray
+Je složeno z nastavení pro indexování a nastavení pro vertex attributy.
+<br>
+VertexAttrib je struktura obsahují nastavení, jak číst jeden Vertex Attribut.
+\snippet solutionInterface/src/solutionInterface/gpu.hpp VertexAttrib
+
+Paměť \ref GPUMemory obsahuje \ref Buffer(y)
+\snippet solutionInterface/src/solutionInterface/gpu.hpp GPUMemory
+
+\ref Buffer je struktura obsahují pointer a velikost.
+\snippet solutionInterface/src/solutionInterface/gpu.hpp Buffer
+
+
+\subsubsection sss_vertexAssembly_outputs Výstupy:
+
+Strukura \ref InVertex vypadá takto:
+\snippet solutionInterface/src/solutionInterface/gpu.hpp InVertex
+
+Data atributu vypadají takto:
+\snippet solutionInterface/src/solutionInterface/gpu.hpp Attrib
+
+\subsubsection sss_vertexAssembly_attribTask Úkol:
+Vašim úkolem je správně číst data atributů z paměti a zapisovat je do struktury InVertex.
+
+Po těchto úkolech byste měli mít hotovou vertexovou část.
+To je část, před sestavením primitiv (Primitiv Assembly Unit).
+
+
+*/

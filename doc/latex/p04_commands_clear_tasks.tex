@@ -1,0 +1,155 @@
+\chapter{04 Čistící příkazy}
+\hypertarget{p04_commands_clear_tasks}{}\label{p04_commands_clear_tasks}\index{04 Čistící příkazy@{04 Čistící příkazy}}
+\hypertarget{p04_commands_clear_tasks_ClearCommandTheory}{}\doxysection{\texorpdfstring{Teorie\+: Čistění framebufferu}{Teorie: Čistění framebufferu}}\label{p04_commands_clear_tasks_ClearCommandTheory}
+\doxylink{structFramebuffer}{Framebuffer} je složen ze tří bufferů\+: paměť barvy (color buffer), paměť hloubky (depth buffer) a paměť stencilu (stencil buffer)\+:  Všechny mají stejné rozlišení. Barevný buffer má několik kanálů (až čtyři), každý má stejnou velikost a typ. Hlouboký buffer má hloubku uloženou ve floatech. Stencilový buffer má hodnotu uloženou v 8bitovém čísle. \doxylink{structFramebuffer}{Framebuffer} je koncipován tak, že pixel na souřadnicích \mbox{[}0,0\mbox{]} je v levém dolním rohu, osa X je doprava a oxy Y nahoru. Je možné jej přetočit vzhůru nohama pomocí příznaku \doxylink{structFramebuffer_a5227afe8482c1670d87d34cf61ec08da}{Framebuffer\+::y\+Reversed}. 
+
+Všechny framebuffery se nachází v paměti grafické karty (\doxylink{structGPUMemory}{GPUMemory})\+: 
+\begin{DoxyCodeInclude}{0}
+\DoxyCodeLine{\textcolor{keyword}{struct\ }\mbox{\hyperlink{structFramebuffer}{Framebuffer}}\{}
+\DoxyCodeLine{\ \ uint32\_t\ \mbox{\hyperlink{structFramebuffer_ad2efd3ac1249da4ce70d478cd48d0e22}{width}}\ \ \ \ \ =\ 0\ \ \ \ ;\ }
+\DoxyCodeLine{\ \ uint32\_t\ \mbox{\hyperlink{structFramebuffer_a614fd13812430c2ffb379b3b050780c4}{height}}\ \ \ \ =\ 0\ \ \ \ ;\ }
+\DoxyCodeLine{\ \ \textcolor{keywordtype}{bool}\ \ \ \ \ \mbox{\hyperlink{structFramebuffer_a5227afe8482c1670d87d34cf61ec08da}{yReversed}}\ =\ \textcolor{keyword}{false};\ }
+\DoxyCodeLine{\ \ \mbox{\hyperlink{structImage}{Image}}\ \ \ \ \mbox{\hyperlink{structFramebuffer_aaaf692c4a3881fdd17df05c0d9b0811f}{color}}\ \ \ \ \ \ \ \ \ \ \ \ ;\ }
+\DoxyCodeLine{\ \ \mbox{\hyperlink{structImage}{Image}}\ \ \ \ \mbox{\hyperlink{structFramebuffer_ad56ef80596abe229e99657865ae8a79b}{depth}}\ \ \ \ \ \ \ \ \ \ \ \ ;\ }
+\DoxyCodeLine{\ \ \mbox{\hyperlink{structImage}{Image}}\ \ \ \ \mbox{\hyperlink{structFramebuffer_ac2732cb27f34176ed1a1acc001c18a88}{stencil}}\ \ \ \ \ \ \ \ \ \ ;\ }
+\DoxyCodeLine{\};}
+
+\end{DoxyCodeInclude}
+ \doxylink{structFramebuffer}{Framebuffer} je poměrně složitá struktura. Je složena ze\+: 
+\begin{DoxyItemize}
+\item tři \doxylink{structImage}{Image} -- barva, hloubka, stencil, 
+\item šířka, 
+\item výška, 
+\item y\+Reversed -- v případě, že je framebuffer vzhůru nohama. 
+\end{DoxyItemize}\doxylink{structImage}{Image} je struktura obsahující 2D data. Je využívána u framebufferů a textur. 
+\begin{DoxyCodeInclude}{0}
+\DoxyCodeLine{\textcolor{keyword}{struct\ }\mbox{\hyperlink{structImage}{Image}}\{}
+\DoxyCodeLine{\ \ \textcolor{keyword}{enum}\ \mbox{\hyperlink{structImage_afe74defc826aae605cb2214cbf34c5eb}{Channel}}\{}
+\DoxyCodeLine{\ \ \ \ \mbox{\hyperlink{structImage_afe74defc826aae605cb2214cbf34c5ebab0f85ea0f951e7461610b41168a95d24}{RED}}\ \ \ =\ 0,\ }
+\DoxyCodeLine{\ \ \ \ \mbox{\hyperlink{structImage_afe74defc826aae605cb2214cbf34c5ebae4313a97b6cfa1b72a92bd67916831b3}{GREEN}}\ \ \ \ ,\ }
+\DoxyCodeLine{\ \ \ \ \mbox{\hyperlink{structImage_afe74defc826aae605cb2214cbf34c5eba4a8385cf9d29b8dafe8618c2814ee81a}{BLUE}}\ \ \ \ \ ,\ }
+\DoxyCodeLine{\ \ \ \ \mbox{\hyperlink{structImage_afe74defc826aae605cb2214cbf34c5eba72096be5043b19298c3d75b7f050647e}{ALPHA}}\ \ \ \ ,\ }
+\DoxyCodeLine{\ \ \};}
+\DoxyCodeLine{\ \ \textcolor{keyword}{enum}\ \mbox{\hyperlink{structImage_a1d53cd4fd9e5b67d38d49bc2c5ebd0db}{Format}}\{}
+\DoxyCodeLine{\ \ \ \ \mbox{\hyperlink{structImage_a1d53cd4fd9e5b67d38d49bc2c5ebd0dba5af181535c9a211a617303e8efe43554}{U8}}\ ,\ }
+\DoxyCodeLine{\ \ \ \ \mbox{\hyperlink{structImage_a1d53cd4fd9e5b67d38d49bc2c5ebd0dbafa6421ccf72f08668e45d9a70c657a1e}{F32}},\ }
+\DoxyCodeLine{\ \ \};}
+\DoxyCodeLine{\ \ \textcolor{keywordtype}{void}*\ \ \ \ \mbox{\hyperlink{structImage_a2d9eabf3628b454331420e4b377538b9}{data}}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ =\ nullptr\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ;\ }
+\DoxyCodeLine{\ \ uint32\_t\ \mbox{\hyperlink{structImage_af20c22715fcc14fe41d929a5127ac897}{channels}}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ =\ 4\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ;\ }
+\DoxyCodeLine{\ \ \mbox{\hyperlink{structImage_a1d53cd4fd9e5b67d38d49bc2c5ebd0db}{Format}}\ \ \ \mbox{\hyperlink{structImage_a98d0e7ac2ffeca933536b705cbdc5dba}{format}}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ =\ \mbox{\hyperlink{structImage_a1d53cd4fd9e5b67d38d49bc2c5ebd0dba5af181535c9a211a617303e8efe43554}{U8}}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ;\ }
+\DoxyCodeLine{\ \ uint32\_t\ \mbox{\hyperlink{structImage_a85765e057e50aaa2da6ffd1e7085f52a}{pitch}}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ =\ 0\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ;\ }
+\DoxyCodeLine{\ \ uint32\_t\ \mbox{\hyperlink{structImage_add6fee24fd0db09ee35432b6541e5018}{bytesPerPixel}}\ \ \ \ \ \ \ \ \ \ \ \ \ =\ 0\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ;\ }
+\DoxyCodeLine{\ \ \mbox{\hyperlink{structImage_afe74defc826aae605cb2214cbf34c5eb}{Channel}}\ \ \mbox{\hyperlink{structImage_adf9e503c262a7996345bd03db4848758}{channelTypes}}[\mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_ab6c0ff7dddc10b51612da25e48940f97}{maxChannels}}]\ =\ \{\mbox{\hyperlink{structImage_afe74defc826aae605cb2214cbf34c5ebab0f85ea0f951e7461610b41168a95d24}{RED}},\mbox{\hyperlink{structImage_afe74defc826aae605cb2214cbf34c5ebae4313a97b6cfa1b72a92bd67916831b3}{GREEN}},\mbox{\hyperlink{structImage_afe74defc826aae605cb2214cbf34c5eba4a8385cf9d29b8dafe8618c2814ee81a}{BLUE}},\mbox{\hyperlink{structImage_afe74defc826aae605cb2214cbf34c5eba72096be5043b19298c3d75b7f050647e}{ALPHA}}\};\ }
+\DoxyCodeLine{\};}
+
+\end{DoxyCodeInclude}
+ \doxylink{structImage}{Image} je inspirovaný strukturami \href{https://wiki.libsdl.org/SDL2/SDL_Surface}{\texttt{ SDL\+\_\+\+Surface}} a \href{https://wiki.libsdl.org/SDL2/SDL_PixelFormat}{\texttt{ SDL\+\_\+\+Pixel\+Format}}.~\newline
+ Struktura obsahuje několik položek\+: 
+\begin{DoxyItemize}
+\item \doxylink{structImage_a2d9eabf3628b454331420e4b377538b9}{Image\+::data} -- ukazatel na začátek, 
+\item \doxylink{structImage_af20c22715fcc14fe41d929a5127ac897}{Image\+::channels} -- počet kanálů, 
+\item \doxylink{structImage_a98d0e7ac2ffeca933536b705cbdc5dba}{Image\+::format} -- formát kanálů, 
+\item \doxylink{structImage_a85765e057e50aaa2da6ffd1e7085f52a}{Image\+::pitch} -- šířka řádku v bajtech, 
+\item \doxylink{structImage_add6fee24fd0db09ee35432b6541e5018}{Image\+::bytes\+Per\+Pixel} -- velikost jednoho pixelu v bajtech, 
+\item \doxylink{structImage_adf9e503c262a7996345bd03db4848758}{Image\+::channel\+Types} -- tabulka mapování čísla kanálu na typ kanálu. 
+\end{DoxyItemize}Adresování dat může být poněkud komplikované... 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{comment}{//\ Pixel\ [x,y]\ začíná\ na\ adrese:}}
+\DoxyCodeLine{uint8\_t*\ pixelStart\ =\ ((uint8\_t*)data)\ +\ y*pitch\ +\ x*bytesPerPixel;}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{//\ Pokud\ jsou\ data\ typu\ float}}
+\DoxyCodeLine{\textcolor{keywordflow}{if}(format\ ==\ Image::FLOAT32)\{}
+\DoxyCodeLine{\ \ \textcolor{keywordtype}{float}*pixelf\ =\ (\textcolor{keywordtype}{float}*)pixelStart;}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \textcolor{comment}{//\ Kanál\ 0\ odpovídá\ barvě\ channelTypes[0]}}
+\DoxyCodeLine{\ \ \textcolor{comment}{//\ tzn.\ 0\ nemusí\ být\ RED}}
+\DoxyCodeLine{\ \ pixelf[0]\ =\ 0.5f;}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{\textcolor{comment}{//\ Pokud\ jsou\ data\ typu\ uint8\_t}}
+\DoxyCodeLine{\textcolor{keywordflow}{if}(format\ ==\ Image::UINT8)\{}
+\DoxyCodeLine{\ \ uint8\_t*pixelu\ =\ (uint8\_t*)pixelStart;}
+\DoxyCodeLine{\ \ pixelu[0]\ =\ 127;}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+
+
+Čistící příkazy (\doxylink{structClearColorCommand}{Clear\+Color\+Command}, \doxylink{structClearDepthCommand}{Clear\+Depth\+Command}, \doxylink{structClearStencilCommand}{Clear\+Stencil\+Command}) vypadají takto\+: 
+\begin{DoxyCodeInclude}{0}
+\DoxyCodeLine{\textcolor{keyword}{struct\ }\mbox{\hyperlink{structClearColorCommand}{ClearColorCommand}}\{}
+\DoxyCodeLine{\ \ glm::vec4\ \mbox{\hyperlink{structClearColorCommand_ac048ceeb3b061652c4202dde6e38790a}{value}}\ =\ glm::vec4(0);\ }
+\DoxyCodeLine{\};}
+
+\end{DoxyCodeInclude}
+ 
+\begin{DoxyCodeInclude}{0}
+\DoxyCodeLine{\textcolor{keyword}{struct\ }\mbox{\hyperlink{structClearDepthCommand}{ClearDepthCommand}}\{}
+\DoxyCodeLine{\ \ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{structClearDepthCommand_a9b3ff257d36af1ace40c5a122044db57}{value}}\ =\ 1e10;\ }
+\DoxyCodeLine{\};}
+
+\end{DoxyCodeInclude}
+ 
+\begin{DoxyCodeInclude}{0}
+\DoxyCodeLine{\textcolor{keyword}{struct\ }\mbox{\hyperlink{structClearStencilCommand}{ClearStencilCommand}}\{}
+\DoxyCodeLine{\ \ uint8\_t\ \mbox{\hyperlink{structClearStencilCommand_a86c2f79f16054f54c08df679595d02a6}{value}}\ =\ 0u;\ }
+\DoxyCodeLine{\};}
+
+\end{DoxyCodeInclude}
+ Čistící příkazy obsahují hodnotu, na kterou se mají vyčistit barevný, hloubkový nebo stencilový buffer. Všimněte si, že barva je uložena jako floatový vektor glm\+::vec4. V tomto vektoru je barva v rozsahu \mbox{[}0,1\mbox{]} typu float. Čistící barvu musíte z toho rozsahu převést na správný typ podle typu barevného bufferu.~\newline
+\hypertarget{p04_commands_clear_tasks_ClearCommandTask}{}\doxysection{\texorpdfstring{Úkol 1\+: Čištění framebufferu}{Úkol 1: Čištění framebufferu}}\label{p04_commands_clear_tasks_ClearCommandTask}
+Vašim úkolem bude naprogramovat obsluhu čistících příkazů. K tomuto úkolu se vážou testy\+:~\newline
+ 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{./izgProject\ -\/c\ -\/-\/test\ 10\ -\/-\/up-\/to-\/test}
+
+\end{DoxyCode}
+ Takto vypadá pseudokód, jak můžete začít psát\+: 
+\begin{DoxyCodeInclude}{0}
+\DoxyCodeLine{\textcolor{keywordtype}{void}\ clearColor(\mbox{\hyperlink{structGPUMemory}{GPUMemory}}\&mem,\mbox{\hyperlink{structClearColorCommand}{ClearColorCommand}}\ cmd)\{}
+\DoxyCodeLine{\ \ \textcolor{comment}{//\ ukázka\ čistícího\ příkazu}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \textcolor{comment}{//\ výběr\ framebufferu}}
+\DoxyCodeLine{\ \ \mbox{\hyperlink{structFramebuffer}{Framebuffer}}*fbo\ =\ mem.\mbox{\hyperlink{structGPUMemory_abd0d80589104a936db46ae766bc7975e}{framebuffers}}+mem.\mbox{\hyperlink{structGPUMemory_acd06344c1c43bef8df606d6664fee4b4}{activatedFramebuffer}};}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \textcolor{comment}{//\ obsahuje\ framebuffer\ barevný\ buffer?}}
+\DoxyCodeLine{\ \ \textcolor{keywordflow}{if}(fbo-\/>\mbox{\hyperlink{structFramebuffer_aaaf692c4a3881fdd17df05c0d9b0811f}{color}}.\mbox{\hyperlink{structImage_a2d9eabf3628b454331420e4b377538b9}{data}})\{}
+\DoxyCodeLine{\ \ \ \ \textcolor{keywordflow}{for}(uint32\_t\ y=0;y<fbo-\/>\mbox{\hyperlink{structFramebuffer_a614fd13812430c2ffb379b3b050780c4}{height}};++y)}
+\DoxyCodeLine{\ \ \ \ \ \ \textcolor{keywordflow}{for}(uint32\_t\ x=0;x<fbo-\/>\mbox{\hyperlink{structFramebuffer_ad2efd3ac1249da4ce70d478cd48d0e22}{width}};++x)\{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}*pixelStart\ =\ \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a6842746ca06d8003aba5565fe7a7d7d6}{getPixel}}(fbo-\/>\mbox{\hyperlink{structFramebuffer_aaaf692c4a3881fdd17df05c0d9b0811f}{color}},x,y);}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}(uint32\_t\ i=0;i<fbo-\/>\mbox{\hyperlink{structFramebuffer_aaaf692c4a3881fdd17df05c0d9b0811f}{color}}.\mbox{\hyperlink{structImage_af20c22715fcc14fe41d929a5127ac897}{channels}};++i)\{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//...}}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\ \ \ \ \ \ \}}
+\DoxyCodeLine{\ \ \textcolor{comment}{//...}}
+\DoxyCodeLine{\ \ \}}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordtype}{void}\ \mbox{\hyperlink{studentSolution_2src_2studentSolution_2gpu_8cpp_acb235bf1bd34504bf58828aac4d40b11}{student\_GPU\_run}}(\mbox{\hyperlink{structGPUMemory}{GPUMemory}}\&mem,\mbox{\hyperlink{structCommandBuffer}{CommandBuffer}}\ \textcolor{keyword}{const}\&cb)\{}
+\DoxyCodeLine{\ \ \textcolor{keywordflow}{for}(uint32\_t\ i=0;i<cb.\mbox{\hyperlink{structCommandBuffer_a5a4e731514b5998dad67189ca3612f3e}{nofCommands}};++i)\{}
+\DoxyCodeLine{\ \ \ \ \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a21e038f5b8958e203d28bc4f18472352}{CommandType}}\ type\ =\ cb.\mbox{\hyperlink{structCommandBuffer_addba1f7b3ffb5ad52a484d1b815436df}{commands}}[i].\mbox{\hyperlink{structCommand_afd23b7e189739dbae6c0f2e93ba02c81}{type}};}
+\DoxyCodeLine{\ \ \ \ \mbox{\hyperlink{unionCommandData}{CommandData}}\ data\ =\ cb.\mbox{\hyperlink{structCommandBuffer_addba1f7b3ffb5ad52a484d1b815436df}{commands}}[i].\mbox{\hyperlink{structCommand_ab4bcc3a5664498309ec42d4bb0e1c872}{data}};}
+\DoxyCodeLine{\ \ \ \ \textcolor{keywordflow}{if}(type\ ==\ \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a21e038f5b8958e203d28bc4f18472352add0cc7d0802d17e157ea28b402e19bc5}{CommandType::CLEAR\_COLOR}})}
+\DoxyCodeLine{\ \ \ \ \ \ clearColor(mem,data.\mbox{\hyperlink{unionCommandData_a51a6194d91c06cb76aa40f6adef91a94}{clearColorCommand}});}
+\DoxyCodeLine{\ \ \}}
+\DoxyCodeLine{\}}
+
+\end{DoxyCodeInclude}
+\hypertarget{p04_commands_clear_tasks_clear}{}\doxysubsection{\texorpdfstring{Test 8 – čištění framebufferu}{Test 8 – čištění framebufferu}}\label{p04_commands_clear_tasks_clear}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{./izgProject\ -\/c\ -\/-\/test\ 8}
+
+\end{DoxyCode}
+ Tento test zkouší vyčistit framebuffer.\hypertarget{p04_commands_clear_tasks_clearPartial}{}\doxysubsection{\texorpdfstring{Test 9 – čištění částečného framebufferu}{Test 9 – čištění částečného framebufferu}}\label{p04_commands_clear_tasks_clearPartial}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{./izgProject\ -\/c\ -\/-\/test\ 9}
+
+\end{DoxyCode}
+ Tento test zkouší vyčistit částečně specifikovaný framebuffer. Paměť barvy, paměť hloubky i stencil může být prázdná (nullptr), v takovém případě čištění neproběhne.\hypertarget{p04_commands_clear_tasks_clearMultipleFBO}{}\doxysubsection{\texorpdfstring{Test 10 – zápis do vícero framebufferů}{Test 10 – zápis do vícero framebufferů}}\label{p04_commands_clear_tasks_clearMultipleFBO}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{./izgProject\ -\/c\ -\/-\/test\ 10}
+
+\end{DoxyCode}
+ Tento test zkouší čistit různé \doxylink{structFramebuffer}{Framebuffer(y)}, ne jen nultý. Čistící příkaz čistí aktivní framebuffer. 

@@ -1,0 +1,106 @@
+\doxysection{Image Struct Reference}
+\hypertarget{structImage}{}\label{structImage}\index{Image@{Image}}
+
+
+This structure represents 2D memory of image. 2D images are used as textures and color or depth buffers of framebuffers. Pixel \mbox{[}x,y\mbox{]} starts at uint8\+\_\+t\texorpdfstring{$\ast$}{*}ptr = ((uint8\+\_\+t\texorpdfstring{$\ast$}{*})data) + y\texorpdfstring{$\ast$}{*}pitch + x\texorpdfstring{$\ast$}{*}bytes\+Per\+Pixel; channel\+Types is swizzling table for colors (RGB,BGR,...) for format == F32\+: bytes\+Per\+Pixel = sizeof(float) \texorpdfstring{$\ast$}{*} channels for format == U8\+: bytes\+Per\+Pixel = sizeof(uint8\+\_\+t) \texorpdfstring{$\ast$}{*} channels.  
+
+
+
+
+{\ttfamily \#include $<$gpu.\+hpp$>$}
+
+\doxysubsubsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+enum \mbox{\hyperlink{structImage_afe74defc826aae605cb2214cbf34c5eb}{Channel}} \{ \mbox{\hyperlink{structImage_afe74defc826aae605cb2214cbf34c5ebab0f85ea0f951e7461610b41168a95d24}{RED}} = 0
+, \mbox{\hyperlink{structImage_afe74defc826aae605cb2214cbf34c5ebae4313a97b6cfa1b72a92bd67916831b3}{GREEN}}
+, \mbox{\hyperlink{structImage_afe74defc826aae605cb2214cbf34c5eba4a8385cf9d29b8dafe8618c2814ee81a}{BLUE}}
+, \mbox{\hyperlink{structImage_afe74defc826aae605cb2214cbf34c5eba72096be5043b19298c3d75b7f050647e}{ALPHA}}
+ \}
+\begin{DoxyCompactList}\small\item\em Channel type. \end{DoxyCompactList}\item 
+enum \mbox{\hyperlink{structImage_a1d53cd4fd9e5b67d38d49bc2c5ebd0db}{Format}} \{ \mbox{\hyperlink{structImage_a1d53cd4fd9e5b67d38d49bc2c5ebd0dba5af181535c9a211a617303e8efe43554}{U8}}
+, \mbox{\hyperlink{structImage_a1d53cd4fd9e5b67d38d49bc2c5ebd0dbafa6421ccf72f08668e45d9a70c657a1e}{F32}}
+ \}
+\begin{DoxyCompactList}\small\item\em Format of data. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{structImage_a2d9eabf3628b454331420e4b377538b9}\label{structImage_a2d9eabf3628b454331420e4b377538b9} 
+void \texorpdfstring{$\ast$}{*} {\bfseries data} = nullptr
+\begin{DoxyCompactList}\small\item\em pointer to image data \end{DoxyCompactList}\item 
+\Hypertarget{structImage_af20c22715fcc14fe41d929a5127ac897}\label{structImage_af20c22715fcc14fe41d929a5127ac897} 
+uint32\+\_\+t {\bfseries channels} = 4
+\begin{DoxyCompactList}\small\item\em number of color channels \end{DoxyCompactList}\item 
+\Hypertarget{structImage_a98d0e7ac2ffeca933536b705cbdc5dba}\label{structImage_a98d0e7ac2ffeca933536b705cbdc5dba} 
+\mbox{\hyperlink{structImage_a1d53cd4fd9e5b67d38d49bc2c5ebd0db}{Format}} {\bfseries format} = \mbox{\hyperlink{structImage_a1d53cd4fd9e5b67d38d49bc2c5ebd0dba5af181535c9a211a617303e8efe43554}{U8}}
+\begin{DoxyCompactList}\small\item\em type of data for every channel \end{DoxyCompactList}\item 
+\Hypertarget{structImage_a85765e057e50aaa2da6ffd1e7085f52a}\label{structImage_a85765e057e50aaa2da6ffd1e7085f52a} 
+uint32\+\_\+t {\bfseries pitch} = 0
+\begin{DoxyCompactList}\small\item\em size of row in bytes \end{DoxyCompactList}\item 
+\Hypertarget{structImage_add6fee24fd0db09ee35432b6541e5018}\label{structImage_add6fee24fd0db09ee35432b6541e5018} 
+uint32\+\_\+t {\bfseries bytes\+Per\+Pixel} = 0
+\begin{DoxyCompactList}\small\item\em size of pixel in bytes \end{DoxyCompactList}\item 
+\Hypertarget{structImage_adf9e503c262a7996345bd03db4848758}\label{structImage_adf9e503c262a7996345bd03db4848758} 
+\mbox{\hyperlink{structImage_afe74defc826aae605cb2214cbf34c5eb}{Channel}} {\bfseries channel\+Types} \mbox{[}\mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_ab6c0ff7dddc10b51612da25e48940f97}{max\+Channels}}\mbox{]} = \{\mbox{\hyperlink{structImage_afe74defc826aae605cb2214cbf34c5ebab0f85ea0f951e7461610b41168a95d24}{RED}},\mbox{\hyperlink{structImage_afe74defc826aae605cb2214cbf34c5ebae4313a97b6cfa1b72a92bd67916831b3}{GREEN}},\mbox{\hyperlink{structImage_afe74defc826aae605cb2214cbf34c5eba4a8385cf9d29b8dafe8618c2814ee81a}{BLUE}},\mbox{\hyperlink{structImage_afe74defc826aae605cb2214cbf34c5eba72096be5043b19298c3d75b7f050647e}{ALPHA}}\}
+\begin{DoxyCompactList}\small\item\em only for colors -\/ what colors the channels represent \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+This structure represents 2D memory of image. 2D images are used as textures and color or depth buffers of framebuffers. Pixel \mbox{[}x,y\mbox{]} starts at uint8\+\_\+t\texorpdfstring{$\ast$}{*}ptr = ((uint8\+\_\+t\texorpdfstring{$\ast$}{*})data) + y\texorpdfstring{$\ast$}{*}pitch + x\texorpdfstring{$\ast$}{*}bytes\+Per\+Pixel; channel\+Types is swizzling table for colors (RGB,BGR,...) for format == F32\+: bytes\+Per\+Pixel = sizeof(float) \texorpdfstring{$\ast$}{*} channels for format == U8\+: bytes\+Per\+Pixel = sizeof(uint8\+\_\+t) \texorpdfstring{$\ast$}{*} channels. 
+
+pitch = width \texorpdfstring{$\ast$}{*} bytes\+Per\+Pixel \mbox{[}\doxylink{structImage}{Image}\mbox{]} 
+
+\doxysubsection{Member Enumeration Documentation}
+\Hypertarget{structImage_afe74defc826aae605cb2214cbf34c5eb}\label{structImage_afe74defc826aae605cb2214cbf34c5eb} 
+\index{Image@{Image}!Channel@{Channel}}
+\index{Channel@{Channel}!Image@{Image}}
+\doxysubsubsection{\texorpdfstring{Channel}{Channel}}
+{\footnotesize\ttfamily enum \mbox{\hyperlink{structImage_afe74defc826aae605cb2214cbf34c5eb}{Image\+::\+Channel}}}
+
+
+
+Channel type. 
+
+\begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{RED@{RED}!Image@{Image}}\index{Image@{Image}!RED@{RED}}}\Hypertarget{structImage_afe74defc826aae605cb2214cbf34c5ebab0f85ea0f951e7461610b41168a95d24}\label{structImage_afe74defc826aae605cb2214cbf34c5ebab0f85ea0f951e7461610b41168a95d24} 
+RED&red color \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{GREEN@{GREEN}!Image@{Image}}\index{Image@{Image}!GREEN@{GREEN}}}\Hypertarget{structImage_afe74defc826aae605cb2214cbf34c5ebae4313a97b6cfa1b72a92bd67916831b3}\label{structImage_afe74defc826aae605cb2214cbf34c5ebae4313a97b6cfa1b72a92bd67916831b3} 
+GREEN&green color \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{BLUE@{BLUE}!Image@{Image}}\index{Image@{Image}!BLUE@{BLUE}}}\Hypertarget{structImage_afe74defc826aae605cb2214cbf34c5eba4a8385cf9d29b8dafe8618c2814ee81a}\label{structImage_afe74defc826aae605cb2214cbf34c5eba4a8385cf9d29b8dafe8618c2814ee81a} 
+BLUE&blue color \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{ALPHA@{ALPHA}!Image@{Image}}\index{Image@{Image}!ALPHA@{ALPHA}}}\Hypertarget{structImage_afe74defc826aae605cb2214cbf34c5eba72096be5043b19298c3d75b7f050647e}\label{structImage_afe74defc826aae605cb2214cbf34c5eba72096be5043b19298c3d75b7f050647e} 
+ALPHA&alpha \\
+\hline
+
+\end{DoxyEnumFields}
+\Hypertarget{structImage_a1d53cd4fd9e5b67d38d49bc2c5ebd0db}\label{structImage_a1d53cd4fd9e5b67d38d49bc2c5ebd0db} 
+\index{Image@{Image}!Format@{Format}}
+\index{Format@{Format}!Image@{Image}}
+\doxysubsubsection{\texorpdfstring{Format}{Format}}
+{\footnotesize\ttfamily enum \mbox{\hyperlink{structImage_a1d53cd4fd9e5b67d38d49bc2c5ebd0db}{Image\+::\+Format}}}
+
+
+
+Format of data. 
+
+\begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{U8@{U8}!Image@{Image}}\index{Image@{Image}!U8@{U8}}}\Hypertarget{structImage_a1d53cd4fd9e5b67d38d49bc2c5ebd0dba5af181535c9a211a617303e8efe43554}\label{structImage_a1d53cd4fd9e5b67d38d49bc2c5ebd0dba5af181535c9a211a617303e8efe43554} 
+U8&data element is in form of 8bit unsigned byte \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{F32@{F32}!Image@{Image}}\index{Image@{Image}!F32@{F32}}}\Hypertarget{structImage_a1d53cd4fd9e5b67d38d49bc2c5ebd0dbafa6421ccf72f08668e45d9a70c657a1e}\label{structImage_a1d53cd4fd9e5b67d38d49bc2c5ebd0dbafa6421ccf72f08668e45d9a70c657a1e} 
+F32&data element is in form of 32bit float \\
+\hline
+
+\end{DoxyEnumFields}
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+solution\+Interface/src/solution\+Interface/\mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp}{gpu.\+hpp}}\end{DoxyCompactItemize}

@@ -1,0 +1,49 @@
+\chapter{01 Jak na projekt?}
+\hypertarget{p01_jakNaTo}{}\label{p01_jakNaTo}\index{01 Jak na projekt?@{01 Jak na projekt?}}
+
+
+Týkají se vás jen dva soubory do kterých napíšete váš kód a dva soubory s deklaracemi struktur\+:
+\begin{DoxyItemize}
+\item \doxylink{studentSolution_2src_2studentSolution_2gpu_8cpp}{student\+Solution/src/student\+Solution/gpu.\+cpp}
+\item \doxylink{prepareModel_8cpp}{student\+Solution/src/student\+Solution/prepare\+Model.\+cpp}
+\end{DoxyItemize}
+
+Celkový projekt je velký, kvůli načítání modelů, vytvoření okna, testování a dalším podpůrným částem, ale není potřeba se jim zabývat (tedy pokud nechcete vidět vnitřnosti a jak celý projekt funguje).
+
+Takže jak na to?~\newline
+ Nejprve si vyzkoušejte, jak by to mělo vypadat...
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\#\ a\ mačkejte\ "{}n"{}\ nebo\ "{}p"{}\ a\ ovládaní\ myší}
+\DoxyCodeLine{izgProject\_windows.exe}
+\DoxyCodeLine{}
+\DoxyCodeLine{\#\ a\ mačkejte\ "{}n"{}\ nebo\ "{}p"{}\ a\ ovládaní\ myší}
+\DoxyCodeLine{./izgProject\_linux.bin\ }
+
+\end{DoxyCode}
+
+
+Jak je to složité? Můj kód pro student\+\_\+\+GPU\+\_\+run má \texorpdfstring{$\sim$}{\string~}1000 řádků a implementace student\+\_\+prepare\+Model a shaderů \texorpdfstring{$\sim$}{\string~}100 řádku. ~\newline
+ Není potřeba nic alokovat, paměť je již předchystaná. Pokud budete někde volat malloc, new a podobně, zamyslete se. Z C++ se nevyužívá skoro nic (jen vector a knihovna glm, reference). Takže by to mělo jít napsat celkem v pohodě i pro C lidi. ~\newline
+ Postup řešení\+:
+
+
+\begin{DoxyEnumerate}
+\item Vyzkoušet si přiložený zkompilovaný referenční projekt izg\+Project\+\_\+linux.\+bin a izg\+Project\+\_\+windows.\+exe. (mačkejte "{}n"{} nebo "{}p"{}, když projekt pustíte, abyste přepínali zobrazované metody). 
+\item \doxysectlink{p17_sestaveni}{Zprovoznit si překlad}{0} 
+\item \doxysectlink{p18_spousteni}{Zkusit si projekt pustit a podívat se na parametry příkazové řádky.}{0} a \doxysectlink{p19_ovladani}{jak se aplikace ovládá}{0} 
+\item V projektu jsou přítomny \doxysectlink{p20_testovani}{akceptační testy}{0}, které vám řeknou, jestli jdete správným směrem a taky vypisují nápovědu. 
+\item Začít implementovat funkci \doxylink{studentSolution_2src_2studentSolution_2gpu_8cpp_acb235bf1bd34504bf58828aac4d40b11}{student\+\_\+\+GPU\+\_\+run} a kontrolovat váš postup podle přiložených testů. 
+\item Začít implementovat funkci \doxylink{prepareModel_8cpp_a46fe75e58d09064a5a33d511123d3a4d}{student\+\_\+prepare\+Model} 
+\item Začít implementovat funkci \doxylink{prepareModel_8cpp_a034552bbcfbd934b738aacf12ea64839}{student\+\_\+draw\+Model\+\_\+vertex\+Shader} 
+\item Začít implementovat funkci \doxylink{prepareModel_8cpp_a8fd935a09a7659cb2858aca6d22d827c}{student\+\_\+draw\+Model\+\_\+fragment\+Shader} 
+\item Ověřte si implementaci na Merlinovi 
+\item \doxysectlink{p21_odevzdavani}{Odevzdejte}{0} 
+\item ??? 
+\item profit 
+\end{DoxyEnumerate}
+
+Každý úkol má přiřazen akceptační test, takže si můžete snadno ověřit funkčnosti vaší implementace. ~\newline
+~\newline
+ Úkoly lze rozdělit do dvou částí\+: implementace grafické karty a implementace kreslení modelů se stíny. 

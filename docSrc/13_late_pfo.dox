@@ -1,0 +1,205 @@
+/**
+\page p13_per_fragment_operations 13 Pozdní Per Fragment Operace
+
+Pozdní Per Fragment Operace se nachází za fragment shaderem.
+Jsou složeny z:
+- Zahazování fragmentů (operace discard)
+- Možné modifikace stencilového bufferu (stencil operace dppass)
+- Možné modifikace hloubkového bufferu (pokud je depth buffer přítomen)
+- Možného zápisu barvy do barevného bufferu (pokud je barevný buffer přítomen)
+
+\image html images/pfo_late.svg "Pozdní Per Fragment operace se skládají ze zahazování fragmentů (discard), modifikace stencilového hloubkového a barevného bufferu." width=800
+
+\section pfo_late_discrad Zahazování fragmentu (operace discard)
+
+Zahazování fragmentů je určeno na základě \ref OutFragment::discard.
+Pokud je nastavena na true, je fragment zahozen a jeho další zpracovávání je ukončeno.
+
+\image html images/pfo_discard.svg "Operace discard. Pokud fragment shader nastavil hodnotu fragmentu discard na true, je fragment vyřazen z dalšího zpracování." width=400
+
+
+
+\section pfo_late_stencil Modifikace stencilového bufferu
+Zápis do stencilového bufferu je umožněn ještě jednou, naposled.
+Pokud je zápis povolen a pokud je stencil buffer přítomen, provede se nad ním operace \ref StencilOps::dppass.
+
+\image html images/pfo_stencil_writes.svg "Modifikace stencilového bufferu pomocí pdpass operací. Pokud je přítomen stencilový buffer, je stencilový test zapnut, a je povolen zápis, provede se poslední stencilová opereace dppass nad stencilovým bufferem." width=400
+
+
+
+\section pfo_late_depth Modifikace hloubkového bufferu
+Zápis hloubky zajistí, že budoucí fragmenty nepřepíší barvu bližších objektů.
+Zápis je povolen v případě, že je přítomen hloubkový buffer.
+
+\image html images/pfo_depth_writes.svg "Zápis hloubky do hloubkového buffer. Pokud je přítomen hloubkový buffer, zapíše do něj nová hloubka fragmentu." width=400
+
+
+
+\section pfo_late_color Modifikace barevného bufferu
+Zápis barvy do barevného bufferu je umožněn, pokud je barevný buffer přítomen a není zakázán zápis.
+
+\image html images/pfo_color_writes.svg "Zápis barvy do barevného bufferu je umožněn, pokud je barevný buffer přítomen a zápis není zablokován." width=400
+
+Jsou dvě možnosti, buď je barva rovnou zapsána, nebo je využit Blending pro modifikaci.
+
+\image html images/pfo_blending.svg "Modifikace barevného buderu je možná ve dvou verzích. Zápisem barvy a pomocí Blendingu." width=600
+
+Při zápisu barvy, nebo při Blendingu je nutné dát pozor na rozsahy a převody mezi typy a rozložením barevného bufferu.
+Barva fragmentu je uložena ve 4 komponentách typu float \ref OutFragment::gl_FragColor.
+Barevný buffer je uložen ve struktuře \ref Image.
+
+\subsection pfo_late_color_write Zápis barvy bez Blendingu
+Při obyčejném zápisu barvy fragmentu do barevného bufferu může dojít k pár komplikacím:
+<ul>
+<li> Je potřeba dbát na typ dat v barevném bufferu (může být float,uint8_t),
+<li> Je potřeba dbát na swizzling kanálů v barevném bufferu (nultá komponenta v pixelu nemusí být červený kanál),
+<li> Je potřeba dbát na přetékání a podtékání hodnot.
+</ul>
+
+\subsubsection pfo_late_color_write_example Příklad zápisu barvy do barevného bufferu typu uint8_t
+V této sekci je uveden příklad zápisu barvy do uint8_t barevného bufferu.
+Data jsou:
+<ul>
+<li> Souřadnice fragmentu jsou \f$ (134,23) \f$,
+<li> Barva fragmentu OutFragment::gl_FragColor je \f$ (0.3,-0.4,1.2,0.5) \f$,
+<li> Formát kanálů Image::Format = U8,
+<li> Počet kanálů color bufferu: Image::channels = 3,
+<li> Swizzling Image::channelTypes[4] = {BLUE,GREEN,RED,ALPHA}.
+</ul>
+
+Prvním krokem je potřeba spočítat ukazatel na pixel:
+\code{.cpp}
+
+uint8_t*pixel = (uint8_t*)getPixel(frame->color,134,23);
+float red   = 0.3f; //ořez  0.3 do rozsahu [0,1]
+float green = 0.0f; //ořez -0.4 do rozsahu [0,1]
+float blue  = 1.0f; //ořez  1.2 do rozsahu [0,1]
+
+pixel[0] = (uint8_t)(blue  * 255.f); //Image::Channel::BLUE
+pixel[1] = (uint8_t)(green * 255.f); //Image::Channel::GREEN
+pixel[2] = (uint8_t)(red   * 255.f); //Image::Channel::RED
+\endcode
+
+\subsubsection pfo_late_color_write_example2 Příklad zápisu barvy do barevného bufferu typu float
+V této sekci je uveden příklad zápisu barvy do float barevného bufferu.
+Data jsou:
+<ul>
+<li> Souřadnice fragmentu jsou \f$ (14,230) \f$,
+<li> Barva fragmentu OutFragment::gl_FragColor je \f$ (3.3,-3.4,1.2,3.5) \f$,
+<li> Formát kanálů Image::Format = F32,
+<li> Počet kanálů color bufferu: Image::channels = 4,
+<li> Swizzling Image::channelTypes[4] = {ALPHA,GREEN,RED,BLUE}.
+</ul>
+
+\code{.cpp}
+
+float*pixel = (float*)getPixel(frame->color,14,230);
+float red   =  3.3f; //netřeba ořezávat
+float green = -3.4f; //netřeba ořezávat
+float blue  =  1.2f; //netřeba ořezávat
+float alpha =  3.5f; //netřeba ožezávat
+
+pixel[0] = alpha; //Image::Channel::ALPHA
+pixel[1] = green; //Image::Channel::GREEN
+pixel[2] = red  ; //Image::Channel::RED
+pixel[3] = blue ; //Image::Channel::BLUE
+\endcode
+
+
+
+Hodnoty barvy fragmentu, který se má uložit do barevného bufferu jsou typu float OutFragment::gl_FragColor.
+
+
+
+\subsection pfo_late_blending Zápis barvy s Blendingem
+Blending je operace, která vytváří novou barvu na základě barvy uložené v color bufferu a barvy fragmentu.
+Nová barva je následně zapsána do color bufferu.
+
+\image html images/blending.svg "Do procesu Blendingu vstupuje barva fragmentu, původní barva color bufferu a nastavení Blendingu. Blending spočítá novou barvu a ta je poté zapsána do color bufferu." width=600
+
+Nastavení Blendingu je vidět na následujícím snippetu:
+
+\snippet solutionInterface/src/solutionInterface/gpu.hpp BlendingSettings
+
+<ul>
+<li> enabled -- Blending může být vypnutý nebo zapnutý,
+<li> sFactor -- source factor, faktor váhující zdrojovou barvu (barvu fragmentu),
+<li> dFactor -- destination factor, faktor váhující cílovou barvu (barva z color buffuer),
+<li> equation -- způsob, jak jsou barvy smíchány dohromady.
+</ul>
+
+Způsob míchání je vidět na následujícím snippetu:
+\snippet solutionInterface/src/solutionInterface/gpu.hpp BlendEquation
+<ul>
+<li> ADD -- barvy jsou sečteny,
+<li> SUBTRACT -- barvy jsou odečteny,
+<li> REVERSE_SUBTRACT -- barvy jsou odečteny v opačném pořadí,
+<li> MIN -- získá se minimální hodnota,
+<li> MAX -- získá se maximální hodnota.
+</ul>
+
+Faktory jsou uvedeny v následující ukázce:
+\snippet solutionInterface/src/solutionInterface/gpu.hpp BlendFunc
+
+Detailní popis, co jednotlivé hodnoty znamenají je možné najít v dokumentaci \ref BlendingSettings, \ref BlendEquation a \ref BlendFunc.
+
+\subsubsection pfo_late_blending_example Příklad práce Blendingu
+V této sekci je uveden příklad, jakým způsobem je spočítána výsledná barva pomocí Blendingu.
+Do procesu Blendingu vstupuje:
+<ul>
+<li> Barva fragmentu \f$ Frag = (0.3,0.1,0.7,0.4) \f$,
+<li> Barva v color bufferu \f$ Frame = (0.8,0.4,0.2,0.1) \f$,
+<li> equation = \ref BlendEquation::REVERSE_SUBTRACT,
+<li> sFactor = \ref BlendFunc::ONE_MINUS_DST_ALPHA,
+<li> dFactor = \ref BlendFunc::SRC_COLOR.
+</ul>
+
+Hodnota equation nastavená na BlendEquation::REVERSE_SUBTRACT značí, že se od barvy v Frame odečítá barva Frag a to tímto způsobem:<br>
+\f$ Result_{rgba} = Frame_{rgba} \cdot d_{rgba} - Frag_{rgba} \cdot s_{rgba} \f$.
+
+Source factor sFactor nastavený na BlendFunc::ONE_MINUS_DST_ALPHA značí, že hodnota source faktoru \f$ s_{rgba} \f$ je rovna:<br>
+\f$ s_{rgba} = (1,1,1,1) - (Frame_a,Frame_a,Frame_a,Frame_a) = (1,1,1,1) - (0.1,0.1,0.1,0.1) = (0.9,0.9,0.9,0.9)\f$.<br>
+
+Destination factor dFactor nastavený na BlendFunc::SRC_COLOR značí, že hodnota destination faktoru \f$ d_{rgba} \f$ je rovna:<br>
+\f$ d_{rgba} = (Frag_r,Frag_g,Frag_b,Frag_a) = (0.3,0.1,0.7,0.4)\f$.
+
+Výsledná barva \f$ Result_{rgba} \f$ je rovna:<br>
+\f$ Result_{rgba} = Frame_{rgba} \cdot d_{rgba} - Frag_{rgba} \cdot s_{rgba} = (0.8,0.4,0.2,0.1) \cdot (0.3,0.1,0.7,0.4) - (0.3,0.1,0.7,0.4) \cdot (0.9,0.9,0.9,0.9) = (0.24,0.04,0.14,0.04) - (0.27,0.09,0.63,0.36) = (-0.03,-0.05,-0.49,-0.32)\f$.<br>
+
+Výsledná barva \f$ (-0.03,-0.05,-0.49,-0.32)\f$ je negativní, to nevadí.
+Pokud by byl typ dat barevného bufferu float, uloží se hodnoty tak, jak byly spočítány.
+Pokud by byl typ dat barevného bufferu uint8_t, uřežou se hodnoty do rozsahu 0-1 (v tomto případě všechny na 0) a převedou se na rozsah 0-255 a uloží se (uložily by se samé nuly).
+
+\section pfo_late_tasks Úkol 6 -- Naprogramovat pozdní Per Fragment Operace
+
+\subsection pfo_late_discard_tasks Test 34 -- Discard
+Tento test zkouší, zda funguje operace discard.
+\code{.sh}
+./izgProject -c --test 34
+\endcode
+
+\subsection pfo_late_stencil_tasks Test 35 -- Modifikace stencilového bufferu při dppass
+Tento test zkouší, zda funguje stencilová operace při dppass
+\code{.sh}
+./izgProject -c --test 35
+\endcode
+
+\subsection pfo_late_depth_tasks Test 36 -- Modifikace depth bufferu
+Tento test zkouší, zda funguje zápis do hloubkového bufferu.
+\code{.sh}
+./izgProject -c --test 36
+\endcode
+
+\subsection pfo_late_color_tasks Test 37 -- Zápis barvy
+Tento test zkouší, zda funguje zápis do barevného bufferu.
+\code{.sh}
+./izgProject -c --test 37
+\endcode
+
+\subsection pfo_late_blending_tasks Test 38 -- Blending
+Tento test zkouší, zda funguje blending a všechno jeho nastavení.
+\code{.sh}
+./izgProject -c --test 38
+\endcode
+
+*/

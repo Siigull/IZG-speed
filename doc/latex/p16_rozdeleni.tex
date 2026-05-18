@@ -1,0 +1,37 @@
+\chapter{16 Rozdělení souborů a složek}
+\hypertarget{p16_rozdeleni}{}\label{p16_rozdeleni}\index{16 Rozdělení souborů a složek@{16 Rozdělení souborů a složek}}
+Projekt je rozdělen do několika podsložek\+:
+
+{\bfseries{build/}} Tady se čeká, že si budete sestavovat projekt, ale není to nutné, pokud víte, co děláte...
+
+{\bfseries{doc/}} Tato složka obsahuje doxygen dokumentaci projektu. Můžete ji přegenerovat pomocí příkazu doxygen spuštěného v root adresáři projektu.
+
+{\bfseries{doc\+Src/}} Tato složka obsahuje zdrojové kódy k dokumentaci.
+
+{\bfseries{examples/}} Tato složka obsahuje přiložené příklady, které využívají vámi vytvořené zobrazovadlo.
+
+{\bfseries{framework/}} Tato složka obsahuje interní záležitosti projektu. Všechny soubory jsou napsány v C++, abyste se mohli podívat, jak to funguje.
+
+{\bfseries{libs/}} Tato složka obsahuje pomocné knihovny
+
+{\bfseries{resources/}} Tato složka obsahuje modely a obrázky.
+
+{\bfseries{solution\+Interface}} Tato složka obsahuje rozhraní/interface řešení. Slouží jako interface pro studentské řešení a učitelské řešení.
+
+{\bfseries{src/}} Tato složka obsahuje main
+
+{\bfseries{student\+Solution/}} Tato složka obsahuje soubory, které budete editovat při implementaci projektu. Složka obsahuje soubory, které budete odevzávat a podpůrné hlavičkové soubory (které nebudete odevzdávat.
+
+{\bfseries{teacher\+Solution\+Binary}} Tato složka obsahuje před kompilované učitelské řešení pro provádění testů.
+
+{\bfseries{tests/}} Tato složka obsahuje akceptační a performanční testy projektu. Akceptační testy jsou napsány s využitím knihovny catch. Testy jsou rozděleny do testovacích případů (TEST\+\_\+\+CASE). Daný TEST\+\_\+\+CASE testuje jednu podčást projektu.
+
+Složka student\+Solution/src/student\+Solution/ obsahuje soubory, které se vás přímo týkají\+:
+
+\doxylink{studentSolution_2src_2studentSolution_2gpu_8cpp}{student\+Solution/src/student\+Solution/gpu.\+cpp} obsahuje definici funkce představující funkcionalitu grafické karty \doxylink{studentSolution_2src_2studentSolution_2gpu_8cpp_acb235bf1bd34504bf58828aac4d40b11}{student\+\_\+\+GPU\+\_\+run} -- tady odvedete nejvíce práce.
+
+\doxylink{prepareModel_8cpp}{student\+Solution/src/student\+Solution/prepare\+Model.\+cpp} obsahuje definici funkce pro zpracování modelu \doxylink{prepareModel_8cpp_a46fe75e58d09064a5a33d511123d3a4d}{student\+\_\+prepare\+Model} a vertex a fragment shaderu \doxylink{prepareModel_8cpp_a034552bbcfbd934b738aacf12ea64839}{student\+\_\+draw\+Model\+\_\+vertex\+Shader} \doxylink{prepareModel_8cpp_a8fd935a09a7659cb2858aca6d22d827c}{student\+\_\+draw\+Model\+\_\+fragment\+Shader} -- toto máte taky naprogramovat.
+
+Složka solution\+Interface/src/solution\+Interface/ obsahuje podpůrné hlavičkové soubory, které se vás týkají\+:
+
+\doxylink{solutionInterface_2src_2solutionInterface_2gpu_8hpp}{solution\+Interface/src/solution\+Interface/gpu.\+hpp} obsahuje definice typů a konstant pro grafickou kartu -- projděte si. \doxylink{modelFwd_8hpp}{solution\+Interface/src/solution\+Interface/model\+Fwd.\+hpp} obsahuje definice typů a konstant pro model -- projděte si. 

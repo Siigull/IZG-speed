@@ -1,0 +1,76 @@
+\chapter{05 Uživatelský příkaz, číslování a podcommand buffer}
+\hypertarget{p05_commands_user_sub_draw_tasks}{}\label{p05_commands_user_sub_draw_tasks}\index{05 Uživatelský příkaz, číslování a podcommand buffer@{05 Uživatelský příkaz, číslování a podcommand buffer}}
+\hypertarget{p05_commands_user_sub_draw_tasks_userCommand}{}\doxysection{\texorpdfstring{Úkol 2\+: – Uživatelský příkaz a číslování}{Úkol 2: – Uživatelský příkaz a číslování}}\label{p05_commands_user_sub_draw_tasks_userCommand}
+Cílem této části je zprovoznit uživatelský příkaz, kreslící příkazy a pod \doxylink{structCommandBuffer}{Command\+Buffer(y)}.\hypertarget{p05_commands_user_sub_draw_tasks_userCommandT}{}\doxysubsection{\texorpdfstring{Test 11 – User\+Command}{Test 11 – UserCommand}}\label{p05_commands_user_sub_draw_tasks_userCommandT}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{./izgProject\ -\/c\ -\/-\/test\ 11}
+
+\end{DoxyCode}
+ Tento test zkouší, zda jste naimplementovali obsluhu uživatelského příkazu\+: \doxylink{structUserCommand}{User\+Command}. 
+\begin{DoxyCodeInclude}{0}
+\DoxyCodeLine{\textcolor{keyword}{struct\ }\mbox{\hyperlink{structUserCommand}{UserCommand}}\{}
+\DoxyCodeLine{\ \ \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a71ccc6fa3730a87e50bbb36079c57885}{UserCommandFce}}\ \mbox{\hyperlink{structUserCommand_a864a70aee21a374b1797681e6ed24f33}{callback}}\ =\ \textcolor{keyword}{nullptr};\ }
+\DoxyCodeLine{\ \ \textcolor{keywordtype}{void}*\ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structUserCommand_a39db386e467c298eba0a5b5ab0f72f1e}{data}}\ \ \ \ \ =\ \textcolor{keyword}{nullptr};\ }
+\DoxyCodeLine{\};}
+
+\end{DoxyCodeInclude}
+ Pokud grafická karta narazí na tento příkaz, měla by vyvolat callback a dát mu data. Pozor, uživatelský callback může být nullptr, v takovém případě se příkaz ignoruje.\hypertarget{p05_commands_user_sub_draw_tasks_drawIDTest}{}\doxysubsection{\texorpdfstring{Test 12 – Draw\+Command a počítání gl\+\_\+\+Draw\+ID}{Test 12 – DrawCommand a počítání gl\_DrawID}}\label{p05_commands_user_sub_draw_tasks_drawIDTest}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{./izgProject\ -\/c\ -\/-\/test\ 12}
+
+\end{DoxyCode}
+ Tento test zkouší, zda jste naimplementovali obsluhu kreslícího příkazu\+: \doxylink{structDrawCommand}{Draw\+Command}. 
+\begin{DoxyCodeInclude}{0}
+\DoxyCodeLine{\textcolor{keyword}{struct\ }\mbox{\hyperlink{structDrawCommand}{DrawCommand}}\{}
+\DoxyCodeLine{\ \ uint32\_t\ \mbox{\hyperlink{structDrawCommand_a4a7376486faf9f07fccb7de82d86566b}{nofVertices}}\ =\ 0;\ }
+\DoxyCodeLine{\};}
+
+\end{DoxyCodeInclude}
+ Pokud grafická karta narazí na tento příkaz, měla by spustit kreslení. Každý vykreslovací příkaz je číslovaný vzestupně od počátku spuštění. Cílem tohoto testu je ověřit, že počítáte vykresovací příkazy (a nastavujete \doxylink{structGPUMemory_aa6541055bfd7af94a91f35bfe0cd9aad}{GPUMemory\+::gl\+\_\+\+Draw\+ID}). Toto číslování se používá pro výběr materiálů, textur, modelových matic a podobně. Číslují se jen vykreslovací příkazy. Pokud je mezi kreslícími jiný příkaz, neovlivní to číslování. Výjimkou je příkaz \doxylink{structSetDrawIdCommand}{Set\+Draw\+Id\+Command}, který umožňuje explicitně \doxylink{structGPUMemory_aa6541055bfd7af94a91f35bfe0cd9aad}{GPUMemory\+::gl\+\_\+\+Draw\+ID} nastavit.  Hrubý pseudokód může vypadat nějak takto\+: 
+\begin{DoxyCodeInclude}{0}
+\DoxyCodeLine{\textcolor{keywordtype}{void}\ \mbox{\hyperlink{studentSolution_2src_2studentSolution_2gpu_8cpp_acb235bf1bd34504bf58828aac4d40b11}{student\_GPU\_run}}(\mbox{\hyperlink{structGPUMemory}{GPUMemory}}\&mem,\mbox{\hyperlink{structCommandBuffer}{CommandBuffer}}\ \textcolor{keyword}{const}\&cb)\{}
+\DoxyCodeLine{\ \ \textcolor{comment}{//\ smyčka\ přes\ příkazy}}
+\DoxyCodeLine{\ \ \textcolor{keywordflow}{for}(...\ commands\ ...)\{}
+\DoxyCodeLine{\ \ \ \ \textcolor{comment}{//\ vykreslovací\ příkaz}}
+\DoxyCodeLine{\ \ \ \ \textcolor{keywordflow}{if}\ (commandType\ ==\ \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a21e038f5b8958e203d28bc4f18472352a2b4807f24940ca2fe73284bc6e864d66}{CommandType::DRAW}}\ )\{}
+\DoxyCodeLine{\ \ \ \ \ \ \textcolor{comment}{//\ kresli}}
+\DoxyCodeLine{\ \ \ \ \ \ draw(mem,\ drawCommand);}
+\DoxyCodeLine{\ \ \ \ \ \ \textcolor{comment}{//\ počítadlo\ kreslících\ příkazů}}
+\DoxyCodeLine{\ \ \ \ \ \ mem.\mbox{\hyperlink{structGPUMemory_aa6541055bfd7af94a91f35bfe0cd9aad}{gl\_DrawID}}++;}
+\DoxyCodeLine{\ \ \ \ \}}
+\DoxyCodeLine{\ \ \ \ \textcolor{keywordflow}{if}\ (commandType\ ==\ \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a21e038f5b8958e203d28bc4f18472352af33727905f5b6f48cac50cb735ed9524}{CommandType::SET\_DRAW\_ID}})\{}
+\DoxyCodeLine{\ \ \ \ \ \ mem.\mbox{\hyperlink{structGPUMemory_aa6541055bfd7af94a91f35bfe0cd9aad}{gl\_DrawID}}\ =\ ...}
+\DoxyCodeLine{\ \ \ \ \}}
+\DoxyCodeLine{\ \ \}}
+\DoxyCodeLine{\}}
+
+\end{DoxyCodeInclude}
+\hypertarget{p05_commands_user_sub_draw_tasks_subCmdPractice}{}\doxysubsection{\texorpdfstring{Test 13 – sub command}{Test 13 – sub command}}\label{p05_commands_user_sub_draw_tasks_subCmdPractice}
+Testy\+: 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{./izgProject\ -\/c\ -\/-\/test\ 13}
+
+\end{DoxyCode}
+ \doxylink{structSubCommand}{Sub\+Command} je způsob, jak rozšiřovat a větvit \doxylink{structCommandBuffer}{Command\+Buffer}. \doxylink{structSubCommand}{Sub\+Command} obsahuje ukazatel na další \doxylink{structCommandBuffer}{Command\+Buffer}. 
+\begin{DoxyCodeInclude}{0}
+\DoxyCodeLine{\textcolor{keyword}{struct\ }\mbox{\hyperlink{structSubCommand}{SubCommand}}\{}
+\DoxyCodeLine{\ \ \mbox{\hyperlink{structCommandBuffer}{CommandBuffer}}*\mbox{\hyperlink{structSubCommand_a6743a1b924763618d8c2fafd3b4decd5}{commandBuffer}}\ =\ \textcolor{keyword}{nullptr};\ }
+\DoxyCodeLine{\};}
+
+\end{DoxyCodeInclude}
+ Koncept je podobný jako u sekundárních command bufferů ve Vulkánu\+: \href{https://docs.vulkan.org/spec/latest/chapters/cmdbuffers.html\#commandbuffers-secondary}{\texttt{ Sekundární Command Buffer}}. Příkladem využití \doxylink{structSubCommand}{Sub\+Command} v tomto projektu je vykreslování stínů. Technika vykreslování stínů vyžaduje vykreslit scénu 2x, pokaždé s jiným programem a framebufferem. Je tak možné uložit si sub \doxylink{structCommandBuffer}{Command\+Buffer} pro vykreslení scény a ten pak dvakrát uložit v primárním \doxylink{structCommandBuffer}{Command\+Buffer(u)} pro celý snímek. \doxylink{structSubCommand}{Sub\+Command} může být vložen v libovolné hloubce, tzn. sub command buffer může obsahovat sub command buffer. Hrubý pseudokód může vypadat nějak takto\+: 
+\begin{DoxyCodeInclude}{0}
+\DoxyCodeLine{\textcolor{keywordtype}{void}\ \mbox{\hyperlink{studentSolution_2src_2studentSolution_2gpu_8cpp_acb235bf1bd34504bf58828aac4d40b11}{student\_GPU\_run}}(\mbox{\hyperlink{structGPUMemory}{GPUMemory}}\&mem,\mbox{\hyperlink{structCommandBuffer}{CommandBuffer}}\ \textcolor{keyword}{const}\&cb)\{}
+\DoxyCodeLine{\ \ \textcolor{comment}{//\ smyčka\ přes\ příkazy}}
+\DoxyCodeLine{\ \ \textcolor{keywordflow}{for}(...\ commands\ ...)\{}
+\DoxyCodeLine{\ \ \ \ \textcolor{comment}{//\ sub\ command}}
+\DoxyCodeLine{\ \ \ \ \textcolor{keywordflow}{if}\ (commandType\ ==\ \mbox{\hyperlink{solutionInterface_2src_2solutionInterface_2gpu_8hpp_a21e038f5b8958e203d28bc4f18472352aadcc01dbaca0f0d3fb64ef8f45550ec3}{CommandType::SUB\_COMMAND}})\{}
+\DoxyCodeLine{\ \ \ \ \ \ processSubCommandRecursive(commandData.subCommand.commandBuffer);}
+\DoxyCodeLine{\ \ \ \ \}}
+\DoxyCodeLine{\ \ \}}
+\DoxyCodeLine{\}}
+
+\end{DoxyCodeInclude}
+ 

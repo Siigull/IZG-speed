@@ -1,0 +1,28 @@
+var searchData=
+[
+  ['i1_0',['i1',['../unionUniform.html#a8449fdf21a57c7e30991794dd81c3b74',1,'Uniform']]],
+  ['i2_1',['i2',['../unionUniform.html#a15c52a56321295508bdc481ac41abf91',1,'Uniform']]],
+  ['i3_2',['i3',['../unionUniform.html#a0e021e299ac1124b1d19458465e6b905',1,'Uniform']]],
+  ['i4_3',['i4',['../unionUniform.html#aa1d074fbace15f47187c291a8522cc76',1,'Uniform']]],
+  ['id_4',['id',['../structSetDrawIdCommand.html#a4d4b55a0b9c937e9d9840ba91277d92b',1,'SetDrawIdCommand::id'],['../structBindFramebufferCommand.html#a6bc09d211b78f6ccd68d90478a003194',1,'BindFramebufferCommand::id'],['../structBindProgramCommand.html#a8494c3d81b406d53824a994808e8347e',1,'BindProgramCommand::id'],['../structBindVertexArrayCommand.html#a2dedaac94feb65b7c932753adba273e9',1,'BindVertexArrayCommand::id']]],
+  ['idtobreak_5',['idToBreak',['../structTaskFunctions.html#a2f2ead8b7fa4de3980646ded15437b31',1,'TaskFunctions']]],
+  ['image_6',['Image',['../structImage.html',1,'']]],
+  ['img_7',['img',['../structTexture.html#a64d1fdc3117ab704bc4c4c9696d7237e',1,'Texture']]],
+  ['implementace_20vykreslování_20modelů_20se_20stíny_20ndash_20soubor_20student_20preparemodel_20cpp_8',['15 Implementace vykreslování modelů se stíny &amp;ndash; soubor student/prepareModel.cpp',['../p15_drawModel.html',1,'']]],
+  ['incr_9',['INCR',['../solutionInterface_2src_2solutionInterface_2gpu_8hpp.html#af046868f9f300b11282490852e003566afc67535e5273d466beba3c06c0dbd988',1,'gpu.hpp']]],
+  ['incr_5fwrap_10',['INCR_WRAP',['../solutionInterface_2src_2solutionInterface_2gpu_8hpp.html#af046868f9f300b11282490852e003566a056f9acd45832946a8f02289a8516e7f',1,'gpu.hpp']]],
+  ['indexbufferid_11',['indexbufferid',['../structVertexArray.html#a7648ec169177dbb70b495b51ffcfb606',1,'VertexArray::indexBufferID'],['../structMesh.html#a6ee7d4182d7a50b63cafca5b0b66c715',1,'Mesh::indexBufferID']]],
+  ['indexoffset_12',['indexoffset',['../structVertexArray.html#a89b9faa058891874f5bf63064deafe99',1,'VertexArray::indexOffset'],['../structMesh.html#ae334cf0d47655e3daefe644b574468d5',1,'Mesh::indexOffset']]],
+  ['indexováním_13',['Test 18 &amp;ndash; číslování vrcholů s indexováním.',['../p07_pipeline_vector_part_tasks.html#gl_VertexIDIndex32',1,'']]],
+  ['indexované_20kreslení_14',['Neindexované a indexované kreslení',['../p07_pipeline_vector_part_tasks.html#index_draw',1,'']]],
+  ['indextype_15',['indextype',['../structVertexArray.html#a7822420a93f7334ffdb1a0992de59ae3',1,'VertexArray::indexType'],['../structMesh.html#a55de606f67f2aa169ef7b51042ade990',1,'Mesh::indexType'],['../solutionInterface_2src_2solutionInterface_2gpu_8hpp.html#a862161defe984b09e24dfec9e0540a3e',1,'IndexType:&#160;gpu.hpp']]],
+  ['infragment_16',['infragment',['../p09_rasterization_theory.html#ss_rasterization_InFragment',1,'InFragment'],['../structInFragment.html',1,'InFragment']]],
+  ['interpolace_20atributů_17',['Interpolace atributů',['../p09_rasterization_theory.html#ss_rasterization_interpolation',1,'']]],
+  ['interpolaci_20hloubky_18',['Výpočet 2D Barycentrických souřadnic pro interpolaci hloubky',['../p09_rasterization_theory.html#sss_rasterization_interpolation_2Dlambda',1,'']]],
+  ['interpolaci_20uživatelských_20atribů_19',['Výpočet perspektivně korektních Barycentrických souřadnic pro interpolaci uživatelských atribů',['../p09_rasterization_theory.html#sss_rasterization_interpolation_3Dlambda',1,'']]],
+  ['interpolují_20vertex_20attributy_20',['Testy 28-29 &amp;ndash; Ověření, zda se správně interpolují vertex attributy.',['../p09_rasterization_theory.html#ss_raster_test_7',1,'']]],
+  ['interpoluje_20hloubka_20fragmentů_21',['Test 27 &amp;ndash; Ověření, zda se správně interpoluje hloubka fragmentů.',['../p09_rasterization_theory.html#ss_raster_test_6',1,'']]],
+  ['invert_22',['INVERT',['../solutionInterface_2src_2solutionInterface_2gpu_8hpp.html#af046868f9f300b11282490852e003566aa2727ae72447eea06d4cc0ef67187280',1,'gpu.hpp']]],
+  ['invertex_23',['InVertex',['../structInVertex.html',1,'']]],
+  ['izg_24',['00 Zadání projektu do předmětu IZG.',['../index.html',1,'']]]
+];

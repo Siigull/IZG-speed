@@ -1,0 +1,88 @@
+\doxysection{student\+Solution/src/student\+Solution/shader\+Functions.hpp File Reference}
+\hypertarget{shaderFunctions_8hpp}{}\label{shaderFunctions_8hpp}\index{studentSolution/src/studentSolution/shaderFunctions.hpp@{studentSolution/src/studentSolution/shaderFunctions.hpp}}
+
+
+This file contains declaration of function that can be used in shaders. Students are required to implement these functions.  
+
+
+{\ttfamily \#include $<$solution\+Interface/gpu.\+hpp$>$}\newline
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+glm\+::vec4 \mbox{\hyperlink{shaderFunctions_8hpp_ab4cd8b3c624dd5bb5b640cbdea6b0a47}{student\+\_\+read\+\_\+texture}} (\mbox{\hyperlink{structTexture}{Texture}} const \&texture, glm\+::vec2 const \&uv)
+\begin{DoxyCompactList}\small\item\em This function reads color from texture. \end{DoxyCompactList}\item 
+glm\+::vec4 \mbox{\hyperlink{shaderFunctions_8hpp_a7ffb250b0e244ef32829f61c66f5d266}{student\+\_\+read\+\_\+texture\+Clamp}} (\mbox{\hyperlink{structTexture}{Texture}} const \&texture, glm\+::vec2 const \&uv)
+\begin{DoxyCompactList}\small\item\em This function reads color from texture with clamping on the borders. \end{DoxyCompactList}\item 
+glm\+::vec4 \mbox{\hyperlink{shaderFunctions_8hpp_ab790a26225c48878804c53a226a445ed}{student\+\_\+texel\+Fetch}} (\mbox{\hyperlink{structTexture}{Texture}} const \&texture, glm\+::uvec2 const \&uv)
+\begin{DoxyCompactList}\small\item\em This function fetches color from texture. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+This file contains declaration of function that can be used in shaders. Students are required to implement these functions. 
+
+\begin{DoxyAuthor}{Author}
+Tomáš Milet, \href{mailto:imilet@fit.vutbr.cz}{\texttt{ imilet@fit.\+vutbr.\+cz}} 
+\end{DoxyAuthor}
+
+
+\doxysubsection{Function Documentation}
+\Hypertarget{shaderFunctions_8hpp_ab4cd8b3c624dd5bb5b640cbdea6b0a47}\label{shaderFunctions_8hpp_ab4cd8b3c624dd5bb5b640cbdea6b0a47} 
+\index{shaderFunctions.hpp@{shaderFunctions.hpp}!student\_read\_texture@{student\_read\_texture}}
+\index{student\_read\_texture@{student\_read\_texture}!shaderFunctions.hpp@{shaderFunctions.hpp}}
+\doxysubsubsection{\texorpdfstring{student\_read\_texture()}{student\_read\_texture()}}
+{\footnotesize\ttfamily glm\+::vec4 student\+\_\+read\+\_\+texture (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structTexture}{Texture}} const \&}]{texture,  }\item[{glm\+::vec2 const \&}]{uv }\end{DoxyParamCaption})}
+
+
+
+This function reads color from texture. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em texture} & texture \\
+\hline
+{\em uv} & uv coordinates\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+color 4 floats 
+\end{DoxyReturn}
+\Hypertarget{shaderFunctions_8hpp_a7ffb250b0e244ef32829f61c66f5d266}\label{shaderFunctions_8hpp_a7ffb250b0e244ef32829f61c66f5d266} 
+\index{shaderFunctions.hpp@{shaderFunctions.hpp}!student\_read\_textureClamp@{student\_read\_textureClamp}}
+\index{student\_read\_textureClamp@{student\_read\_textureClamp}!shaderFunctions.hpp@{shaderFunctions.hpp}}
+\doxysubsubsection{\texorpdfstring{student\_read\_textureClamp()}{student\_read\_textureClamp()}}
+{\footnotesize\ttfamily glm\+::vec4 student\+\_\+read\+\_\+texture\+Clamp (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structTexture}{Texture}} const \&}]{texture,  }\item[{glm\+::vec2 const \&}]{uv }\end{DoxyParamCaption})}
+
+
+
+This function reads color from texture with clamping on the borders. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em texture} & texture \\
+\hline
+{\em uv} & uv coordinates\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+color 4 floats 
+\end{DoxyReturn}
+\Hypertarget{shaderFunctions_8hpp_ab790a26225c48878804c53a226a445ed}\label{shaderFunctions_8hpp_ab790a26225c48878804c53a226a445ed} 
+\index{shaderFunctions.hpp@{shaderFunctions.hpp}!student\_texelFetch@{student\_texelFetch}}
+\index{student\_texelFetch@{student\_texelFetch}!shaderFunctions.hpp@{shaderFunctions.hpp}}
+\doxysubsubsection{\texorpdfstring{student\_texelFetch()}{student\_texelFetch()}}
+{\footnotesize\ttfamily glm\+::vec4 student\+\_\+texel\+Fetch (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structTexture}{Texture}} const \&}]{texture,  }\item[{glm\+::uvec2 const \&}]{pix }\end{DoxyParamCaption})}
+
+
+
+This function fetches color from texture. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em texture} & texture \\
+\hline
+{\em pix} & integer coorinates\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+color 4 floats 
+\end{DoxyReturn}

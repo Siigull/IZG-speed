@@ -1,0 +1,26 @@
+\chapter{08 Vektorová část GPU\+: část přimitiv}
+\hypertarget{p08_pipeline_primitive_part_theory}{}\label{p08_pipeline_primitive_part_theory}\index{08 Vektorová část GPU: část přimitiv@{08 Vektorová část GPU: část přimitiv}}
+Vektorová část zobrazovacího řetězce lze rozdělit na dvě části\+:
+\begin{DoxyItemize}
+\item vertexová část,
+\item část primitiv.
+\end{DoxyItemize}
+
+Tyto dvě části jsou odděleny jednotkou Primitive Assembly, která ze streamu vertexů sestavuje stream primitiv.
+
+
+
+Vertexovou čast byste v tuto chvíli již měli mít hotovou. Zbývá část primitiv.\hypertarget{p08_pipeline_primitive_part_theory_pipeline_primitive_part}{}\doxysection{\texorpdfstring{Část primitiv}{Část primitiv}}\label{p08_pipeline_primitive_part_theory_pipeline_primitive_part}
+Vertex Assembly jednotka chrlí vrcholy a vertex shader je zpracovává, transformuje. Je na čase z nich sestavit trojúhelníky a připravit je pro rasterizaci. Část za vertex shaderem je složena z několika částí.
+
+\hypertarget{p08_pipeline_primitive_part_theory_primitive_assembly}{}\doxysubsection{\texorpdfstring{Primitive Assembly}{Primitive Assembly}}\label{p08_pipeline_primitive_part_theory_primitive_assembly}
+Primitive Assembly je jednotka, která sestavuje trojúhelníky (mimo jiné). Trojúhelníku, úsečce, bodu se hromadně říká primitivum. V tomto projektu se používají pouze trojúhelníky. Primitive Assembly jednotka si počká na 3 po sobě jdoucí \doxylink{structOutVertex}{výstupní vrcholy} z vertex shaderu a sestaví trojúhelník (struktura, která by měla obsahovat 3 výstupní vrcholy). Lze na to také nahlížet tak, že primitive assembly jednotka dostane příkaz vykreslit třeba 4 trojúhelníky. Jednotka tak spustí vertex shader 12x, který takto spustí 12x vertex assembly jednotku.
+
+\hypertarget{p08_pipeline_primitive_part_theory_gpu_pd}{}\doxysubsection{\texorpdfstring{Perspektivní dělení}{Perspektivní dělení}}\label{p08_pipeline_primitive_part_theory_gpu_pd}
+Perspektivní dělení následuje za clippingem (ten bude až později, teď není potřeba) a provádí převod z homogenních souřadnic na kartézské pomocí dělení w. \hypertarget{p08_pipeline_primitive_part_theory_gpu_Viewport}{}\doxysubsection{\texorpdfstring{Viewport transformace}{Viewport transformace}}\label{p08_pipeline_primitive_part_theory_gpu_Viewport}
+Viewport transformace provádí převod NDC (rozsah -\/1, +1) na rozlišení okna, aby se mohla provést rasterizace. \hypertarget{p08_pipeline_primitive_part_theory_gpu_Culling}{}\doxysubsection{\texorpdfstring{Culling / Backface Culling}{Culling / Backface Culling}}\label{p08_pipeline_primitive_part_theory_gpu_Culling}
+Backface Culling se stará o zahození trojúhelníků, které jsou odvráceny od pozorovatele. Culling lze zapnout nebo vypnout pomocí\+: \doxylink{structBackfaceCulling_ae721a4edf793efc6ae7292ebdd880306}{Backface\+Culling\+::enabled} Pokud je zapnutý, trojúhelníky, které jsou odvrácené, jsou zahazovány. To, které jsou přivrácené a odvrácené je určeno\+:
+\begin{DoxyItemize}
+\item nastasvením \doxylink{structBackfaceCulling_a33977d66b5cff5ea41b261c677fef364}{Backface\+Culling\+::front\+Face\+Is\+Counter\+Clock\+Wise},
+\item pořadím vrcholů trojúhelníku na obrazovce, jsou-\/li specifikovány po směru nebo proti směru hodinových ručiček. Pokud je backface culling vypnutý, vykreslují se všechny trojúhelníky -- přivrácené i odvrácené -- specifikované po i proti směru hodinových ručiček.  
+\end{DoxyItemize}

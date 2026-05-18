@@ -1,0 +1,27 @@
+var searchData=
+[
+  ['f32_0',['F32',['../structImage.html#a1d53cd4fd9e5b67d38d49bc2c5ebd0dbafa6421ccf72f08668e45d9a70c657a1e',1,'Image']]],
+  ['finální_20render_1',['finální render',['../p15_drawModel.html#finalCountDown',1,'Úkol 11 &amp;ndash; finální render'],['../p15_drawModel.html#finalCountDown_task',1,'Test 63 &amp;ndash; finální render']]],
+  ['float_2',['float',['../solutionInterface_2src_2solutionInterface_2gpu_8hpp.html#a8cc36b907e294f5e78e1b479cac369ddae738c26bf4ce1037fa81b039a915cbf6',1,'FLOAT:&#160;gpu.hpp'],['../p13_per_fragment_operations.html#pfo_late_color_write_example2',1,'Příklad zápisu barvy do barevného bufferu typu float']]],
+  ['format_3',['format',['../structImage.html#a1d53cd4fd9e5b67d38d49bc2c5ebd0db',1,'Image::Format'],['../structImage.html#a98d0e7ac2ffeca933536b705cbdc5dba',1,'Image::format']]],
+  ['fragmentů_4',['Test 27 &amp;ndash; Ověření, zda se správně interpoluje hloubka fragmentů.',['../p09_rasterization_theory.html#ss_raster_test_6',1,'']]],
+  ['fragment_20operace_5',['fragment operace',['../p12_pfo_early.html#pfo_early_tasks',1,'Úkol 5 &amp;ndash; Naprogramovat brzké Per Fragment Operace'],['../p13_per_fragment_operations.html#pfo_late_tasks',1,'Úkol 6 &amp;ndash; Naprogramovat pozdní Per Fragment Operace'],['../p10_per_fragment_operations.html',1,'10 Per Fragment Operace'],['../p12_pfo_early.html',1,'12 Brzké per fragment operace'],['../p13_per_fragment_operations.html',1,'13 Pozdní Per Fragment Operace'],['../p10_per_fragment_operations.html#per_fragment_operation',1,'Per Fragment Operace']]],
+  ['fragment_20processor_6',['Fragment processor',['../p09_rasterization_theory.html#gpu_fragmentShader',1,'']]],
+  ['fragment_20shader_7',['Test 58-62 &amp;ndash; Fragment Shader',['../p15_drawModel.html#fragment_task',1,'']]],
+  ['fragment_20shader_20drawmode_5ffragmentshader_8',['Úkol 10 &amp;ndash; Vykreslování modelů &amp;ndash; fragment shader drawMode_fragmentShader',['../p15_drawModel.html#drawModel_fs',1,'']]],
+  ['fragment_20shaderu_9',['Úkol 4 &amp;ndash; naprogramovat Primitive Assembly jednotku, perspektivní dělení, zahazování odvrácených primitiv, rasterizaci a pouštění fragment shaderu',['../p09_rasterization_theory.html#Raster',1,'']]],
+  ['fragmentshader_10',['fragmentshader',['../structProgram.html#a5faf623d0af27d6000ebcacafecf2eb5',1,'Program::fragmentShader'],['../solutionInterface_2src_2solutionInterface_2gpu_8hpp.html#ac2dd95ee5e44978647da13fc95b9420e',1,'FragmentShader:&#160;gpu.hpp']]],
+  ['fragmentu_20operace_20discard_11',['Zahazování fragmentu (operace discard)',['../p13_per_fragment_operations.html#pfo_late_discrad',1,'']]],
+  ['framebufferů_12',['Test 10 &amp;ndash; zápis do vícero framebufferů',['../p04_commands_clear_tasks.html#clearMultipleFBO',1,'']]],
+  ['framebuffer_13',['Framebuffer',['../structFramebuffer.html',1,'']]],
+  ['framebuffers_14',['framebuffers',['../structGPUMemory.html#abd0d80589104a936db46ae766bc7975e',1,'GPUMemory']]],
+  ['framebufferu_15',['framebufferu',['../p04_commands_clear_tasks.html#ClearCommandTask',1,'Úkol 1: Čištění framebufferu'],['../p04_commands_clear_tasks.html#ClearCommandTheory',1,'Teorie: Čistění framebufferu'],['../p04_commands_clear_tasks.html#clear',1,'Test 8 &amp;ndash; čištění framebufferu'],['../p04_commands_clear_tasks.html#clearPartial',1,'Test 9 &amp;ndash; čištění částečného framebufferu']]],
+  ['free_16',['free',['../modelFwd_8hpp.html#a7d738b5fa483c2e2abd6cb28e3ea07da',1,'modelFwd.cpp']]],
+  ['frontfaceiscounterclockwise_17',['frontfaceiscounterclockwise',['../structSetFrontFaceCommand.html#aae3d6ebf5adb8df2c9d4a0d0e271ba0c',1,'SetFrontFaceCommand::frontFaceIsCounterClockWise'],['../structBackfaceCulling.html#a33977d66b5cff5ea41b261c677fef364',1,'BackfaceCulling::frontFaceIsCounterClockWise']]],
+  ['frontops_18',['frontOps',['../structStencilSettings.html#a80d833cb87eadee270af94f27ed2f4e9',1,'StencilSettings']]],
+  ['func_19',['func',['../structStencilSettings.html#aeef6ed112903656cc94a46ff39e2880d',1,'StencilSettings']]],
+  ['funce_20',['Stencilová porovnávací funce',['../p12_pfo_early.html#pfo_early_stencil_test_func',1,'']]],
+  ['funguje_20backface_20culling_21',['Test 26 &amp;ndash; Ověření, zda vám funguje backface culling.',['../p09_rasterization_theory.html#ss_raster_test_5',1,'']]],
+  ['funguje_20základní_20rasterizace_22',['Test 22 &amp;ndash; Ověření, že funguje základní rasterizace',['../p09_rasterization_theory.html#ss_raster_test',1,'']]],
+  ['funkce_20student_5fpreparemodel_23',['Úkol 8 &amp;ndash; Vykreslování modelů &amp;ndash; funkce student_prepareModel',['../p15_drawModel.html#drawModel_fce',1,'']]]
+];

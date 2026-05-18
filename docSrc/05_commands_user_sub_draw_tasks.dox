@@ -1,0 +1,55 @@
+/**
+
+\page p05_commands_user_sub_draw_tasks 05 Uživatelský příkaz, číslování a podcommand buffer
+
+
+\section userCommand Úkol 2: -- Uživatelský příkaz a číslování
+Cílem této části je zprovoznit uživatelský příkaz, kreslící příkazy a pod \ref CommandBuffer(y).
+
+
+\subsection userCommandT Test 11 -- UserCommand
+\code{.sh}
+./izgProject -c --test 11
+\endcode
+Tento test zkouší, zda jste naimplementovali obsluhu uživatelského příkazu: \ref UserCommand.
+\snippet solutionInterface/src/solutionInterface/gpu.hpp UserCommand
+Pokud grafická karta narazí na tento příkaz, měla by vyvolat callback a dát mu data.
+Pozor, uživatelský callback může být nullptr, v takovém případě se příkaz ignoruje.
+
+
+\subsection drawIDTest Test 12 -- DrawCommand a počítání gl_DrawID 
+\code{.sh}
+./izgProject -c --test 12
+\endcode
+Tento test zkouší, zda jste naimplementovali obsluhu kreslícího příkazu: \ref DrawCommand.
+\snippet solutionInterface/src/solutionInterface/gpu.hpp DrawCommand
+Pokud grafická karta narazí na tento příkaz, měla by spustit kreslení.
+Každý vykreslovací příkaz je číslovaný vzestupně od počátku spuštění.
+Cílem tohoto testu je ověřit, že počítáte vykresovací příkazy (a nastavujete \ref GPUMemory::gl_DrawID).
+Toto číslování se používá pro výběr materiálů, textur, modelových matic a podobně.
+Číslují se jen vykreslovací příkazy.
+Pokud je mezi kreslícími jiný příkaz, neovlivní to číslování.
+Výjimkou je příkaz \ref SetDrawIdCommand, který umožňuje explicitně \ref GPUMemory::gl_DrawID nastavit.
+\image html images/gl_DrawID.svg "Pouze kreslící příkazy jsou číslovány. SetDrawIdCommand může explicitně nastavit číslo příkazu. Je jedno, zda jsou příkazy součástí SubCommand, číslování to neovlivní." width=600
+Hrubý pseudokód může vypadat nějak takto:
+\snippet docSrc/drawExample.cpp student_GPU_run_gl_DrawID
+
+
+\subsection subCmdPractice Test 13 -- sub command
+Testy:
+\code{.sh}
+./izgProject -c --test 13
+\endcode
+\ref SubCommand je způsob, jak rozšiřovat a větvit \ref CommandBuffer. \ref SubCommand obsahuje ukazatel na další \ref CommandBuffer.
+\snippet solutionInterface/src/solutionInterface/gpu.hpp SubCommand
+Koncept je podobný jako u sekundárních command bufferů ve Vulkánu: <a href="https://docs.vulkan.org/spec/latest/chapters/cmdbuffers.html#commandbuffers-secondary">Sekundární Command Buffer</a>.
+Příkladem využití \ref SubCommand v tomto projektu je vykreslování stínů.
+Technika vykreslování stínů vyžaduje vykreslit scénu 2x, pokaždé s jiným programem a framebufferem.
+Je tak možné uložit si sub \ref CommandBuffer pro vykreslení scény a ten pak dvakrát uložit v primárním \ref CommandBuffer(u) pro celý snímek.
+\ref SubCommand může být vložen v libovolné hloubce, tzn. sub command buffer může obsahovat sub command buffer.
+Hrubý pseudokód může vypadat nějak takto:
+\snippet docSrc/drawExample.cpp student_GPU_run_SubCommand
+
+
+
+*/

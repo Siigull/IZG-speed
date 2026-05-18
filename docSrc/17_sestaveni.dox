@@ -1,0 +1,31 @@
+/**
+\page p17_sestaveni 17 Sestavení
+
+Projekt byl testován na Ubuntu 20.04 -- 24.04, Visual Studio 2017, 2019.
+Projekt vyžaduje 64 bitové sestavení.
+Projekt využívá build systém <a href="https://cmake.org/">CMAKE</a>.
+CMake je program, který na základně konfiguračních souborů "CMakeLists.txt"
+vytvoří "makefile" v daném vývojovém prostředí.
+Dokáže generovat makefile pro Linux, mingw, solution file pro Microsoft
+Visual Studio, a další.<br>
+Postup Linux:
+\code{.sh}
+# stáhnout projekt
+unzip izgProject.zip -d izgProject
+cd izgProject/build
+cmake ..
+make -j8
+./izgProject
+./izgProject -h
+\endcode
+Posup na Windows:
+-# stáhnout projekt
+-# rozbalit projekt
+-# jděte do složky build/ 
+-# ve složce build pusťte cmake-gui ..
+-# pokud nevíte jak, tak pusťte cmake-gui a nastavte "Where is the source code:" na složku s projektem (obsahuje CMakeLists.txt)
+-# a "Where to build the binaries: " na složku build
+-# configure
+-# generate
+-# Otevřete vygenerovnou Microsoft Visual Studio Solution soubor.
+*/
