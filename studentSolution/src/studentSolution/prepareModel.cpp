@@ -72,11 +72,12 @@ void student_drawModel_vertexShader(OutVertex&outVertex,InVertex const&inVertex,
   auto itm = si.uniforms[getUniformLocation(si.gl_DrawID,INVERSE_TRANSPOSE_MODEL_MATRIX)].m4;
   auto pv = si.uniforms[getUniformLocation(si.gl_DrawID,PROJECTION_VIEW_MATRIX)].m4;
   auto sm = si.uniforms[getUniformLocation(si.gl_DrawID,USE_SHADOW_MAP_MATRIX)].m4;
-  outVertex.gl_Position = pv * m * pos;
-  outVertex.attributes[0].v3 = glm::vec3(m * pos);
+  auto worldPos = m * pos;
+  outVertex.gl_Position = pv * worldPos;
+  outVertex.attributes[0].v3 = glm::vec3(worldPos);
   outVertex.attributes[1].v3 = glm::vec3(itm * nor);
   outVertex.attributes[2].v2 = tex;
-  outVertex.attributes[3].v4 = sm * m * pos;
+  outVertex.attributes[3].v4 = sm * worldPos;
 }
 //! [drawModel_vs]
 
