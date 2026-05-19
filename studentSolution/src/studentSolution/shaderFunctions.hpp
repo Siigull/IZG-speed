@@ -40,6 +40,31 @@ static inline glm::vec4 __student_texelFetch_inline(Texture const&texture,glm::u
   return color;
 }
 
+__attribute__((always_inline)) static inline glm::vec4 __student_texelFetch_inline_nobounds(Texture const&texture,glm::uvec2 const&pix){
+  auto&img = texture.img;
+  if(img.format == Image::U8){
+    auto colorPtr = (uint8_t*)img.data + pix.y * img.pitch + pix.x * img.bytesPerPixel;
+    if(img.channels==4 && img.channelTypes[0]==Image::RED && img.channelTypes[1]==Image::GREEN && img.channelTypes[2]==Image::BLUE && img.channelTypes[3]==Image::ALPHA){
+      return glm::vec4(colorPtr[0]/255.f,colorPtr[1]/255.f,colorPtr[2]/255.f,colorPtr[3]/255.f);
+    }
+    glm::vec4 color = glm::vec4(0.f,0.f,0.f,1.f);
+    for(uint32_t c=0;c<img.channels;++c)
+      color[c] = colorPtr[img.channelTypes[c]]/255.f;
+    return color;
+  }
+  else if(img.format == Image::F32){
+    auto colorPtr = (float*)((uint8_t*)img.data + pix.y * img.pitch + pix.x * img.bytesPerPixel);
+    if(img.channels==1 && img.channelTypes[0]==Image::RED){
+      return glm::vec4(*colorPtr,0.f,0.f,1.f);
+    }
+    glm::vec4 color = glm::vec4(0.f,0.f,0.f,1.f);
+    for(uint32_t c=0;c<img.channels;++c)
+      color[c] = colorPtr[img.channelTypes[c]];
+    return color;
+  }
+  return glm::vec4(0.f,0.f,0.f,1.f);
+}
+
 static inline glm::vec4 student_read_texture_impl(Texture const&texture,float u,float v){
   if(!texture.img.data)return glm::vec4(0.f);
   float xf = u * float(texture.width - 1) + 0.5f;

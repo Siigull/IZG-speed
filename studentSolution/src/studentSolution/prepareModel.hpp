@@ -66,7 +66,7 @@ __attribute__((always_inline)) inline void student_drawModel_fragmentShader(OutF
     float uy=texCoord.y<0.f?0.f:(texCoord.y>1.f?1.f:texCoord.y);
     float xf=ux*float(t.width-1)+0.5f;
     float yf=uy*float(t.height-1)+0.5f;
-    albedoRGBA=__student_texelFetch_inline(t,glm::uvec2((uint32_t)xf,(uint32_t)yf));
+    albedoRGBA=__student_texelFetch_inline_nobounds(t,glm::uvec2((uint32_t)xf,(uint32_t)yf));
   }
   glm::vec3 albedo = glm::vec3(albedoRGBA);
 
@@ -80,7 +80,7 @@ __attribute__((always_inline)) inline void student_drawModel_fragmentShader(OutF
       auto&t=si.textures[shadowMapID];
       float xf=sp.x*float(t.width-1)+0.5f;
       float yf=sp.y*float(t.height-1)+0.5f;
-      float closest=__student_texelFetch_inline(t,glm::uvec2((uint32_t)xf,(uint32_t)yf)).r;
+      float closest=__student_texelFetch_inline_nobounds(t,glm::uvec2((uint32_t)xf,(uint32_t)yf)).r;
       if(sp.z>closest)
         shadowFactor=1.f;
     }
