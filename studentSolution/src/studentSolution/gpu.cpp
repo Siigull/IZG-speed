@@ -334,14 +334,17 @@ static void draw(GPUMemory&mem,DrawCommand const&cmd){
       auto&att=vao.vertexAttrib[a];
       if(att.bufferID<0||att.type==AttribType::EMPTY)continue;
       auto ad=(uint8_t*)mem.buffers[att.bufferID].data+att.offset+vid*att.stride;
-      if(att.type==AttribType::FLOAT)inV.attributes[a].v1=*(float*)ad;
-      else if(att.type==AttribType::VEC2)inV.attributes[a].v2=*(glm::vec2*)ad;
-      else if(att.type==AttribType::VEC3)inV.attributes[a].v3=*(glm::vec3*)ad;
-      else if(att.type==AttribType::VEC4)inV.attributes[a].v4=*(glm::vec4*)ad;
-      else if(att.type==AttribType::UINT)inV.attributes[a].u1=*(uint32_t*)ad;
-      else if(att.type==AttribType::UVEC2)inV.attributes[a].u2=*(glm::uvec2*)ad;
-      else if(att.type==AttribType::UVEC3)inV.attributes[a].u3=*(glm::uvec3*)ad;
-      else if(att.type==AttribType::UVEC4)inV.attributes[a].u4=*(glm::uvec4*)ad;
+      switch(att.type){
+        case AttribType::FLOAT: inV.attributes[a].v1=*(float*)ad; break;
+        case AttribType::VEC2:  inV.attributes[a].v2=*(glm::vec2*)ad; break;
+        case AttribType::VEC3:  inV.attributes[a].v3=*(glm::vec3*)ad; break;
+        case AttribType::VEC4:  inV.attributes[a].v4=*(glm::vec4*)ad; break;
+        case AttribType::UINT:  inV.attributes[a].u1=*(uint32_t*)ad; break;
+        case AttribType::UVEC2: inV.attributes[a].u2=*(glm::uvec2*)ad; break;
+        case AttribType::UVEC3: inV.attributes[a].u3=*(glm::uvec3*)ad; break;
+        case AttribType::UVEC4: inV.attributes[a].u4=*(glm::uvec4*)ad; break;
+        default: break;
+      }
     }
     auto vs=prg.vertexShader;
     if(!vs)vs=[](OutVertex&o,InVertex const&,ShaderInterface const&){o.gl_Position=glm::vec4(0,0,0,1);};
