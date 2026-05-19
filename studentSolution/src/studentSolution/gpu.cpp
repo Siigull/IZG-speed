@@ -247,12 +247,14 @@ static void raster(GPUMemory&mem,OutVertex const v[3]){
       InFragment inF;inF.gl_FragCoord=glm::vec4(x+.5f,y+.5f,depthZ,1.f);
       for(uint32_t ai=0;ai<nActiveAttribs;++ai){
         uint32_t a=activeAttribs[ai];
-        AttribType tp=p.vs2fs[a];
-        if(tp==AttribType::FLOAT)inF.attributes[a].v1=v[0].attributes[a].v1*lP[0]+v[1].attributes[a].v1*lP[1]+v[2].attributes[a].v1*lP[2];
-        else if(tp==AttribType::VEC2)inF.attributes[a].v2=v[0].attributes[a].v2*lP[0]+v[1].attributes[a].v2*lP[1]+v[2].attributes[a].v2*lP[2];
-        else if(tp==AttribType::VEC3)inF.attributes[a].v3=v[0].attributes[a].v3*lP[0]+v[1].attributes[a].v3*lP[1]+v[2].attributes[a].v3*lP[2];
-        else if(tp==AttribType::VEC4)inF.attributes[a].v4=v[0].attributes[a].v4*lP[0]+v[1].attributes[a].v4*lP[1]+v[2].attributes[a].v4*lP[2];
-        else if(tp==AttribType::UINT)inF.attributes[a].u1=(uint32_t)round(v[0].attributes[a].u1*lP[0]+v[1].attributes[a].u1*lP[1]+v[2].attributes[a].u1*lP[2]);
+        switch(p.vs2fs[a]){
+          case AttribType::FLOAT: inF.attributes[a].v1=v[0].attributes[a].v1*lP[0]+v[1].attributes[a].v1*lP[1]+v[2].attributes[a].v1*lP[2]; break;
+          case AttribType::VEC2:  inF.attributes[a].v2=v[0].attributes[a].v2*lP[0]+v[1].attributes[a].v2*lP[1]+v[2].attributes[a].v2*lP[2]; break;
+          case AttribType::VEC3:  inF.attributes[a].v3=v[0].attributes[a].v3*lP[0]+v[1].attributes[a].v3*lP[1]+v[2].attributes[a].v3*lP[2]; break;
+          case AttribType::VEC4:  inF.attributes[a].v4=v[0].attributes[a].v4*lP[0]+v[1].attributes[a].v4*lP[1]+v[2].attributes[a].v4*lP[2]; break;
+          case AttribType::UINT:  inF.attributes[a].u1=(uint32_t)round(v[0].attributes[a].u1*lP[0]+v[1].attributes[a].u1*lP[1]+v[2].attributes[a].u1*lP[2]); break;
+          default: break;
+        }
       }
       OutFragment outF;
       if(p.fragmentShader&&p.fragmentShader!=izg2026::createShadowMap_fs)p.fragmentShader(outF,inF,si);
