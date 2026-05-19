@@ -265,22 +265,32 @@ static void raster(GPUMemory&mem,OutVertex const v[3]){
         glm::vec4 fragColor=outF.gl_FragColor;
         if(bs.enabled){
           glm::vec4 dstColor;
-          for(uint32_t c=0;c<f->color.channels;++c){
-            float ch=float(px[f->color.channelTypes[c]])/255.f;
-            if(c==0)dstColor.r=ch;
-            else if(c==1)dstColor.g=ch;
-            else if(c==2)dstColor.b=ch;
-            else if(c==3)dstColor.a=ch;
-          }
-          if(f->color.channels<4){
-            if(f->color.channels<=0)dstColor.r=0.f;
-            if(f->color.channels<=1)dstColor.g=0.f;
-            if(f->color.channels<=2)dstColor.b=0.f;
-            dstColor.a=1.f;
+          if(f->color.channels==4){
+            dstColor.r=float(px[f->color.channelTypes[0]])/255.f;
+            dstColor.g=float(px[f->color.channelTypes[1]])/255.f;
+            dstColor.b=float(px[f->color.channelTypes[2]])/255.f;
+            dstColor.a=float(px[f->color.channelTypes[3]])/255.f;
+          }else{
+            for(uint32_t c=0;c<f->color.channels;++c){
+              float ch=float(px[f->color.channelTypes[c]])/255.f;
+              if(c==0)dstColor.r=ch;
+              else if(c==1)dstColor.g=ch;
+              else if(c==2)dstColor.b=ch;
+              else if(c==3)dstColor.a=ch;
+            }
+            if(f->color.channels<4){
+              if(f->color.channels<=0)dstColor.r=0.f;
+              if(f->color.channels<=1)dstColor.g=0.f;
+              if(f->color.channels<=2)dstColor.b=0.f;
+              dstColor.a=1.f;
+            }
           }
           if(bs.equation==BlendEquation::MIN)fragColor=glm::min(fragColor,dstColor);
           else if(bs.equation==BlendEquation::MAX)fragColor=glm::max(fragColor,dstColor);
-          else{
+          else if(bs.equation==BlendEquation::ADD && bs.sFactor==BlendFunc::SRC_ALPHA && bs.dFactor==BlendFunc::ONE_MINUS_SRC_ALPHA){
+            float a=fragColor.a;
+            fragColor=fragColor*a+dstColor*(1.f-a);
+          }else{
             glm::vec4 sf=getBlendFactor(bs.sFactor,fragColor,dstColor);
             glm::vec4 df=getBlendFactor(bs.dFactor,fragColor,dstColor);
             fragColor=applyBlendEquation(bs.equation,fragColor*sf,dstColor*df);
