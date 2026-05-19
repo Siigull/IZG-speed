@@ -268,9 +268,13 @@ static void raster(GPUMemory&mem,OutVertex const v[3]){
       }
 
       l0*=invA;l1*=invA;l2*=invA;
-      float zInv=l0*hInv[0]+l1*hInv[1]+l2*hInv[2];
-      float lP[3]={l0*hInv[0]/zInv,l1*hInv[1]/zInv,l2*hInv[2]/zInv};
       float depthZ=l0*scr[0].z+l1*scr[1].z+l2*scr[2].z;
+      float p0=l0*hInv[0];
+      float p1=l1*hInv[1];
+      float p2=l2*hInv[2];
+      float zInv=p0+p1+p2;
+      float invZ=1.0f/zInv;
+      float lP[3]={p0*invZ,p1*invZ,p2*invZ};
 
       uint8_t stencilVal=0;
       if(stencilPx)stencilVal=*stencilPx;
