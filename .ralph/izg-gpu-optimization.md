@@ -93,9 +93,18 @@ Explored several micro-optimizations; all were reverted after testing showed no 
 6. **Shadow VS mat-mat→mat-vec restructuring** — compiler already did it.
 7. **Stencil load restructuring** — compiler already dead-code eliminated it.
 
+### Iteration 10 exploration (no new commit)
+Tried several micro-optimizations; none produced measurable improvement over the ~3.93e-02 (-f 10) baseline:
+1. **inv255 multiply vs `/255.f` in `__student_texelFetch_inline_nobounds`** — compiler already converts to equivalent codegen; no improvement.
+2. **Defer barycentric computation until after depth test** — compiler likely already optimizes this via speculative execution or there isn't enough depth-failure to matter; no improvement.
+3. **Guard stencil load behind `ss.enabled`** — compiler already dead-code eliminated the unused load when stencil is disabled.
+4. **Early alpha discard in FS (before lighting/shadow)** — median unchanged; the model has few transparent pixels, so skip doesn't help in the benchmark.
+
 ### Insights
 - Compiler with `-O3 -march=native` is extremely aggressive on scalar code. Micro-optimizations provide diminishing returns.
 - **Algorithmic wins matter**: 8x8 tile coarse raster for shadow map reduced per-frame by ~10% (~4.55e-02 → ~4.15e-02).
 - Scene raster inner loop is still the main bottleneck (~16ms). Tile raster for scene pass was attempted but overhead exceeded benefit for small triangles.
 - `always_inline` on VS/FS gave ~2-3% win by eliminating per-pixel function call overhead in raster.
+- Current best on `-f 10` (actual competition metric): ~3.93e-02 s/frame.
 - To reach the ~2ms best solution on this PC, we need more algorithmic improvements: SIMD pixel processing, hierarchical Z, or further tile optimizations.
+- **Next ideas**: Try removing `allFloatAttribs` condition checks in scene pass by unconditionally interpolating all 4 vec4 attributes when program is known. Or try 4x4 tile raster for scene pass with fully-inside tiles skipping edge tests.
