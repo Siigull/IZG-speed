@@ -1,6 +1,7 @@
 #include <studentSolution/gpu.hpp>
 #include <studentSolution/prepareModel.hpp>
 #include <cstring>
+#include <immintrin.h>
 
 namespace izg2026{
   void createShadowMap_fs(OutFragment&,InFragment const&,ShaderInterface const&);
@@ -40,14 +41,14 @@ static void clearStencil(GPUMemory&mem,ClearStencilCommand const&cmd){
   memset(f->stencil.data,v,f->stencil.pitch*f->height);
 }
 
-static glm::vec3 ndc(glm::vec4 const&v){return glm::vec3(v)/v.w;}
-static float edge(glm::vec2 const&a,glm::vec2 const&b,glm::vec2 const&c){
+__attribute__((always_inline)) static glm::vec3 ndc(glm::vec4 const&v){return glm::vec3(v)/v.w;}
+__attribute__((always_inline)) static float edge(glm::vec2 const&a,glm::vec2 const&b,glm::vec2 const&c){
   return (c.x-a.x)*(b.y-a.y)-(c.y-a.y)*(b.x-a.x);
 }
-static float min3(float a,float b,float c){return a<b?(a<c?a:c):( b<c?b:c);}
-static float max3(float a,float b,float c){return a>b?(a>c?a:c):( b>c?b:c);}
+__attribute__((always_inline)) static float min3(float a,float b,float c){return a<b?(a<c?a:c):( b<c?b:c);}
+__attribute__((always_inline)) static float max3(float a,float b,float c){return a>b?(a>c?a:c):( b>c?b:c);}
 
-static bool stencilTest(uint8_t s,uint32_t ref,StencilFunc f){
+__attribute__((always_inline)) static bool stencilTest(uint8_t s,uint32_t ref,StencilFunc f){
   switch(f){
     case StencilFunc::NEVER:    return false;
     case StencilFunc::LESS:     return s<ref;
@@ -60,7 +61,7 @@ static bool stencilTest(uint8_t s,uint32_t ref,StencilFunc f){
   default: return true;
   }
 }
-static uint8_t applyStencilOp(uint8_t v,StencilOp op,uint32_t ref){
+__attribute__((always_inline)) static uint8_t applyStencilOp(uint8_t v,StencilOp op,uint32_t ref){
   switch(op){
     case StencilOp::KEEP:      return v;
     case StencilOp::ZERO:      return 0;
@@ -73,7 +74,7 @@ static uint8_t applyStencilOp(uint8_t v,StencilOp op,uint32_t ref){
   default: return v;
   }
 }
-static glm::vec4 getBlendFactor(BlendFunc f,glm::vec4 const&src,glm::vec4 const&dst){
+__attribute__((always_inline)) static glm::vec4 getBlendFactor(BlendFunc f,glm::vec4 const&src,glm::vec4 const&dst){
   switch(f){
     case BlendFunc::ZERO:                return glm::vec4(0.f);
     case BlendFunc::ONE:                 return glm::vec4(1.f);
@@ -88,7 +89,7 @@ static glm::vec4 getBlendFactor(BlendFunc f,glm::vec4 const&src,glm::vec4 const&
   default: return glm::vec4(1.f);
   }
 }
-static glm::vec4 applyBlendEquation(BlendEquation e,glm::vec4 const&s,glm::vec4 const&d){
+__attribute__((always_inline)) static glm::vec4 applyBlendEquation(BlendEquation e,glm::vec4 const&s,glm::vec4 const&d){
   switch(e){
     case BlendEquation::ADD:              return s+d;
     case BlendEquation::SUBTRACT:         return s-d;
@@ -101,13 +102,13 @@ static glm::vec4 applyBlendEquation(BlendEquation e,glm::vec4 const&s,glm::vec4 
 
 static void raster(GPUMemory&mem,OutVertex const v[3]);
 
-static bool insideNear(glm::vec4 const&p){return p.z>=-p.w;}
-static OutVertex vtxLerp(OutVertex const&a,OutVertex const&b,float t){
+__attribute__((always_inline)) static bool insideNear(glm::vec4 const&p){return p.z>=-p.w;}
+__attribute__((always_inline)) static OutVertex vtxLerp(OutVertex const&a,OutVertex const&b,float t){
   OutVertex r;r.gl_Position=a.gl_Position+t*(b.gl_Position-a.gl_Position);
   for(uint32_t i=0;i<maxAttribs;++i)r.attributes[i].v4=a.attributes[i].v4+t*(b.attributes[i].v4-a.attributes[i].v4);
   return r;
 }
-static float nearT(glm::vec4 const&a,glm::vec4 const&b){
+__attribute__((always_inline)) static float nearT(glm::vec4 const&a,glm::vec4 const&b){
   float av=a.z+a.w,bv=b.z+b.w;
   float d=av-bv;if(fabsf(d)<1e-6f)return 0.f;
   return av/d;
@@ -251,7 +252,36 @@ static void raster(GPUMemory&mem,OutVertex const v[3]){
             float l1_row=l1_dx*xc0+l1_dy*yc+l1_c;
             float l2_row=l2_dx*xc0+l2_dy*yc+l2_c;
             if(fullTile){
-              for(int x=tx;x<tx1;++x){
+              int x=tx;
+              // scalar prologue to align to 4-pixel boundary
+              while(x<tx1 && (uintptr_t)depthPx & 15){
+                float depthZ=l0_row*dc0+l1_row*dc1+l2_row*dc2;
+                float oldDepth=*(float*)depthPx;
+                if(depthZ<oldDepth)*(float*)depthPx=depthZ;
+                l0_row+=l0_dx;l1_row+=l1_dx;l2_row+=l2_dx;
+                depthPx+=f->depth.bytesPerPixel;
+                x++;
+              }
+              int xSSE=x;
+              __m128 dc0v=_mm_set1_ps(dc0);
+              __m128 dc1v=_mm_set1_ps(dc1);
+              __m128 dc2v=_mm_set1_ps(dc2);
+              __m128 step0=_mm_set_ps(3.f*l0_dx,2.f*l0_dx,1.f*l0_dx,0.f);
+              __m128 step1=_mm_set_ps(3.f*l1_dx,2.f*l1_dx,1.f*l1_dx,0.f);
+              __m128 step2=_mm_set_ps(3.f*l2_dx,2.f*l2_dx,1.f*l2_dx,0.f);
+              for(;xSSE+3<tx1;xSSE+=4){
+                __m128 l0v=_mm_add_ps(_mm_set1_ps(l0_row),step0);
+                __m128 l1v=_mm_add_ps(_mm_set1_ps(l1_row),step1);
+                __m128 l2v=_mm_add_ps(_mm_set1_ps(l2_row),step2);
+                __m128 depthZ=_mm_add_ps(_mm_add_ps(_mm_mul_ps(l0v,dc0v),_mm_mul_ps(l1v,dc1v)),_mm_mul_ps(l2v,dc2v));
+                __m128 oldDepth=_mm_load_ps((float*)depthPx);
+                __m128 mask=_mm_cmplt_ps(depthZ,oldDepth);
+                __m128 newDepth=_mm_or_ps(_mm_and_ps(mask,depthZ),_mm_andnot_ps(mask,oldDepth));
+                _mm_store_ps((float*)depthPx,newDepth);
+                l0_row+=4.f*l0_dx;l1_row+=4.f*l1_dx;l2_row+=4.f*l2_dx;
+                depthPx+=4*f->depth.bytesPerPixel;
+              }
+              for(;xSSE<tx1;xSSE++){
                 float depthZ=l0_row*dc0+l1_row*dc1+l2_row*dc2;
                 float oldDepth=*(float*)depthPx;
                 if(depthZ<oldDepth)*(float*)depthPx=depthZ;
