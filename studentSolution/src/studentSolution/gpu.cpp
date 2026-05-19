@@ -414,7 +414,12 @@ static void raster(GPUMemory&mem,OutVertex const v[3]){
       if(ss.enabled&&stencilPx&&!mem.blockWrites.stencil)*stencilPx=applyStencilOp(stencilVal,ops.dppass,ss.refValue);
 
       InFragment inF;inF.gl_FragCoord=glm::vec4(x+.5f,y+.5f,depthZ,1.f);
-      if(allFloatAttribs){
+      if(p.fragmentShader==student_drawModel_fragmentShader){
+        inF.attributes[0].v4=v[0].attributes[0].v4*lP[0]+v[1].attributes[0].v4*lP[1]+v[2].attributes[0].v4*lP[2];
+        inF.attributes[1].v4=v[0].attributes[1].v4*lP[0]+v[1].attributes[1].v4*lP[1]+v[2].attributes[1].v4*lP[2];
+        inF.attributes[2].v4=v[0].attributes[2].v4*lP[0]+v[1].attributes[2].v4*lP[1]+v[2].attributes[2].v4*lP[2];
+        inF.attributes[3].v4=v[0].attributes[3].v4*lP[0]+v[1].attributes[3].v4*lP[1]+v[2].attributes[3].v4*lP[2];
+      }else if(allFloatAttribs){
         if(p.vs2fs[0]!=AttribType::EMPTY)inF.attributes[0].v4=v[0].attributes[0].v4*lP[0]+v[1].attributes[0].v4*lP[1]+v[2].attributes[0].v4*lP[2];
         if(p.vs2fs[1]!=AttribType::EMPTY)inF.attributes[1].v4=v[0].attributes[1].v4*lP[0]+v[1].attributes[1].v4*lP[1]+v[2].attributes[1].v4*lP[2];
         if(p.vs2fs[2]!=AttribType::EMPTY)inF.attributes[2].v4=v[0].attributes[2].v4*lP[0]+v[1].attributes[2].v4*lP[1]+v[2].attributes[2].v4*lP[2];
@@ -451,15 +456,16 @@ static void raster(GPUMemory&mem,OutVertex const v[3]){
         uint8_t* px=colorPx;
         glm::vec4 fragColor=outF.gl_FragColor;
         if(bs.enabled){
+          constexpr float inv255c = 1.0f/255.0f;
           glm::vec4 dstColor;
           if(f->color.channels==4){
-            dstColor.r=float(px[f->color.channelTypes[0]])/255.f;
-            dstColor.g=float(px[f->color.channelTypes[1]])/255.f;
-            dstColor.b=float(px[f->color.channelTypes[2]])/255.f;
-            dstColor.a=float(px[f->color.channelTypes[3]])/255.f;
+            dstColor.r=float(px[f->color.channelTypes[0]])*inv255c;
+            dstColor.g=float(px[f->color.channelTypes[1]])*inv255c;
+            dstColor.b=float(px[f->color.channelTypes[2]])*inv255c;
+            dstColor.a=float(px[f->color.channelTypes[3]])*inv255c;
           }else{
             for(uint32_t c=0;c<f->color.channels;++c){
-              float ch=float(px[f->color.channelTypes[c]])/255.f;
+              float ch=float(px[f->color.channelTypes[c]])*inv255c;
               if(c==0)dstColor.r=ch;
               else if(c==1)dstColor.g=ch;
               else if(c==2)dstColor.b=ch;

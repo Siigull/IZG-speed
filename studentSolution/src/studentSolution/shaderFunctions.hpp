@@ -22,12 +22,13 @@ static inline glm::vec4 __student_texelFetch_inline(Texture const&texture,glm::u
   glm::vec4 color = glm::vec4(0.f,0.f,0.f,1.f);
   if(pix.x>=texture.width || pix.y >=texture.height)return color;
   if(img.format == Image::U8){
+    constexpr float inv255 = 1.0f/255.0f;
     auto colorPtr = (uint8_t*)img.data + pix.y * img.pitch + pix.x * img.bytesPerPixel;
     if(img.channels==4 && img.channelTypes[0]==Image::RED && img.channelTypes[1]==Image::GREEN && img.channelTypes[2]==Image::BLUE && img.channelTypes[3]==Image::ALPHA){
-      return glm::vec4(colorPtr[0]/255.f,colorPtr[1]/255.f,colorPtr[2]/255.f,colorPtr[3]/255.f);
+      return glm::vec4(colorPtr[0]*inv255,colorPtr[1]*inv255,colorPtr[2]*inv255,colorPtr[3]*inv255);
     }
     for(uint32_t c=0;c<img.channels;++c)
-      color[c] = colorPtr[img.channelTypes[c]]/255.f;
+      color[c] = colorPtr[img.channelTypes[c]]*inv255;
   }
   else if(img.format == Image::F32){
     auto colorPtr = (float*)((uint8_t*)img.data + pix.y * img.pitch + pix.x * img.bytesPerPixel);
@@ -43,13 +44,14 @@ static inline glm::vec4 __student_texelFetch_inline(Texture const&texture,glm::u
 __attribute__((always_inline)) static inline glm::vec4 __student_texelFetch_inline_nobounds(Texture const&texture,glm::uvec2 const&pix){
   auto&img = texture.img;
   if(img.format == Image::U8){
+    constexpr float inv255 = 1.0f/255.0f;
     auto colorPtr = (uint8_t*)img.data + pix.y * img.pitch + pix.x * img.bytesPerPixel;
     if(img.channels==4 && img.channelTypes[0]==Image::RED && img.channelTypes[1]==Image::GREEN && img.channelTypes[2]==Image::BLUE && img.channelTypes[3]==Image::ALPHA){
-      return glm::vec4(colorPtr[0]/255.f,colorPtr[1]/255.f,colorPtr[2]/255.f,colorPtr[3]/255.f);
+      return glm::vec4(colorPtr[0]*inv255,colorPtr[1]*inv255,colorPtr[2]*inv255,colorPtr[3]*inv255);
     }
     glm::vec4 color = glm::vec4(0.f,0.f,0.f,1.f);
     for(uint32_t c=0;c<img.channels;++c)
-      color[c] = colorPtr[img.channelTypes[c]]/255.f;
+      color[c] = colorPtr[img.channelTypes[c]]*inv255;
     return color;
   }
   else if(img.format == Image::F32){
