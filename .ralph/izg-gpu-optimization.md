@@ -3,7 +3,7 @@
 **Goal:** Optimize the student GPU implementation as much as possible while keeping all 64 conformance tests passing.
 
 **Baseline:** ~8.6e-02 seconds per frame (method 0, 50 frames)
-**Current Best:** ~3.85e-02 seconds per frame
+**Current Best:** ~3.73e-02 seconds per frame
 
 ## Build & Test Commands
 - Build: `cd /home/sigull/izgProject/build && ninja`
@@ -59,6 +59,10 @@ Per-frame split for ~50ms total frame:
     - Also kept unconditional 4-vec4 attribute interpolation for known FS (avoids EMPTY branches).
     - Performance before: ~3.93e-02 (measured with `-f 10`)
     - Performance after: ~3.85e-02 (~2% faster)
+    - Tests passing: 64/64
+22. Skip Newton iteration in `student_fastRsqrt` — use raw `_mm_rsqrt_ss` only. The Newton refinement (1 FMA) per normalize was surprisingly expensive; raw rsqrtss error (~0.024%) passes all conformance tests.
+    - Performance before: ~3.85e-02 (measured with `-f 10`)
+    - Performance after: ~3.73e-02 (~3-4% faster)
     - Tests passing: 64/64
 
 ## Attempted & Reverted
@@ -116,6 +120,6 @@ Revisited the `/255.f` issue with fresh eyes. Assembly inspection revealed the c
 - **Algorithmic wins matter**: 8x8 tile coarse raster for shadow map reduced per-frame by ~10% (~4.55e-02 → ~4.15e-02).
 - Scene raster inner loop is still the main bottleneck (~16ms). Tile raster for scene pass was attempted but overhead exceeded benefit for small triangles.
 - `always_inline` on VS/FS gave ~2-3% win by eliminating per-pixel function call overhead in raster.
-- Current best on `-f 10` (actual competition metric): ~3.93e-02 s/frame.
+- Current best on `-f 10` (actual competition metric): ~3.73e-02 s/frame.
 - To reach the ~2ms best solution on this PC, we need more algorithmic improvements: SIMD pixel processing, hierarchical Z, or further tile optimizations.
 - **Next ideas**: Try removing `allFloatAttribs` condition checks in scene pass by unconditionally interpolating all 4 vec4 attributes when program is known. Or try 4x4 tile raster for scene pass with fully-inside tiles skipping edge tests.
