@@ -1,8 +1,15 @@
 #include <studentSolution/gpu.hpp>
+#include <studentSolution/prepareModel.hpp>
 #include <cstring>
 
 namespace izg2026{
   void createShadowMap_fs(OutFragment&,InFragment const&,ShaderInterface const&);
+  void createShadowMap_vs(OutVertex&,InVertex const&,ShaderInterface const&);
+  inline void createShadowMap_vs_fast(OutVertex&outVertex,InVertex const&inVertex,ShaderInterface const&si){
+    auto const&vp    = si.uniforms[getUniformLocation(si.gl_DrawID,CREATE_SHADOW_MAP_MATRIX)].m4;
+    auto const&model = si.uniforms[getUniformLocation(si.gl_DrawID,MODEL_MATRIX            )].m4;
+    outVertex.gl_Position = vp*model*glm::vec4(inVertex.attributes[0].v3,1.f);
+  }
 }
 
 static void clearColor(GPUMemory&mem,ClearColorCommand const&cmd){
@@ -109,6 +116,10 @@ static void clipRaster(GPUMemory&mem,OutVertex const vin[3]){
   bool in[3];for(int i=0;i<3;++i)in[i]=insideNear(vin[i].gl_Position);
   int cnt=in[0]+in[1]+in[2];
   if(cnt==0)return;
+  if(cnt==3){
+    raster(mem,vin);
+    return;
+  }
   OutVertex v[4];int n=0;
   for(int i=0;i<3;++i){
     int j=(i+1)%3;
@@ -161,6 +172,8 @@ static void raster(GPUMemory&mem,OutVertex const v[3]){
 
   ShaderInterface si;si.uniforms=mem.uniforms;si.textures=mem.textures;si.gl_DrawID=mem.gl_DrawID;
   float invA=1.f/A;
+  float scr_z_invA[3]={scr[0].z*invA,scr[1].z*invA,scr[2].z*invA};
+  float hInv_invA[3]={hInv[0]*invA,hInv[1]*invA,hInv[2]*invA};
   auto&ss=mem.stencilSettings;
   auto&bs=mem.blendingSettings;
   StencilOps ops=isFrontFace?ss.frontOps:ss.backOps;
@@ -284,22 +297,17 @@ static void raster(GPUMemory&mem,OutVertex const v[3]){
     float l2_row = l2_dx * (x0 + 0.5f) + l2_dy * yc + l2_c;
 
     for(int x=x0;x<=x1;++x){
-      float l0=l0_row;
-      float l1=l1_row;
-      float l2=l2_row;
-      if(l0<=0.f||l1<=0.f||l2<=0.f){
+      if(l0_row<=0.f||l1_row<=0.f||l2_row<=0.f){
         l0_row+=l0_dx;l1_row+=l1_dx;l2_row+=l2_dx;
         if(stencilPx)stencilPx+=f->stencil.bytesPerPixel;
         if(depthPx)depthPx+=f->depth.bytesPerPixel;
         if(colorPx)colorPx+=f->color.bytesPerPixel;
         continue;
       }
-
-      l0*=invA;l1*=invA;l2*=invA;
-      float depthZ=l0*scr[0].z+l1*scr[1].z+l2*scr[2].z;
-      float p0=l0*hInv[0];
-      float p1=l1*hInv[1];
-      float p2=l2*hInv[2];
+      float depthZ=l0_row*scr_z_invA[0]+l1_row*scr_z_invA[1]+l2_row*scr_z_invA[2];
+      float p0=l0_row*hInv_invA[0];
+      float p1=l1_row*hInv_invA[1];
+      float p2=l2_row*hInv_invA[2];
       float zInv=p0+p1+p2;
       float invZ=1.0f/zInv;
       float lP[3]={p0*invZ,p1*invZ,p2*invZ};
@@ -352,7 +360,12 @@ static void raster(GPUMemory&mem,OutVertex const v[3]){
         }
       }
       OutFragment outF;
-      if(p.fragmentShader&&p.fragmentShader!=izg2026::createShadowMap_fs)p.fragmentShader(outF,inF,si);
+      if(p.fragmentShader&&p.fragmentShader!=izg2026::createShadowMap_fs){
+        if(p.fragmentShader==student_drawModel_fragmentShader)
+          student_drawModel_fragmentShader(outF,inF,si);
+        else
+          p.fragmentShader(outF,inF,si);
+      }
       if(outF.discard){
         l0_row+=l0_dx;l1_row+=l1_dx;l2_row+=l2_dx;
         if(stencilPx)stencilPx+=f->stencil.bytesPerPixel;
@@ -442,8 +455,15 @@ static void draw(GPUMemory&mem,DrawCommand const&cmd){
       }
     }
     auto vs=prg.vertexShader;
-    if(!vs)vs=[](OutVertex&o,InVertex const&,ShaderInterface const&){o.gl_Position=glm::vec4(0,0,0,1);};
-    vs(ov[v%3],inV,si);
+    if(!vs){
+      ov[v%3].gl_Position=glm::vec4(0,0,0,1);
+    }else if(vs==izg2026::createShadowMap_vs){
+      izg2026::createShadowMap_vs_fast(ov[v%3],inV,si);
+    }else if(vs==student_drawModel_vertexShader){
+      student_drawModel_vertexShader(ov[v%3],inV,si);
+    }else{
+      vs(ov[v%3],inV,si);
+    }
     if(v%3==2)clipRaster(mem,ov);
   }
 }
