@@ -133,10 +133,16 @@ static void raster(GPUMemory&mem,OutVertex const v[3]){
   uint32_t w=f->width,h=f->height;
 
   for(int i=0;i<3;++i)if(v[i].gl_Position.w<=0.f)return;
-  glm::vec3 pos[3];for(int i=0;i<3;++i)pos[i]=ndc(v[i].gl_Position);
-  glm::vec3 scr[3];for(int i=0;i<3;++i)scr[i]=glm::vec3((glm::vec2(pos[i].x,pos[i].y)*.5f+.5f)*glm::vec2(w,h),pos[i].z);
-  glm::vec2 sp[3];for(int i=0;i<3;++i)sp[i]=glm::vec2(scr[i]);
-  float A=edge(sp[0],sp[1],sp[2]); if(A==0.f)return;
+  float hInv[3]={1.f/v[0].gl_Position.w,1.f/v[1].gl_Position.w,1.f/v[2].gl_Position.w};
+  glm::vec3 scr[3];
+  for(int i=0;i<3;++i){
+    float ndcX=v[i].gl_Position.x*hInv[i];
+    float ndcY=v[i].gl_Position.y*hInv[i];
+    scr[i].x=(ndcX*.5f+.5f)*w;
+    scr[i].y=(ndcY*.5f+.5f)*h;
+    scr[i].z=v[i].gl_Position.z*hInv[i];
+  }
+  float A=edge(glm::vec2(scr[0]),glm::vec2(scr[1]),glm::vec2(scr[2])); if(A==0.f)return;
   bool cw=A<0.f;
   bool refCW=A>0.f;
   bool refCCW=!refCW;
@@ -154,31 +160,34 @@ static void raster(GPUMemory&mem,OutVertex const v[3]){
   int y1=(int)glm::clamp(max3(scr[0].y,scr[1].y,scr[2].y),0.f,(float)h-1);
 
   ShaderInterface si;si.uniforms=mem.uniforms;si.textures=mem.textures;si.gl_DrawID=mem.gl_DrawID;
-  float invA=1.f/A;float hInv[3]={1.f/v[0].gl_Position.w,1.f/v[1].gl_Position.w,1.f/v[2].gl_Position.w};
+  float invA=1.f/A;
   auto&ss=mem.stencilSettings;
   auto&bs=mem.blendingSettings;
   StencilOps ops=isFrontFace?ss.frontOps:ss.backOps;
 
   uint32_t activeAttribs[maxAttribs];
   uint32_t nActiveAttribs=0;
+  bool allFloatAttribs=true;
   for(uint32_t a=0;a<maxAttribs;++a){
-    if(p.vs2fs[a]!=AttribType::EMPTY)
+    if(p.vs2fs[a]!=AttribType::EMPTY){
       activeAttribs[nActiveAttribs++]=a;
+      if(static_cast<int>(p.vs2fs[a])>static_cast<int>(AttribType::VEC4))allFloatAttribs=false;
+    }
   }
 
   bool hasStencil=f->stencil.data!=nullptr;
   bool hasDepth=f->depth.data!=nullptr;
   bool hasColor=f->color.data!=nullptr;
 
-  float l0_dx = sp[2].y - sp[1].y;
-  float l0_dy = sp[1].x - sp[2].x;
-  float l0_c  = sp[1].y * sp[2].x - sp[1].x * sp[2].y;
-  float l1_dx = sp[0].y - sp[2].y;
-  float l1_dy = sp[2].x - sp[0].x;
-  float l1_c  = sp[2].y * sp[0].x - sp[2].x * sp[0].y;
-  float l2_dx = sp[1].y - sp[0].y;
-  float l2_dy = sp[0].x - sp[1].x;
-  float l2_c  = sp[0].y * sp[1].x - sp[0].x * sp[1].y;
+  float l0_dx = scr[2].y - scr[1].y;
+  float l0_dy = scr[1].x - scr[2].x;
+  float l0_c  = scr[1].y * scr[2].x - scr[1].x * scr[2].y;
+  float l1_dx = scr[0].y - scr[2].y;
+  float l1_dy = scr[2].x - scr[0].x;
+  float l1_c  = scr[2].y * scr[0].x - scr[2].x * scr[0].y;
+  float l2_dx = scr[1].y - scr[0].y;
+  float l2_dy = scr[0].x - scr[1].x;
+  float l2_c  = scr[0].y * scr[1].x - scr[0].x * scr[1].y;
   if(cw){
     l0_dx=-l0_dx;l0_dy=-l0_dy;l0_c=-l0_c;
     l1_dx=-l1_dx;l1_dy=-l1_dy;l1_c=-l1_c;
@@ -305,15 +314,22 @@ static void raster(GPUMemory&mem,OutVertex const v[3]){
       if(ss.enabled&&stencilPx&&!mem.blockWrites.stencil)*stencilPx=applyStencilOp(stencilVal,ops.dppass,ss.refValue);
 
       InFragment inF;inF.gl_FragCoord=glm::vec4(x+.5f,y+.5f,depthZ,1.f);
-      for(uint32_t ai=0;ai<nActiveAttribs;++ai){
-        uint32_t a=activeAttribs[ai];
-        switch(p.vs2fs[a]){
-          case AttribType::FLOAT: inF.attributes[a].v1=v[0].attributes[a].v1*lP[0]+v[1].attributes[a].v1*lP[1]+v[2].attributes[a].v1*lP[2]; break;
-          case AttribType::VEC2:  inF.attributes[a].v2=v[0].attributes[a].v2*lP[0]+v[1].attributes[a].v2*lP[1]+v[2].attributes[a].v2*lP[2]; break;
-          case AttribType::VEC3:  inF.attributes[a].v3=v[0].attributes[a].v3*lP[0]+v[1].attributes[a].v3*lP[1]+v[2].attributes[a].v3*lP[2]; break;
-          case AttribType::VEC4:  inF.attributes[a].v4=v[0].attributes[a].v4*lP[0]+v[1].attributes[a].v4*lP[1]+v[2].attributes[a].v4*lP[2]; break;
-          case AttribType::UINT:  inF.attributes[a].u1=(uint32_t)round(v[0].attributes[a].u1*lP[0]+v[1].attributes[a].u1*lP[1]+v[2].attributes[a].u1*lP[2]); break;
-          default: break;
+      if(allFloatAttribs){
+        if(p.vs2fs[0]!=AttribType::EMPTY)inF.attributes[0].v4=v[0].attributes[0].v4*lP[0]+v[1].attributes[0].v4*lP[1]+v[2].attributes[0].v4*lP[2];
+        if(p.vs2fs[1]!=AttribType::EMPTY)inF.attributes[1].v4=v[0].attributes[1].v4*lP[0]+v[1].attributes[1].v4*lP[1]+v[2].attributes[1].v4*lP[2];
+        if(p.vs2fs[2]!=AttribType::EMPTY)inF.attributes[2].v4=v[0].attributes[2].v4*lP[0]+v[1].attributes[2].v4*lP[1]+v[2].attributes[2].v4*lP[2];
+        if(p.vs2fs[3]!=AttribType::EMPTY)inF.attributes[3].v4=v[0].attributes[3].v4*lP[0]+v[1].attributes[3].v4*lP[1]+v[2].attributes[3].v4*lP[2];
+      }else{
+        for(uint32_t ai=0;ai<nActiveAttribs;++ai){
+          uint32_t a=activeAttribs[ai];
+          switch(p.vs2fs[a]){
+            case AttribType::FLOAT: inF.attributes[a].v1=v[0].attributes[a].v1*lP[0]+v[1].attributes[a].v1*lP[1]+v[2].attributes[a].v1*lP[2]; break;
+            case AttribType::VEC2:  inF.attributes[a].v2=v[0].attributes[a].v2*lP[0]+v[1].attributes[a].v2*lP[1]+v[2].attributes[a].v2*lP[2]; break;
+            case AttribType::VEC3:  inF.attributes[a].v3=v[0].attributes[a].v3*lP[0]+v[1].attributes[a].v3*lP[1]+v[2].attributes[a].v3*lP[2]; break;
+            case AttribType::VEC4:  inF.attributes[a].v4=v[0].attributes[a].v4*lP[0]+v[1].attributes[a].v4*lP[1]+v[2].attributes[a].v4*lP[2]; break;
+            case AttribType::UINT:  inF.attributes[a].u1=(uint32_t)round(v[0].attributes[a].u1*lP[0]+v[1].attributes[a].u1*lP[1]+v[2].attributes[a].u1*lP[2]); break;
+            default: break;
+          }
         }
       }
       OutFragment outF;
