@@ -3,7 +3,7 @@
 **Goal:** Optimize the student GPU implementation as much as possible while keeping all 64 conformance tests passing.
 
 **Baseline:** ~8.6e-02 seconds per frame (method 0, 50 frames)
-**Current Best:** ~4.10e-02 seconds per frame
+**Current Best:** ~4.00e-02 seconds per frame
 
 ## Build & Test Commands
 - Build: `cd /home/sigull/izgProject/build && ninja`
@@ -49,6 +49,10 @@ Per-frame split for ~50ms total frame:
 19. Fast rsqrt-based `normalize` in fragment shader (`student_fastNormalize` using `_mm_rsqrt_ss` + 1 Newton iteration; eliminates 2 `vsqrtss` per visible pixel)
     - Performance before: ~4.15e-02
     - Performance after: ~4.10e-02 (~1-2% faster)
+    - Tests passing: 64/64
+20. No-bounds texture fetch variant (`__student_texelFetch_inline_nobounds`) for inlined fragment shader path. The FS texture coordinates are already clamped to [0,1], so bounds checks in `texelFetch` are always false. Removing them saves branches per texture sample.
+    - Performance before: ~4.25e-02 (measured with `-f 10`)
+    - Performance after: ~4.00e-02 (~5-6% faster)
     - Tests passing: 64/64
 
 ## Attempted & Reverted
