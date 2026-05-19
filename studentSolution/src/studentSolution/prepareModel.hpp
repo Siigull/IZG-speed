@@ -14,7 +14,7 @@
 
 void student_prepareModel(GPUMemory&mem,CommandBuffer&commandBuffer,Model const&model);
 
-inline void student_drawModel_vertexShader(OutVertex&outVertex,InVertex const&inVertex,ShaderInterface const&si){
+__attribute__((always_inline)) inline void student_drawModel_vertexShader(OutVertex&outVertex,InVertex const&inVertex,ShaderInterface const&si){
   auto pos = glm::vec4(inVertex.attributes[0].v3,1.f);
   auto nor = glm::vec4(inVertex.attributes[1].v3,0.f);
   auto tex = inVertex.attributes[2].v2;
@@ -30,7 +30,7 @@ inline void student_drawModel_vertexShader(OutVertex&outVertex,InVertex const&in
   outVertex.attributes[3].v4 = sm * worldPos;
 }
 
-inline void student_drawModel_fragmentShader(OutFragment&outFragment,InFragment const&inFragment,ShaderInterface const&si){
+__attribute__((always_inline)) inline void student_drawModel_fragmentShader(OutFragment&outFragment,InFragment const&inFragment,ShaderInterface const&si){
   auto pos = inFragment.attributes[0].v3;
   auto nor = inFragment.attributes[1].v3;
   auto texCoord = inFragment.attributes[2].v2;
