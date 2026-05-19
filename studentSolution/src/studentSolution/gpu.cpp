@@ -1,6 +1,10 @@
 #include <studentSolution/gpu.hpp>
 #include <cstring>
 
+namespace izg2026{
+  void createShadowMap_fs(OutFragment&,InFragment const&,ShaderInterface const&);
+}
+
 static void clearColor(GPUMemory&mem,ClearColorCommand const&cmd){
   Framebuffer*f=mem.framebuffers+mem.activatedFramebuffer;
   if(!f->color.data)return;
@@ -251,7 +255,7 @@ static void raster(GPUMemory&mem,OutVertex const v[3]){
         else if(tp==AttribType::UINT)inF.attributes[a].u1=(uint32_t)round(v[0].attributes[a].u1*lP[0]+v[1].attributes[a].u1*lP[1]+v[2].attributes[a].u1*lP[2]);
       }
       OutFragment outF;
-      if(p.fragmentShader)p.fragmentShader(outF,inF,si);
+      if(p.fragmentShader&&p.fragmentShader!=izg2026::createShadowMap_fs)p.fragmentShader(outF,inF,si);
       if(outF.discard){
         l0_row+=l0_dx;l1_row+=l1_dx;l2_row+=l2_dx;
         if(stencilPx)stencilPx+=f->stencil.bytesPerPixel;
