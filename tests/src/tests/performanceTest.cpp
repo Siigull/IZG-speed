@@ -76,6 +76,8 @@ void runPerformanceTest(size_t framesPerMeasurement) {
     std::cout << "[Student] Seconds per frame: " << std::scientific << std::setprecision(10) << t << std::endl;
   }
 
+  if(getenv("SKIP_TEACHER_PERF")) return;
+
   // ---------- Teacher ----------
   {
     switchToTeacherSolution();
