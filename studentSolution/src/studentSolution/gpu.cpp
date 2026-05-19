@@ -195,27 +195,46 @@ static void raster(GPUMemory&mem,OutVertex const v[3]){
   }
 
   if(nActiveAttribs==0&&!hasColor&&p.fragmentShader==izg2026::createShadowMap_fs){
+    if(!ss.enabled&&!mem.blockWrites.depth&&hasDepth){
+      float dc0=scr[0].z*invA;
+      float dc1=scr[1].z*invA;
+      float dc2=scr[2].z*invA;
+      for(int y=y0;y<=y1;++y){
+        uint8_t* depthRow=(uint8_t*)f->depth.data+y*f->depth.pitch;
+        uint8_t* depthPx=depthRow+x0*f->depth.bytesPerPixel;
+        float yc=y+0.5f;
+        float l0_row=l0_dx*(x0+0.5f)+l0_dy*yc+l0_c;
+        float l1_row=l1_dx*(x0+0.5f)+l1_dy*yc+l1_c;
+        float l2_row=l2_dx*(x0+0.5f)+l2_dy*yc+l2_c;
+        for(int x=x0;x<=x1;++x){
+          if(l0_row>0.f&&l1_row>0.f&&l2_row>0.f){
+            float depthZ=l0_row*dc0+l1_row*dc1+l2_row*dc2;
+            float oldDepth=*(float*)depthPx;
+            if(depthZ<oldDepth)*(float*)depthPx=depthZ;
+          }
+          l0_row+=l0_dx;l1_row+=l1_dx;l2_row+=l2_dx;
+          depthPx+=f->depth.bytesPerPixel;
+        }
+      }
+      return;
+    }
     for(int y=y0;y<=y1;++y){
       uint8_t* stencilRow=hasStencil?((uint8_t*)f->stencil.data+y*f->stencil.pitch):nullptr;
       uint8_t* depthRow=hasDepth?((uint8_t*)f->depth.data+y*f->depth.pitch):nullptr;
       uint8_t* stencilPx=hasStencil?(stencilRow+x0*f->stencil.bytesPerPixel):nullptr;
       uint8_t* depthPx=hasDepth?(depthRow+x0*f->depth.bytesPerPixel):nullptr;
-      float yc = y + 0.5f;
-      float l0_row = l0_dx * (x0 + 0.5f) + l0_dy * yc + l0_c;
-      float l1_row = l1_dx * (x0 + 0.5f) + l1_dy * yc + l1_c;
-      float l2_row = l2_dx * (x0 + 0.5f) + l2_dy * yc + l2_c;
+      float yc=y+0.5f;
+      float l0_row=l0_dx*(x0+0.5f)+l0_dy*yc+l0_c;
+      float l1_row=l1_dx*(x0+0.5f)+l1_dy*yc+l1_c;
+      float l2_row=l2_dx*(x0+0.5f)+l2_dy*yc+l2_c;
       for(int x=x0;x<=x1;++x){
-        float l0=l0_row;
-        float l1=l1_row;
-        float l2=l2_row;
-        if(l0<=0.f||l1<=0.f||l2<=0.f){
+        if(l0_row<=0.f||l1_row<=0.f||l2_row<=0.f){
           l0_row+=l0_dx;l1_row+=l1_dx;l2_row+=l2_dx;
           if(stencilPx)stencilPx+=f->stencil.bytesPerPixel;
           if(depthPx)depthPx+=f->depth.bytesPerPixel;
           continue;
         }
-        l0*=invA;l1*=invA;l2*=invA;
-        float depthZ=l0*scr[0].z+l1*scr[1].z+l2*scr[2].z;
+        float depthZ=(l0_row*scr[0].z+l1_row*scr[1].z+l2_row*scr[2].z)*invA;
         uint8_t stencilVal=0;
         if(stencilPx)stencilVal=*stencilPx;
         if(ss.enabled&&stencilPx){
