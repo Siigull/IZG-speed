@@ -32,8 +32,7 @@ __attribute__((always_inline)) inline void student_drawModel_vertexShader(OutVer
 }
 
 __attribute__((always_inline)) inline float student_fastRsqrt(float x){
-  float approx=_mm_cvtss_f32(_mm_rsqrt_ss(_mm_set_ss(x)));
-  return approx*(1.5f-0.5f*x*approx*approx);
+  return _mm_cvtss_f32(_mm_rsqrt_ss(_mm_set_ss(x)));
 }
 __attribute__((always_inline)) inline glm::vec3 student_fastNormalize(glm::vec3 const&v){
   float len2=v.x*v.x+v.y*v.y+v.z*v.z;
