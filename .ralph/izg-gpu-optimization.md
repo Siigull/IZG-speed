@@ -3,7 +3,7 @@
 **Goal:** Optimize the student GPU implementation as much as possible while keeping all 64 conformance tests passing.
 
 **Baseline:** ~8.6e-02 seconds per frame (method 0, 50 frames)
-**Current Best:** ~4.00e-02 seconds per frame
+**Current Best:** ~3.85e-02 seconds per frame
 
 ## Build & Test Commands
 - Build: `cd /home/sigull/izgProject/build && ninja`
@@ -54,6 +54,12 @@ Per-frame split for ~50ms total frame:
     - Performance before: ~4.25e-02 (measured with `-f 10`)
     - Performance after: ~4.00e-02 (~5-6% faster)
     - Tests passing: 64/64
+21. Replace `/255.f` divisions with `constexpr float inv255 = 1.0f/255.0f` multiplies in texture fetch and blend paths. Compiler was emitting `divss` for constant division; explicit reciprocal forces `mulss`.
+    - Assembly check: fragment shader `divss` count dropped from 24 to 3.
+    - Also kept unconditional 4-vec4 attribute interpolation for known FS (avoids EMPTY branches).
+    - Performance before: ~3.93e-02 (measured with `-f 10`)
+    - Performance after: ~3.85e-02 (~2% faster)
+    - Tests passing: 64/64
 
 ## Attempted & Reverted
 - Fragment shader raw-float math (no measurable gain)
@@ -95,10 +101,15 @@ Explored several micro-optimizations; all were reverted after testing showed no 
 
 ### Iteration 10 exploration (no new commit)
 Tried several micro-optimizations; none produced measurable improvement over the ~3.93e-02 (-f 10) baseline:
-1. **inv255 multiply vs `/255.f` in `__student_texelFetch_inline_nobounds`** — compiler already converts to equivalent codegen; no improvement.
-2. **Defer barycentric computation until after depth test** — compiler likely already optimizes this via speculative execution or there isn't enough depth-failure to matter; no improvement.
-3. **Guard stencil load behind `ss.enabled`** — compiler already dead-code eliminated the unused load when stencil is disabled.
-4. **Early alpha discard in FS (before lighting/shadow)** — median unchanged; the model has few transparent pixels, so skip doesn't help in the benchmark.
+1. **Defer barycentric computation until after depth test** — compiler likely already optimizes this via speculative execution or there isn't enough depth-failure to matter; no improvement.
+2. **Guard stencil load behind `ss.enabled`** — compiler already dead-code eliminated the unused load when stencil is disabled.
+3. **Early alpha discard in FS (before lighting/shadow)** — median unchanged; the model has few transparent pixels, so skip doesn't help in the benchmark.
+
+### Iteration 11 commit (inv255 + unconditional attr interp)
+Revisited the `/255.f` issue with fresh eyes. Assembly inspection revealed the compiler was NOT converting `/255.f` to multiplication — it emitted `divss` instructions inside the inlined texture fetch. Using `constexpr float inv255` eliminates the divisions.
+- Also added unconditional 4-vec4 attribute interpolation when `p.fragmentShader==student_drawModel_fragmentShader` (avoids per-pixel EMPTY checks).
+- Perf improved from ~3.93e-02 to ~3.85e-02 (~2%).
+- Key lesson: even with `-O3`, GCC can miss floating-point reciprocal optimizations in complex inlined code. Always verify with objdump.
 
 ### Insights
 - Compiler with `-O3 -march=native` is extremely aggressive on scalar code. Micro-optimizations provide diminishing returns.
