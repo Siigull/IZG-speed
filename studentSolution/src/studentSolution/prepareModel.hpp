@@ -11,6 +11,7 @@
 #include <solutionInterface/uniformLocations.hpp>
 #include <studentSolution/shaderFunctions.hpp>
 #include <glm/glm.hpp>
+#include <xmmintrin.h>
 
 void student_prepareModel(GPUMemory&mem,CommandBuffer&commandBuffer,Model const&model);
 
@@ -30,6 +31,15 @@ __attribute__((always_inline)) inline void student_drawModel_vertexShader(OutVer
   outVertex.attributes[3].v4 = sm * worldPos;
 }
 
+__attribute__((always_inline)) inline float student_fastRsqrt(float x){
+  float approx=_mm_cvtss_f32(_mm_rsqrt_ss(_mm_set_ss(x)));
+  return approx*(1.5f-0.5f*x*approx*approx);
+}
+__attribute__((always_inline)) inline glm::vec3 student_fastNormalize(glm::vec3 const&v){
+  float len2=v.x*v.x+v.y*v.y+v.z*v.z;
+  return v*student_fastRsqrt(len2);
+}
+
 __attribute__((always_inline)) inline void student_drawModel_fragmentShader(OutFragment&outFragment,InFragment const&inFragment,ShaderInterface const&si){
   auto pos = inFragment.attributes[0].v3;
   auto nor = inFragment.attributes[1].v3;
@@ -45,7 +55,7 @@ __attribute__((always_inline)) inline void student_drawModel_fragmentShader(OutF
   auto doubleSided = si.uniforms[getUniformLocation(si.gl_DrawID,DOUBLE_SIDED)].v1;
   auto shadowMapID = si.uniforms[getUniformLocation(si.gl_DrawID,SHADOWMAP_ID)].i1;
 
-  auto N = glm::normalize(nor);
+  auto N = student_fastNormalize(nor);
   if(doubleSided > 0.f && glm::dot(N, cameraPos - pos) < 0.f)
     N = -N;
 
@@ -60,7 +70,7 @@ __attribute__((always_inline)) inline void student_drawModel_fragmentShader(OutF
   }
   glm::vec3 albedo = glm::vec3(albedoRGBA);
 
-  auto L = glm::normalize(lightPos - pos);
+  auto L = student_fastNormalize(lightPos - pos);
   float diffuseFactor = glm::max(glm::dot(N, L), 0.f);
 
   float shadowFactor = 0.f;
