@@ -212,21 +212,64 @@ static void raster(GPUMemory&mem,OutVertex const v[3]){
       float dc0=scr[0].z*invA;
       float dc1=scr[1].z*invA;
       float dc2=scr[2].z*invA;
-      for(int y=y0;y<=y1;++y){
-        uint8_t* depthRow=(uint8_t*)f->depth.data+y*f->depth.pitch;
-        uint8_t* depthPx=depthRow+x0*f->depth.bytesPerPixel;
-        float yc=y+0.5f;
-        float l0_row=l0_dx*(x0+0.5f)+l0_dy*yc+l0_c;
-        float l1_row=l1_dx*(x0+0.5f)+l1_dy*yc+l1_c;
-        float l2_row=l2_dx*(x0+0.5f)+l2_dy*yc+l2_c;
-        for(int x=x0;x<=x1;++x){
-          if(l0_row>0.f&&l1_row>0.f&&l2_row>0.f){
-            float depthZ=l0_row*dc0+l1_row*dc1+l2_row*dc2;
-            float oldDepth=*(float*)depthPx;
-            if(depthZ<oldDepth)*(float*)depthPx=depthZ;
+      constexpr int TS=8;
+      auto tileMin=[](int a,int b){return a<b?a:b;};
+      for(int ty=y0;ty<=y1;ty+=TS){
+        int ty1=tileMin(ty+TS,y1+1);
+        float yc0=ty+0.5f;
+        float yc1=ty1-0.5f;
+        for(int tx=x0;tx<=x1;tx+=TS){
+          int tx1=tileMin(tx+TS,x1+1);
+          float xc0=tx+0.5f;
+          float xc1=tx1-0.5f;
+          // evaluate 4 corners for each edge
+          float l00=l0_dx*xc0+l0_dy*yc0+l0_c;
+          float l01=l0_dx*xc0+l0_dy*yc1+l0_c;
+          float l10=l0_dx*xc1+l0_dy*yc0+l0_c;
+          float l11=l0_dx*xc1+l0_dy*yc1+l0_c;
+          float m00=l1_dx*xc0+l1_dy*yc0+l1_c;
+          float m01=l1_dx*xc0+l1_dy*yc1+l1_c;
+          float m10=l1_dx*xc1+l1_dy*yc0+l1_c;
+          float m11=l1_dx*xc1+l1_dy*yc1+l1_c;
+          float n00=l2_dx*xc0+l2_dy*yc0+l2_c;
+          float n01=l2_dx*xc0+l2_dy*yc1+l2_c;
+          float n10=l2_dx*xc1+l2_dy*yc0+l2_c;
+          float n11=l2_dx*xc1+l2_dy*yc1+l2_c;
+          // classify tile
+          bool l0_out=(l00<=0.f&&l01<=0.f&&l10<=0.f&&l11<=0.f);
+          bool l1_out=(m00<=0.f&&m01<=0.f&&m10<=0.f&&m11<=0.f);
+          bool l2_out=(n00<=0.f&&n01<=0.f&&n10<=0.f&&n11<=0.f);
+          if(l0_out||l1_out||l2_out)continue;
+          bool l0_in=(l00>0.f&&l01>0.f&&l10>0.f&&l11>0.f);
+          bool l1_in=(m00>0.f&&m01>0.f&&m10>0.f&&m11>0.f);
+          bool l2_in=(n00>0.f&&n01>0.f&&n10>0.f&&n11>0.f);
+          bool fullTile=l0_in&&l1_in&&l2_in;
+          for(int y=ty;y<ty1;++y){
+            uint8_t* depthPx=((uint8_t*)f->depth.data+y*f->depth.pitch)+tx*f->depth.bytesPerPixel;
+            float yc=y+0.5f;
+            float l0_row=l0_dx*xc0+l0_dy*yc+l0_c;
+            float l1_row=l1_dx*xc0+l1_dy*yc+l1_c;
+            float l2_row=l2_dx*xc0+l2_dy*yc+l2_c;
+            if(fullTile){
+              for(int x=tx;x<tx1;++x){
+                float depthZ=l0_row*dc0+l1_row*dc1+l2_row*dc2;
+                float oldDepth=*(float*)depthPx;
+                if(depthZ<oldDepth)*(float*)depthPx=depthZ;
+                l0_row+=l0_dx;l1_row+=l1_dx;l2_row+=l2_dx;
+                depthPx+=f->depth.bytesPerPixel;
+              }
+            }else{
+              for(int x=tx;x<tx1;++x){
+                if(l0_row>0.f&&l1_row>0.f&&l2_row>0.f){
+                  float depthZ=l0_row*dc0+l1_row*dc1+l2_row*dc2;
+                  float oldDepth=*(float*)depthPx;
+                  if(depthZ<oldDepth)*(float*)depthPx=depthZ;
+                }
+                l0_row+=l0_dx;l1_row+=l1_dx;l2_row+=l2_dx;
+                depthPx+=f->depth.bytesPerPixel;
+              }
+            }
           }
-          l0_row+=l0_dx;l1_row+=l1_dx;l2_row+=l2_dx;
-          depthPx+=f->depth.bytesPerPixel;
         }
       }
       return;
