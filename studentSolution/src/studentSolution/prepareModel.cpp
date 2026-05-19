@@ -111,8 +111,14 @@ void student_drawModel_fragmentShader(OutFragment&outFragment,InFragment const&i
     N = -N;
 
   glm::vec4 albedoRGBA = diffuseColor;
-  if(textureID >= 0)
-    albedoRGBA = student_read_textureClamp(si.textures[textureID], texCoord);
+  if(textureID >= 0){
+    auto&t=si.textures[textureID];
+    float ux=texCoord.x<0.f?0.f:(texCoord.x>1.f?1.f:texCoord.x);
+    float uy=texCoord.y<0.f?0.f:(texCoord.y>1.f?1.f:texCoord.y);
+    float xf=ux*float(t.width-1)+0.5f;
+    float yf=uy*float(t.height-1)+0.5f;
+    albedoRGBA=__student_texelFetch_inline(t,glm::uvec2((uint32_t)xf,(uint32_t)yf));
+  }
   glm::vec3 albedo = glm::vec3(albedoRGBA);
 
   auto L = glm::normalize(lightPos - pos);
@@ -122,9 +128,12 @@ void student_drawModel_fragmentShader(OutFragment&outFragment,InFragment const&i
   if(shadowMapID >= 0){
     auto sp = shadowPos / shadowPos.w;
     if(sp.x >= 0.f && sp.x <= 1.f && sp.y >= 0.f && sp.y <= 1.f){
-      float closest = student_read_textureClamp(si.textures[shadowMapID], glm::vec2(sp)).r;
-      if(sp.z > closest)
-        shadowFactor = 1.f;
+      auto&t=si.textures[shadowMapID];
+      float xf=sp.x*float(t.width-1)+0.5f;
+      float yf=sp.y*float(t.height-1)+0.5f;
+      float closest=__student_texelFetch_inline(t,glm::uvec2((uint32_t)xf,(uint32_t)yf)).r;
+      if(sp.z>closest)
+        shadowFactor=1.f;
     }
   }
 
