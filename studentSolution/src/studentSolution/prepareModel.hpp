@@ -74,13 +74,16 @@ __attribute__((always_inline)) inline void student_drawModel_fragmentShader(OutF
 
   float shadowFactor = 0.f;
   if(shadowMapID >= 0){
-    auto sp = shadowPos / shadowPos.w;
-    if(sp.x >= 0.f && sp.x <= 1.f && sp.y >= 0.f && sp.y <= 1.f){
+    float invW = _mm_cvtss_f32(_mm_rcp_ss(_mm_set_ss(shadowPos.w)));
+    float spx = shadowPos.x * invW;
+    float spy = shadowPos.y * invW;
+    float spz = shadowPos.z * invW;
+    if(spx >= 0.f && spx <= 1.f && spy >= 0.f && spy <= 1.f){
       auto&t=si.textures[shadowMapID];
-      float xf=sp.x*float(t.width-1)+0.5f;
-      float yf=sp.y*float(t.height-1)+0.5f;
+      float xf=spx*float(t.width-1)+0.5f;
+      float yf=spy*float(t.height-1)+0.5f;
       float closest=__student_texelFetch_inline_nobounds(t,glm::uvec2((uint32_t)xf,(uint32_t)yf)).r;
-      if(sp.z>closest)
+      if(spz>closest)
         shadowFactor=1.f;
     }
   }
